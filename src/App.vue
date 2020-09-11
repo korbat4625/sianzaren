@@ -15,11 +15,13 @@
 
     <b-navbar type="dark" variant="dark">
 
+      <!-- 這邊使用 BV 支援 <router-link to=...>的元件 -->
       <b-navbar-nav>
         <b-nav-item to="/">Home</b-nav-item>
         <b-nav-item to="/about">About Me</b-nav-item>
       </b-navbar-nav>
 
+      <!-- 這邊使用 BV navbar 的搜尋框元件，後面用以搜尋文章 -->
       <b-navbar-nav class="ml-auto">
         <b-nav-form>
           <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
@@ -28,7 +30,9 @@
       </b-navbar-nav>
     </b-navbar>
 
+    <!-- 負責顯示所有內容 -->
     <router-view/>
+
   </div>
 </template>
 
@@ -51,10 +55,6 @@
 
 .container-fluid.hero {
   background-color: #024e82;
-  .row {
-    padding-left: -15px;
-    padding-right: -15px;
-  }
   .hero--chooseHero {
     position: relative;
     padding: 1rem;
@@ -92,14 +92,4 @@ nav {
   }
 }
 
-.choosePhoto {
-  height: 20rem;
-}
-
-.logo {
-  background-image: url("./assets/cover.png");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position-y: center;
-}
 </style>
