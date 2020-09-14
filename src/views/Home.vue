@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <b-container class="pageHome">
     <b-row>
       <b-col cols="9"><Articles/></b-col>
       <b-col cols="3"><Recently/></b-col>

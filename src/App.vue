@@ -1,12 +1,12 @@
 <template>
   <div id="app">
-    <b-container fluid class="hero">
+    <b-container fluid class="hero" ref="hero">
       <b-row>
         <b-col cols="12">
           <div class="hero--chooseHero">
             <div class="hero--chooseHero__content">
-              <h1>IT幫幫忙 - 鐵人賽 30 天</h1>
-              <p>自討苦吃</p>
+              <h1 @click="showLoginClick">IT幫幫忙 - 鐵人賽 30 天</h1>
+              <p @click="showUser">自討苦吃</p>
             </div>
           </div>
         </b-col>
@@ -19,6 +19,7 @@
       <b-navbar-nav>
         <b-nav-item to="/">Home</b-nav-item>
         <b-nav-item to="/about">About Me</b-nav-item>
+        <b-nav-item to="/login" v-if="loginShow">登入</b-nav-item>
       </b-navbar-nav>
 
       <!-- 這邊使用 BV navbar 的搜尋框元件，後面用以搜尋文章 -->
@@ -35,6 +36,53 @@
 
   </div>
 </template>
+
+<script>
+import { firebase } from './Model/FirebaseModel'
+export default {
+  name: 'App',
+  data () {
+    return {
+      loginShow: false,
+      loginClick: 0
+    }
+  },
+  methods: {
+    showLoginClick () {
+      this.loginClick++
+      if (this.loginClick > 2) {
+        this.loginShow = true
+        setTimeout(() => {
+          this.loginClick = 0
+          this.loginShow = false
+        }, 3000)
+      }
+    },
+    showUser () {
+      var user = firebase.auth().currentUser
+      var name, email, photoUrl, uid, emailVerified
+
+      if (user != null) {
+        name = user.displayName
+        email = user.email
+        photoUrl = user.photoURL
+        emailVerified = user.emailVerified
+        uid = user.uid
+        console.log({
+          name,
+          email,
+          photoUrl,
+          emailVerified,
+          uid
+        })
+      } else {
+        console.log('使用者以登出', user)
+      }
+    }
+  }
+}
+
+</script>
 
 <style lang="scss" scope>
 * {
