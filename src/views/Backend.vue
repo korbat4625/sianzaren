@@ -1,33 +1,28 @@
 <template>
   <b-container>
     <b-row>
+      <b-button v-b-toggle.sidebar-no-header>Toggle Sidebar</b-button>
       <b-col>
-        這裡是後台待開發
-      <b-navbar-nav>
-        <b-nav-item to="/" @click="signOut">登出</b-nav-item>
-      </b-navbar-nav>
+        <router-link to="/backend/article_editor">新增文章</router-link>
+        <b-nav-item v-if="$router.history.current.name === 'Backend'" to="/" @click="signOut">登出</b-nav-item>
       </b-col>
+    </b-row>
+    <b-row>
+      <router-view></router-view>
     </b-row>
   </b-container>
 </template>
 
 <script>
-import { firebase } from '../Model/FirebaseModel'
+// import '../plugins/markdown.js'
+
 export default {
   name: 'Backend',
   data () {
     return {
-
+      content: '# your markdown content'
     }
   },
-  methods: {
-    signOut () {
-      firebase.auth().signOut().then(function () {
-        // Sign-out successful.
-      // eslint-disable-next-line handle-callback-err
-        console.log('登出成功')
-      })
-    }
-  }
+  methods: {}
 }
 </script>

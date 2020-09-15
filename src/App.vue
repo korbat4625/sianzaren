@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-container fluid class="hero" ref="hero">
+    <b-container fluid class="hero" ref="hero" v-if="$router.history.current.fullPath.search('backend') === -1">
       <b-row>
         <b-col cols="12">
           <div class="hero--chooseHero">
@@ -12,8 +12,8 @@
         </b-col>
       </b-row>
     </b-container>
-
-    <b-navbar type="dark" variant="dark">
+<!-- $router.history.current.fullPath.search('backend') === -1 -->
+    <b-navbar type="dark" variant="dark" v-if="$router.history.current.fullPath.search('backend') === -1">
 
       <!-- 這邊使用 BV 支援 <router-link to=...>的元件 -->
       <b-navbar-nav>
@@ -21,7 +21,7 @@
         <b-nav-item to="/about">About Me</b-nav-item>
         <b-nav-item to="/login" v-if="loginShow">登入</b-nav-item>
       </b-navbar-nav>
-
+      <!-- <b-nav-item v-if="$router.history.current.name === 'Backend'" to="/" @click="signOut">登出</b-nav-item> -->
       <!-- 這邊使用 BV navbar 的搜尋框元件，後面用以搜尋文章 -->
       <b-navbar-nav class="ml-auto">
         <b-nav-form>
@@ -59,6 +59,7 @@ export default {
       }
     },
     showUser () {
+      console.log(this.$router)
       var user = firebase.auth().currentUser
       var name, email, photoUrl, uid, emailVerified
 
@@ -78,6 +79,13 @@ export default {
       } else {
         console.log('使用者以登出', user)
       }
+    },
+    signOut () {
+      firebase.auth().signOut().then(function () {
+        // Sign-out successful.
+      // eslint-disable-next-line handle-callback-err
+        console.log('登出成功')
+      })
     }
   }
 }
