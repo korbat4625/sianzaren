@@ -12,7 +12,7 @@
         </b-col>
       </b-row>
     </b-container>
-<!-- $router.history.current.fullPath.search('backend') === -1 -->
+
     <b-navbar type="dark" variant="dark" v-if="$router.history.current.fullPath.search('backend') === -1">
 
       <!-- 這邊使用 BV 支援 <router-link to=...>的元件 -->
@@ -79,13 +79,6 @@ export default {
       } else {
         console.log('使用者以登出', user)
       }
-    },
-    signOut () {
-      firebase.auth().signOut().then(function () {
-        // Sign-out successful.
-      // eslint-disable-next-line handle-callback-err
-        console.log('登出成功')
-      })
     }
   }
 }
