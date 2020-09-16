@@ -8,54 +8,35 @@
         <p>{{ article.content }}</p>
       </div>
       <div class="goto">
-        <p>>> 繼續閱讀</p>
+        <p> >> 繼續閱讀</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { db } from '../Model/FirebaseModel.js'
 export default {
   name: 'Article',
   props: {
     msg: String
   },
+  created () {
+    console.log('排序', db)
+    const self = this
+    db.collection('posts').get().then(function (querySnapshot) {
+      querySnapshot.forEach(function (doc) {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, ' => ', doc.data())
+        const data = doc.data()
+        data.id = doc.id
+        self.posts.push(data)
+      })
+    })
+  },
   data () {
     return {
       posts: [
-        {
-          title: '鐵人賽第一天',
-          content: '第一天就不知道怎麼辦，還有29天也...',
-          id: 12
-        }, {
-          title: '鐵人賽第一天',
-          content: '第一天就不知道怎麼辦，還有29天也...',
-          id: 12
-        }, {
-          title: '鐵人賽第一天',
-          content: '第一天就不知道怎麼辦，還有29天也...',
-          id: 12
-        }, {
-          title: '鐵人賽第一天',
-          content: '第一天就不知道怎麼辦，還有29天也...',
-          id: 12
-        }, {
-          title: '鐵人賽第一天',
-          content: '第一天就不知道怎麼辦，還有29天也...',
-          id: 12
-        }, {
-          title: '鐵人賽第一天',
-          content: '第一天就不知道怎麼辦，還有29天也...',
-          id: 12
-        }, {
-          title: '鐵人賽第一天',
-          content: '第一天就不知道怎麼辦，還有29天也...',
-          id: 12
-        }, {
-          title: '鐵人賽第一天',
-          content: '第一天就不知道怎麼辦，還有29天也...',
-          id: 12
-        }
       ]
     }
   }

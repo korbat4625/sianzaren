@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { firebase } from './Model/FirebaseModel'
+
 export default {
   name: 'App',
   data () {
@@ -56,28 +56,6 @@ export default {
           this.loginClick = 0
           this.loginShow = false
         }, 3000)
-      }
-    },
-    showUser () {
-      console.log(this.$router)
-      var user = firebase.auth().currentUser
-      var name, email, photoUrl, uid, emailVerified
-
-      if (user != null) {
-        name = user.displayName
-        email = user.email
-        photoUrl = user.photoURL
-        emailVerified = user.emailVerified
-        uid = user.uid
-        console.log({
-          name,
-          email,
-          photoUrl,
-          emailVerified,
-          uid
-        })
-      } else {
-        console.log('使用者以登出', user)
       }
     }
   }

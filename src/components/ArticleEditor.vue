@@ -1,5 +1,8 @@
 <template>
   <b-container class="pageArticleEditor">
+    <b-modal id="modal-1" title="是否新增文章" @ok="updateArticle(articleData)">
+      <p class="my-4">如要新增請按確認</p>
+    </b-modal>
     <b-row>
       <b-col cols="12">
         <label for="input-large">文章標題:</label>
@@ -7,32 +10,59 @@
       </b-col>
       <b-col cols="12">
         <MarkdownPro
-          @on-save="updateArticle"
+          @on-save="updateData"
         ></MarkdownPro>
       </b-col>
-      <b-col class="mt-2"><b-button variant="primary" @click="updateArticle">點擊新增文章</b-button></b-col>
+      <b-col class="mt-2"><b-button v-b-modal.modal-1 variant="primary">點擊新增文章</b-button></b-col>
     </b-row>
   </b-container>
 </template>
 
 <script>
 import { MarkdownPro } from 'vue-meditor'
-import { firebase } from '../Model/FirebaseModel.js'
+import { db } from '../Model/FirebaseModel.js'
+console.log(db)
 export default {
   name: 'ArticleEditor',
   data () {
     return {
-      title: ''
+      title: '',
+      articleData: {}
     }
   },
   components: {
     MarkdownPro
   },
   methods: {
-    updateArticle (content) {
-      const update = content
-      update.title = this.title
-      console.log(update)
+    updateData (content) {
+      this.articleData = content
+      this.articleData.title = this.title
+      this.articleData.createdAt = new Date().getTime()
+      console.log(this.articleData)
+      this.articleData.articleInfo = {
+        email: 'korbat4625@gmail.com',
+        emailVerified: false,
+        name: null,
+        photoUrl: null,
+        uid: 'WeUniFQleyaoZ0bwvibUrku1DRk2'
+      }
+      this.showUser()
+      console.log(this.articleData)
+    },
+
+    updateArticle (data) {
+      db.collection('managers').doc('korbat4625').collection('posts').add(data).then(res => {
+        console.log('新增文章成功')
+      }).catch(res => {
+        console.log('新增文章失敗')
+      })
+
+      db.collection('posts').add(data).then(res => {
+        console.log('新增文章成功')
+        db.collection('posts').orderBy('createdAt', 'desc')
+      }).catch(res => {
+        console.log('新增文章失敗')
+      })
     }
   }
 }

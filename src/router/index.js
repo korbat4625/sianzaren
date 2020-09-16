@@ -1,11 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import {
-  firebase
-} from '../Model/FirebaseModel.js'
-
-var db = firebase.firestore()
 
 Vue.use(VueRouter)
 
@@ -48,4 +43,4 @@ const router = new VueRouter({
   routes
 })
 
-export { router, db }
+export { router }
