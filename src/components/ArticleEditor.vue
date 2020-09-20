@@ -34,32 +34,25 @@ export default {
     MarkdownPro
   },
   methods: {
-    updateData (content) {
-      this.articleData = content
+    updateData (saveEventInfo) {
+      const splitter = '<!-- more -->'
+      if (saveEventInfo.value.indexOf(splitter) === -1) {
+        saveEventInfo.value = saveEventInfo.value.slice(0, 20) + splitter + saveEventInfo.value.slice(20)
+      }
+
+      saveEventInfo.stopOnMore = saveEventInfo.value.split(splitter)
+      saveEventInfo.stopOnMore = saveEventInfo.stopOnMore[0] + '...'
+
+      this.articleData = saveEventInfo
       this.articleData.title = this.title
       this.articleData.createdAt = new Date().getTime()
-      console.log(this.articleData)
-      this.articleData.articleInfo = {
-        email: 'korbat4625@gmail.com',
-        emailVerified: false,
-        name: null,
-        photoUrl: null,
-        uid: 'WeUniFQleyaoZ0bwvibUrku1DRk2'
-      }
-      this.showUser()
+      this.articleData.userInfo = this.showUser()
       console.log(this.articleData)
     },
 
     updateArticle (data) {
-      db.collection('managers').doc('korbat4625').collection('posts').add(data).then(res => {
-        console.log('新增文章成功')
-      }).catch(res => {
-        console.log('新增文章失敗')
-      })
-
       db.collection('posts').add(data).then(res => {
         console.log('新增文章成功')
-        db.collection('posts').orderBy('createdAt', 'desc')
       }).catch(res => {
         console.log('新增文章失敗')
       })

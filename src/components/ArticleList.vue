@@ -5,10 +5,10 @@
         <h3>{{ article.title }}</h3>
       </div>
       <div class="article__blocks__block_content">
-        <p>{{ article.content }}</p>
+        <p>{{ article.stopOnMore }}</p>
       </div>
-      <div class="goto">
-        <p> >> 繼續閱讀</p>
+      <div class="goto" @click="gotoArticle">
+        <p :data-articleId="article.id"> >> 繼續閱讀</p>
       </div>
     </div>
   </div>
@@ -17,27 +17,39 @@
 <script>
 import { db } from '../Model/FirebaseModel.js'
 export default {
-  name: 'Article',
+  name: 'ArticleList',
   props: {
     msg: String
   },
   created () {
-    console.log('排序', db)
     const self = this
-    db.collection('posts').get().then(function (querySnapshot) {
+    db.collection('posts').orderBy('createdAt', 'desc').get().then(function (querySnapshot) {
       querySnapshot.forEach(function (doc) {
         // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, ' => ', doc.data())
+        // console.log(doc.id, ' => ', doc.data())
         const data = doc.data()
         data.id = doc.id
         self.posts.push(data)
+        console.log(data)
       })
     })
   },
+
   data () {
     return {
       posts: [
       ]
+    }
+  },
+
+  methods: {
+    gotoArticle ({ target }) {
+      const targetArticle = this.posts.find(ele => {
+        return target.dataset.articleid === ele.id
+      })
+      console.log(targetArticle)
+      console.log(this.$route)
+      this.$router.push(`/article/${targetArticle.id}`)
     }
   }
 }

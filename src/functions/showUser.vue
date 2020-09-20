@@ -6,8 +6,10 @@
 import { firebase } from '../Model/FirebaseModel.js'
 export default {
   name: 'globalFunctionShowUser',
+  created () {
+  },
   methods: {
-    showUser () {
+    showUser (e) {
       var user = firebase.auth().currentUser
       var name, email, photoUrl, uid, emailVerified
 
@@ -24,9 +26,18 @@ export default {
           emailVerified,
           uid
         })
+        return {
+          name,
+          email,
+          photoUrl,
+          emailVerified,
+          uid
+        }
       } else {
         console.log('使用者以登出', user)
       }
+
+      console.log(e)
     }
   }
 }

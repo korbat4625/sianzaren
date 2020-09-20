@@ -1,7 +1,7 @@
 <template>
   <b-container class="pageHome">
     <b-row>
-      <b-col cols="9"><Articles/></b-col>
+      <b-col cols="9"><ArticleList/></b-col>
       <b-col cols="3"><Recently/></b-col>
     </b-row>
   </b-container>
@@ -9,13 +9,13 @@
 
 <script>
 // @ is an alias to /src
-import Articles from '@/components/Articles.vue'
+import ArticleList from '@/components/ArticleList.vue'
 import Recently from '@/components/Recently.vue'
 
 export default {
   name: 'Home',
   components: {
-    Articles,
+    ArticleList,
     Recently
   }
 }

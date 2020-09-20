@@ -34,6 +34,11 @@ const routes = [
         component: () => import('../components/ArticleEditor.vue')
       }
     ]
+  },
+  {
+    path: '/article/:articleId',
+    name: 'ArticlePage',
+    component: () => import('../components/ArticlePage.vue')
   }
 ]
 
