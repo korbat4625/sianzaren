@@ -6,11 +6,11 @@ import store from './store'
 import { BootstrapVue } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import showUser from './functions/showUser.vue'
+import firebase from './Model/FirebaseModel.vue'
 
 Vue.use(BootstrapVue)
 Vue.config.productionTip = false
-Vue.mixin(showUser)
+Vue.mixin(firebase)
 
 new Vue({
   router,

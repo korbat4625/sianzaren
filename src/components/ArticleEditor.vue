@@ -51,11 +51,7 @@ export default {
     },
 
     updateArticle (data) {
-      db.collection('posts').add(data).then(res => {
-        console.log('新增文章成功')
-      }).catch(res => {
-        console.log('新增文章失敗')
-      })
+      this.updateArticle()
     }
   }
 }

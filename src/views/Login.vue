@@ -32,33 +32,6 @@
 
 <script>
 import cButton from '../components/CButton.vue'
-import { firebase } from '../Model/FirebaseModel'
-
-firebase.auth().onAuthStateChanged(function (user) {
-  if (user) {
-    // User is signed in.
-    var displayName = user.displayName
-    var email = user.email
-    var emailVerified = user.emailVerified
-    var photoURL = user.photoURL
-    var isAnonymous = user.isAnonymous
-    var uid = user.uid
-    var providerData = user.providerData
-    // ...
-    console.log('使用者資訊: ', {
-      displayName,
-      email,
-      emailVerified,
-      photoURL,
-      isAnonymous,
-      uid,
-      providerData
-    })
-  } else {
-    // User is signed out.
-    // ...
-  }
-})
 
 export default {
   name: 'Login',
@@ -91,26 +64,10 @@ export default {
       console.log([this.account, this.password, this.inOrUp])
       switch (this.inOrUp) {
         case 1:
-          firebase.auth().signInWithEmailAndPassword(this.account, this.password).then(() => {
-            console.log('登入成功')
-            this.$router.push('/backend')
-          }).catch(function (error) {
-            // Handle Errors here.
-            var errorCode = error.code
-            var errorMessage = error.message
-            console.error(errorCode, errorMessage)
-          })
+          this.signIn()
           break
         case 2:
-          firebase.auth().createUserWithEmailAndPassword(this.account, this.password).then(() => {
-            console.log('註冊成功')
-            this.$router.push('/backend')
-          }).catch(function (error) {
-            // Handle Errors here.
-            var errorCode = error.code
-            var errorMessage = error.message
-            console.error(errorCode, errorMessage)
-          })
+          this.signUp()
           break
         default:
           break

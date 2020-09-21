@@ -32,6 +32,11 @@ const routes = [
         path: 'article_editor',
         name: 'ArticleEditor',
         component: () => import('../components/ArticleEditor.vue')
+      },
+      {
+        path: 'user_info_editor',
+        name: 'UserInfoEditor',
+        component: () => import('../components/UserInfo.vue')
       }
     ]
   },

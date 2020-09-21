@@ -46,6 +46,9 @@ export default {
       loginClick: 0
     }
   },
+  created () {
+    this.stateWatcher()
+  },
   methods: {
     showLoginClick () {
       this.loginClick++
