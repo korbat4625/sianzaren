@@ -34,8 +34,8 @@ export default {
   name: 'UserInfoEditor',
   data () {
     return {
-      displayName: '',
-      email: '',
+      displayName: this.$store.state.currentUser.displayName,
+      email: this.$store.state.currentUser.email,
       phoneNumber: ''
     }
   },
@@ -44,13 +44,12 @@ export default {
   },
   methods: {
     updateUserInfo () {
-      var displayName = this.displayName
-      var email = this.email
-      var phoneNumber = this.phoneNumber
-      console.log({
-        displayName, email, phoneNumber
-      })
-      this.updateProfile({ displayName, email, phoneNumber }).then(function (res) {
+      const info = {}
+      info.displayName = this.displayName
+      info.email = this.email
+      info.phoneNumber = this.phoneNumber
+      console.log(info)
+      this.updateProfile(info).then(function (res) {
         // Update successful.
         console.log('更新成功')
       }).catch(function (error) {

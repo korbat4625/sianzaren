@@ -16,13 +16,7 @@ export default {
         photoUrl = user.photoURL
         emailVerified = user.emailVerified
         uid = user.uid
-        console.log({
-          name,
-          email,
-          photoUrl,
-          emailVerified,
-          uid
-        })
+        console.log({ name, email, photoUrl, emailVerified, uid })
         return { name, email, photoUrl, emailVerified, uid }
       } else {
         console.log('使用者以登出', user)
@@ -31,8 +25,9 @@ export default {
       console.log(e)
     },
 
-    signIn () {
-      firebase.auth().signInWithEmailAndPassword(this.account, this.password).then(() => {
+    signIn (account, password) {
+      firebase.auth().signInWithEmailAndPassword(account, password).then(() => {
+        console.log(this)
         console.log('登入成功')
         this.$router.push('/backend')
       }).catch(function (error) {
@@ -42,8 +37,9 @@ export default {
         console.error(errorCode, errorMessage)
       })
     },
-    signUp () {
-      firebase.auth().createUserWithEmailAndPassword(this.account, this.password).then(() => {
+
+    signUp (account, password) {
+      firebase.auth().createUserWithEmailAndPassword(account, password).then(() => {
         console.log('註冊成功')
         this.$router.push('/backend')
       }).catch(function (error) {
@@ -83,15 +79,7 @@ export default {
           var uid = user.uid
           var providerData = user.providerData
           // ...
-          console.log('使用者資訊: ', {
-            displayName,
-            email,
-            emailVerified,
-            photoURL,
-            isAnonymous,
-            uid,
-            providerData
-          })
+          console.log('使用者資訊: ', { displayName, email, emailVerified, photoURL, isAnonymous, uid, providerData })
           self.$store.commit('setCurrentUser', { displayName, email, emailVerified, photoURL, isAnonymous, uid, providerData })
         } else {
           console.log('目前無使用者')
@@ -99,13 +87,11 @@ export default {
       })
     },
 
-    updateProfile ({ displayName, photoURL, email }) {
+    updateProfile (userInfo) {
       var user = firebase.auth().currentUser
-
       return user.updateProfile({
-        displayName: displayName,
-        photoURL: photoURL,
-        email: email
+        displayName: userInfo.displayName
+        // photoURL: photoURL
       })
     }
   }

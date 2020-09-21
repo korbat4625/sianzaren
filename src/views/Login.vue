@@ -61,16 +61,14 @@ export default {
       this.setStatus.prevStatus = status
     },
     submit () {
-      console.log([this.account, this.password, this.inOrUp])
       switch (this.inOrUp) {
         case 1:
-          this.signIn()
+          this.signIn(this.account, this.password)
           break
         case 2:
           this.signUp()
           break
-        default:
-          break
+        default: break
       }
     }
   }
