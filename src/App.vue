@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-container fluid class="hero" ref="hero" v-if="$router.history.current.fullPath.search('backend') === -1">
+    <b-container fluid class="hero" v-if="$router.history.current.fullPath.search('backend') === -1">
       <b-row>
         <b-col cols="12">
           <div class="hero--chooseHero">

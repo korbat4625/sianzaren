@@ -66,7 +66,7 @@ export default {
           this.signIn(this.account, this.password)
           break
         case 2:
-          this.signUp()
+          this.signUp(this.account, this.password)
           break
         default: break
       }
