@@ -44,6 +44,8 @@ export default {
 
   methods: {
     gotoArticle ({ target }) {
+      console.log('target', target)
+      console.log('this.posts', this.posts)
       const targetArticle = this.posts.find(ele => {
         return target.dataset.articleid === ele.id
       })
