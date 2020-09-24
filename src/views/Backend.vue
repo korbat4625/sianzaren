@@ -8,7 +8,7 @@
         <div>
           <router-link to="/backend/user_info_editor">編輯個人資料</router-link>
         </div>
-        <div @click="signOut">
+        <div @click="F_signOut">
           <router-link to="/">登出</router-link>
         </div>
       </div>
@@ -22,7 +22,7 @@
 
     <b-row>
       <b-col cols="12">
-        <h1 @click="showUser">30天鐵人賽，後台</h1>
+        <h1 @click="F_showUser">30天鐵人賽，後台</h1>
         <b-button v-b-toggle.sidebar-1>Toggle Sidebar</b-button>
       </b-col>
     </b-row>
@@ -42,7 +42,7 @@ export default {
 }
 </script>
 
-<style language="scss">
+<style language="scss" scope>
 .pageBackend {
   padding: 1rem;
 }

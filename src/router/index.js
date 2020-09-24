@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import Backend from '../views/Backend.vue'
+import ArticleEditor from '../components/ArticleEditor.vue'
+import UserInfo from '../components/UserInfo.vue'
+import '../Model/FirebaseModel.js'
 
 Vue.use(VueRouter)
 
@@ -26,17 +30,20 @@ const routes = [
   {
     path: '/backend',
     name: 'Backend',
-    component: () => import('../views/Backend.vue'),
+    component: Backend,
+    beforeEnter: (to, from, next) => {
+      next()
+    },
     children: [
       {
         path: 'article_editor',
         name: 'ArticleEditor',
-        component: () => import('../components/ArticleEditor.vue')
+        component: ArticleEditor
       },
       {
         path: 'user_info_editor',
         name: 'UserInfoEditor',
-        component: () => import('../components/UserInfo.vue')
+        component: UserInfo
       }
     ]
   },

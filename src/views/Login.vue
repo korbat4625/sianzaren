@@ -47,11 +47,14 @@ export default {
       password: ''
     }
   },
-  components: {
-    cButton
+  created () {
   },
+
   mounted () {
     this.setStatus.prevStatus = 1
+  },
+  components: {
+    cButton
   },
   methods: {
     setStatus (status) {
@@ -63,10 +66,10 @@ export default {
     submit () {
       switch (this.inOrUp) {
         case 1:
-          this.signIn(this.account, this.password)
+          this.F_signIn(this.account, this.password)
           break
         case 2:
-          this.signUp(this.account, this.password)
+          this.F_signUp(this.account, this.password)
           break
         default: break
       }

@@ -6,7 +6,8 @@
 import { firebase, db } from './FirebaseModel.js'
 export default {
   methods: {
-    async showUser (e, msg) {
+    async F_showUser (e, msg) {
+      console.log('觸發了F_showUser')
       var user = firebase.auth().currentUser
       var name, email, photoUrl, uid, emailVerified
 
@@ -21,11 +22,10 @@ export default {
       } else {
         console.log('使用者以登出', user)
       }
-
-      console.log(e)
     },
 
-    signIn (account, password) {
+    F_signIn (account, password) {
+      console.log('觸發了F_signIn')
       firebase.auth().signInWithEmailAndPassword(account, password).then(() => {
         console.log(this)
         console.log('登入成功')
@@ -38,7 +38,8 @@ export default {
       })
     },
 
-    signUp (account, password) {
+    F_signUp (account, password) {
+      console.log('觸發了F_signUp')
       firebase.auth().createUserWithEmailAndPassword(account, password).then(() => {
         console.log('註冊成功')
         this.$router.push('/backend')
@@ -50,14 +51,17 @@ export default {
       })
     },
 
-    signOut () {
+    F_signOut () {
+      console.log('觸發了F_signOut')
       firebase.auth().signOut().then(function () {
+        //
         // Sign-out successful.
         console.log('登出成功')
       })
     },
 
-    updateArticle (data) {
+    F_updateArticle (data) {
+      console.log('觸發了F_updateArticle')
       db.collection('posts').add(data).then(res => {
         console.log('新增文章成功')
       }).catch(res => {
@@ -65,11 +69,12 @@ export default {
       })
     },
 
-    stateWatcher () {
+    F_stateWatcher () {
       console.log('監看者觸發')
       const self = this
       firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
+          console.log(user)
           // User is signed in.
           var displayName = user.displayName
           var email = user.email
@@ -78,21 +83,57 @@ export default {
           var isAnonymous = user.isAnonymous
           var uid = user.uid
           var providerData = user.providerData
-          // ...
           console.log('使用者資訊: ', { displayName, email, emailVerified, photoURL, isAnonymous, uid, providerData })
-          self.$store.commit('setCurrentUser', { displayName, email, emailVerified, photoURL, isAnonymous, uid, providerData })
+          if (self.$route.name === 'Login') self.$router.push('backend')
         } else {
-          console.log('目前無使用者')
+          console.log('logout')
+          //
         }
       })
     },
 
-    updateProfile (userInfo) {
+    F_updateProfile (userInfo) {
+      console.log('觸發了F_updateProfile')
       var user = firebase.auth().currentUser
       return user.updateProfile({
         displayName: userInfo.displayName
         // photoURL: photoURL
       })
+    },
+
+    F_checkLogin () {
+      console.log('觸發了F_checkLogin')
+      // if (this.$store.state.currentUser) {
+      //   this.$router.push('backend')
+      // } else {
+      //   this.$router.push('login')
+      // }
+    },
+
+    F_getCollectionDocs () {
+      console.log('觸發了F_getCollectionDocs')
+      db.collection('posts').orderBy('createdAt', 'desc').get().then(function (querySnapshot) {
+        querySnapshot.forEach(function (doc) {
+        // doc.data() is never undefined for query doc snapshots
+        // console.log(doc.id, ' => ', doc.data())
+          const data = doc.data()
+          data.id = doc.id
+          self.posts.push(data)
+          console.log(data)
+        })
+      })
+    },
+
+    F_setManagerData (data) {
+      console.log('觸發了F_setManagerData')
+      return db.collection('manager').doc(data.displayName).set({
+        nickName: data.displayName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        address: data.address,
+        skills: data.skills,
+        intro: data.intro
+      }, { merge: true })
     }
   }
 }

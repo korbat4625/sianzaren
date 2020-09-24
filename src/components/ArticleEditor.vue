@@ -1,6 +1,6 @@
 <template>
   <b-container class="pageArticleEditor">
-    <b-modal id="modal-1" title="是否新增文章" @ok="updateArticle(articleData)">
+    <b-modal id="modal-1" title="是否新增文章" @ok="F_updateArticle(articleData)">
       <p class="my-4">如要新增請按確認</p>
     </b-modal>
     <b-row>
@@ -20,8 +20,6 @@
 
 <script>
 import { MarkdownPro } from 'vue-meditor'
-import { db } from '../Model/FirebaseModel.js'
-console.log(db)
 export default {
   name: 'ArticleEditor',
   data () {
@@ -46,12 +44,10 @@ export default {
       this.articleData = saveEventInfo
       this.articleData.title = this.title
       this.articleData.createdAt = new Date().getTime()
-      this.articleData.userInfo = this.showUser()
+      this.F_showUser().then(res => {
+        this.articleData.userInfo = res
+      })
       console.log(this.articleData)
-    },
-
-    updateArticle (data) {
-      this.updateArticle()
     }
   }
 }

@@ -7,8 +7,8 @@
       <div class="article__blocks__block_content">
         <p>{{ article.stopOnMore }}</p>
       </div>
-      <div class="goto" @click="gotoArticle">
-        <p :data-articleId="article.id"> >> 繼續閱讀</p>
+      <div class="goto" @click="gotoArticle(article.id)"  :data-articleId="article.id">
+        <p> >> 繼續閱讀</p>
       </div>
     </div>
   </div>
@@ -43,14 +43,10 @@ export default {
   },
 
   methods: {
-    gotoArticle ({ target }) {
-      console.log('target', target)
-      console.log('this.posts', this.posts)
+    gotoArticle (articleID) {
       const targetArticle = this.posts.find(ele => {
-        return target.dataset.articleid === ele.id
+        return articleID === ele.id
       })
-      console.log(targetArticle)
-      console.log(this.$route)
       this.$router.push(`/article/${targetArticle.id}`)
     }
   }
