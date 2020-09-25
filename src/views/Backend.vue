@@ -3,10 +3,10 @@
     <b-sidebar id="sidebar-1" title="Sidebar" shadow backdrop>
       <div class="px-3 py-2">
         <div>
-          <router-link to="/backend/article_editor">新增文章</router-link>
+          <router-link :to="'/backend/'+ who +'/article_editor'">新增文章</router-link>
         </div>
         <div>
-          <router-link to="/backend/user_info_editor">編輯個人資料</router-link>
+          <router-link :to="'/backend/'+ who +'/user_info_editor'">編輯個人資料</router-link>
         </div>
         <div @click="F_signOut">
           <router-link to="/">登出</router-link>
@@ -37,7 +37,9 @@
 export default {
   name: 'Backend',
   data () {
-    return {}
+    return {
+      who: this.$route.params.who
+    }
   }
 }
 </script>

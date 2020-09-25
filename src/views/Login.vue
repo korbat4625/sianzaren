@@ -1,6 +1,6 @@
 <template>
   <b-container class="pageLogin">
-    <b-row class="my-3">
+    <b-row class="my-3" v-if="inOrUp === 1">
       <b-col sm="3">
         <label>請輸入帳號:</label>
       </b-col>
@@ -8,12 +8,88 @@
         <b-form-input v-model="account"></b-form-input>
       </b-col>
     </b-row>
-    <b-row class="my-3">
+    <b-row class="my-3" v-if="inOrUp === 1">
       <b-col sm="3">
         <label>請輸入密碼:</label>
       </b-col>
       <b-col sm="9">
         <b-form-input type="password" v-model="password"></b-form-input>
+      </b-col>
+    </b-row>
+    <b-row class="my-3" v-if="inOrUp === 2">
+      <b-col cols="4">
+        <b-card-group deck>
+          <b-card  header="帳號相關" header-tag="header" class="m-3">
+            <div role="group" class="m-3">
+              <label for="account">帳號:</label>
+              <b-form-input
+                id="account"
+                v-model="account"
+                trim
+              ></b-form-input>
+            </div>
+            <div role="group" class="m-3">
+              <label for="password">密碼:</label>
+              <b-form-input
+                id = "password"
+                v-model="password"
+                trim
+              ></b-form-input>
+            </div>
+          </b-card>
+        </b-card-group>
+      </b-col>
+      <b-col cols="4">
+        <b-card-group deck>
+          <b-card  header="名稱相關" header-tag="header" class="m-3">
+            <div role="group" class="m-3">
+              <label for="">暱稱:</label>
+              <b-form-input
+                id="displayName"
+                v-model="displayName"
+                trim
+              ></b-form-input>
+            </div>
+            <div role="group" class="m-3">
+              <label for="name">姓名:</label>
+              <b-form-input
+                id = "name"
+                v-model="name"
+                trim
+              ></b-form-input>
+            </div>
+          </b-card>
+        </b-card-group>
+      </b-col>
+      <b-col cols="4">
+        <b-card-group deck>
+          <b-card header="聯絡資訊" header-tag="header" class="m-3">
+            <div role="group" class="m-3">
+              <label for="email">信箱:</label>
+              <b-form-input
+                id = "email"
+                v-model="email"
+                trim
+              ></b-form-input>
+            </div>
+            <div role="group" class="m-3">
+              <label for="phoneNumber">電話號碼:</label>
+              <b-form-input
+                id="phoneNumber"
+                v-model="phoneNumber"
+                trim
+              ></b-form-input>
+            </div>
+            <div role="group" class="m-3">
+              <label for="address">住址:</label>
+              <b-form-input
+                id = "address"
+                v-model="address"
+                trim
+              ></b-form-input>
+            </div>
+          </b-card>
+        </b-card-group>
       </b-col>
     </b-row>
     <b-row>
@@ -43,19 +119,25 @@ export default {
       ],
       setActive: true,
       inOrUp: 1,
+
       account: '',
-      password: ''
+      password: '',
+      displayName: '',
+      name: '',
+      email: '',
+      phoneNumber: '',
+      address: ''
     }
-  },
-  created () {
   },
 
   mounted () {
     this.setStatus.prevStatus = 1
   },
+
   components: {
     cButton
   },
+
   methods: {
     setStatus (status) {
       console.log(status)
@@ -68,9 +150,19 @@ export default {
         case 1:
           this.F_signIn(this.account, this.password)
           break
-        case 2:
-          this.F_signUp(this.account, this.password)
+        case 2: {
+          const user = {
+            account: this.account,
+            password: this.password,
+            displayName: this.displayName,
+            name: this.name,
+            email: this.email,
+            phoneNumber: this.phoneNumber,
+            address: this.address
+          }
+          this.F_signUp(user)
           break
+        }
         default: break
       }
     }
@@ -101,5 +193,9 @@ export default {
 .active {
   background-color: #595;
   color: white;
+}
+
+.card-deck {
+  height: 100%;
 }
 </style>

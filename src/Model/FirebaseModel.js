@@ -4,6 +4,7 @@ import * as firebase from 'firebase/app'
 import 'firebase/analytics'
 import 'firebase/auth'
 import 'firebase/firestore'
+import 'firebase/storage'
 
 var firebaseConfig = {
   apiKey: 'AIzaSyACSYQJGSEBeocXzdn2ug_56XUJQApB_Kk',
@@ -21,6 +22,7 @@ firebase.initializeApp(firebaseConfig)
 firebase.analytics()
 
 var db = firebase.firestore()
+var storage = firebase.storage()
 
 async function F_showUser (e, msg) {
   var user = firebase.auth().currentUser
@@ -52,9 +54,9 @@ function F_signIn (account, password) {
   })
 }
 
-function F_signUp (account, password) {
-  firebase.auth().createUserWithEmailAndPassword(account, password).then(() => {
-    console.log('註冊成功')
+function F_signUp (user) {
+  firebase.auth().createUserWithEmailAndPassword(user.account, user.password).then(() => {
+    this.F_setManagerData(user)
     this.$router.push('/backend')
   }).catch(function (error) {
     // Handle Errors here.
@@ -110,10 +112,6 @@ function F_updateProfile (userInfo) {
   })
 }
 
-function F_checkLogin () {
-
-}
-
 function F_getCollectionDocs () {
   db.collection('posts').orderBy('createdAt', 'desc').get().then(function (querySnapshot) {
     querySnapshot.forEach(function (doc) {
@@ -142,4 +140,4 @@ function F_setManagerData (data) {
   })
 }
 
-export { firebase, db }
+export { firebase, db, storage }

@@ -1,20 +1,20 @@
 <template>
   <div class="container">
-    <b-card-group deck>
+    <b-card-group header="名稱相關" header-tag="header" deck>
       <b-card title="Title" class="m-3">
         <div role="group" class="m-3">
-          <label for="displayName">暱稱:</label>
+          <label for="">暱稱:</label>
           <b-form-input
+            id="displayName"
             v-model="displayName"
-            id = "displayName"
             trim
           ></b-form-input>
         </div>
         <div role="group" class="m-3">
           <label for="name">姓名:</label>
           <b-form-input
-            v-model="name"
             id = "name"
+            v-model="name"
             trim
           ></b-form-input>
         </div>
@@ -26,24 +26,33 @@
         <div role="group" class="m-3">
           <label for="email">信箱:</label>
           <b-form-input
-            v-model="email"
             id = "email"
+            v-model="email"
             trim
           ></b-form-input>
+          <b-form-text id="input-live-help" v-if="!emailVerified">
+            您的信箱尚未認證，點擊
+            <span class="mail--verified"
+              v-b-tooltip.hover title="發送認證信"
+              @click="makeToast('success')"
+            >
+              連接
+            </span>發送認證信
+          </b-form-text>
         </div>
         <div role="group" class="m-3">
           <label for="phoneNumber">電話號碼:</label>
           <b-form-input
+            id="phoneNumber"
             v-model="phoneNumber"
-            id = "phoneNumber"
             trim
           ></b-form-input>
         </div>
         <div role="group" class="m-3">
           <label for="address">住址:</label>
           <b-form-input
-            v-model="address"
             id = "address"
+            v-model="address"
             trim
           ></b-form-input>
         </div>
@@ -74,7 +83,6 @@
         </div>
       </b-card>
     </b-card-group>
-
     <b-button @click.native="updateUserInfo" href="#" variant="primary" class="m-3">更新資料</b-button>
   </div>
 </template>
@@ -85,26 +93,33 @@ export default {
   data () {
     return {
       displayName: '',
+      name: '',
       email: '',
       phoneNumber: '',
-      name: '',
       address: '',
       skills: '',
       intro: '',
-      photoURL: ''
+      photoURL: '',
+      uid: '',
+      emailVerified: ''
     }
+  },
+  created () {
+    this.F_showUser().then(user => {
+      console.log(user)
+    })
   },
   methods: {
     updateUserInfo () {
       const info = {}
-      info.displayName = this.displayName
-      info.email = this.email
-      info.phoneNumber = this.phoneNumber
-      info.address = this.address
-      info.skills = this.skills
-      info.intro = this.intro
-      info.photoURL = this.photoURL
-      info.online = true
+      // info.displayName = this.displayName
+      // info.email = this.email
+      // info.phoneNumber = this.phoneNumber
+      // info.address = this.address
+      // info.skills = this.skills
+      // info.intro = this.intro
+      // info.photoURL = this.photoURL
+      // info.online = true
 
       this.F_updateProfile(info).then(function (res) {
         // Update successful.
@@ -118,10 +133,23 @@ export default {
       }).catch(function (error) {
         console.error('Error writing document: ', error)
       })
+    },
+
+    makeToast (variant = null) {
+      this.$bvToast.toast('我們已發送認證郵件至', {
+        title: '提示訊息',
+        variant: variant,
+        solid: true
+      })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.mail--verified {
+  color: #33f;
+  cursor: pointer;
+
+}
 </style>

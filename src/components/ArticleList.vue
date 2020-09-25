@@ -15,23 +15,14 @@
 </template>
 
 <script>
-import { db } from '../Model/FirebaseModel.js'
 export default {
   name: 'ArticleList',
   props: {
     msg: String
   },
   created () {
-    const self = this
-    db.collection('posts').orderBy('createdAt', 'desc').get().then(function (querySnapshot) {
-      querySnapshot.forEach(function (doc) {
-        // doc.data() is never undefined for query doc snapshots
-        // console.log(doc.id, ' => ', doc.data())
-        const data = doc.data()
-        data.id = doc.id
-        self.posts.push(data)
-        console.log(data)
-      })
+    this.F_getCollectionDocs('posts', { where: 'createdAt', order: 'desc' }).then(docs => {
+      this.posts = docs
     })
   },
 

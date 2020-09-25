@@ -28,7 +28,7 @@ const routes = [
     component: () => import('../views/Login.vue')
   },
   {
-    path: '/backend',
+    path: '/backend/:who',
     name: 'Backend',
     component: Backend,
     beforeEnter: (to, from, next) => {
