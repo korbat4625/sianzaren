@@ -21,9 +21,10 @@
         <b-card-group deck>
           <b-card  header="帳號相關" header-tag="header" class="m-3">
             <div role="group" class="m-3">
-              <label for="account">帳號:</label>
+              <label for="account">帳號 (請用信箱格式):</label>
               <b-form-input
                 id="account"
+                type="email"
                 v-model="account"
                 trim
               ></b-form-input>
@@ -33,6 +34,7 @@
               <b-form-input
                 id = "password"
                 v-model="password"
+                type="password"
                 trim
               ></b-form-input>
             </div>
@@ -43,7 +45,7 @@
         <b-card-group deck>
           <b-card  header="名稱相關" header-tag="header" class="m-3">
             <div role="group" class="m-3">
-              <label for="">暱稱:</label>
+              <label for="">顯示暱稱:</label>
               <b-form-input
                 id="displayName"
                 v-model="displayName"
@@ -51,7 +53,7 @@
               ></b-form-input>
             </div>
             <div role="group" class="m-3">
-              <label for="name">姓名:</label>
+              <label for="name">英文暱稱:</label>
               <b-form-input
                 id = "name"
                 v-model="name"
@@ -65,9 +67,10 @@
         <b-card-group deck>
           <b-card header="聯絡資訊" header-tag="header" class="m-3">
             <div role="group" class="m-3">
-              <label for="email">信箱:</label>
+              <label for="email">備用信箱:</label>
               <b-form-input
                 id = "email"
+                type="email"
                 v-model="email"
                 trim
               ></b-form-input>
@@ -76,6 +79,7 @@
               <label for="phoneNumber">電話號碼:</label>
               <b-form-input
                 id="phoneNumber"
+                type="number"
                 v-model="phoneNumber"
                 trim
               ></b-form-input>
@@ -140,7 +144,6 @@ export default {
 
   methods: {
     setStatus (status) {
-      console.log(status)
       this.inOrUp = status
       if (status !== this.setStatus.prevStatus) this.setActive = !this.setActive
       this.setStatus.prevStatus = status
@@ -160,7 +163,18 @@ export default {
             phoneNumber: this.phoneNumber,
             address: this.address
           }
-          this.F_signUp(user)
+          this.F_signUp(user).then(() => {
+            this.F_setManagerData(user)
+            this.F_showUser().then(newUser => {
+              console.log('newUser::', newUser)
+              if (newUser.uid === null) return
+              this.$router.push(`/backend/${newUser.uid}`)
+            }).catch(error => {
+              console.error(error)
+            })
+          }).catch(error => {
+            console.log(error)
+          })
           break
         }
         default: break

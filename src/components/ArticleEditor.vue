@@ -44,10 +44,17 @@ export default {
       this.articleData = saveEventInfo
       this.articleData.title = this.title
       this.articleData.createdAt = new Date().getTime()
+
       this.F_showUser().then(res => {
-        this.articleData.userInfo = res
+        const buffer = {
+          displayName: res.displayName,
+          email: res.email,
+          uid: res.uid,
+          photoURL: res.photoURL
+        }
+
+        this.articleData.authorInfo = buffer
       })
-      console.log(this.articleData)
     }
   }
 }

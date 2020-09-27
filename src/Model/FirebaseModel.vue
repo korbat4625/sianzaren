@@ -1,29 +1,23 @@
 <template>
-  <div>
-    <user-info
-    ></user-info>
-  </div>
+  <span>
+  </span>
 </template>
 
 <script>
 import { firebase, db } from './FirebaseModel.js'
 export default {
-  data () {
-    return {}
-  },
   methods: {
     async F_showUser (e, msg) {
       console.log('觸發了F_showUser')
       var user = firebase.auth().currentUser
       // var name, email, photoUrl, uid, emailVerified
-      console.log('F_showUser: ', user)
       if (user != null) return user
       else return null
     },
 
     F_signIn (account, password) {
       console.log('觸發了F_signIn')
-      firebase.auth().signInWithEmailAndPassword(account, password).then(() => {
+      firebase.auth().signInWithEmailAndPassword(account, password).then(function () {
         console.log('登入成功')
 
         this.F_showUser().then(user => {
@@ -38,9 +32,7 @@ export default {
     },
 
     F_signUp (user) {
-      firebase.auth().createUserWithEmailAndPassword(user.account, user.password).then(() => {
-        this.F_setManagerData(user)
-        this.$router.push('/backend')
+      return firebase.auth().createUserWithEmailAndPassword(user.account, user.password).then(function () {
       }).catch(function (error) {
         // Handle Errors here.
         var errorCode = error.code
@@ -59,7 +51,7 @@ export default {
 
     F_updateArticle (data) {
       console.log('觸發了F_updateArticle')
-      db.collection('posts').add(data).then(res => {
+      db.collection('posts').add(data).then(function (res) {
         console.log('新增文章成功')
       }).catch(res => {
         console.log('新增文章失敗')
@@ -68,7 +60,6 @@ export default {
 
     F_stateWatcher () {
       console.log('監看者觸發')
-      const self = this
       firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
           // User is signed in.
@@ -79,8 +70,6 @@ export default {
           // var uid = user.uid
           // var providerData = user.providerData
           console.log('現在使用者: ', user)
-
-          if (self.$route.name === 'Login') self.$router.push(`backend/${user.uid}`)
         } else {
           console.log('logout')
           //
@@ -102,7 +91,7 @@ export default {
       this.F_showUser().then(res => {
         console.log(res)
         if (res === null) this.$router.push('login')
-        else this.$router.push('backend')
+        else this.$router.push(`backend/${res.uid}`)
       })
     },
 

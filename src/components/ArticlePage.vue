@@ -5,7 +5,7 @@
         <div class="article">
           <div class="content__header">
             <h3>{{ articleInfo.title }}</h3>
-            <p>文章作者: {{ articleInfo.userInfo.email }}</p>
+            <p>文章作者: {{ articleInfo.authorInfo.email }}</p>
             <p>上傳時間: {{ articleInfo.createdAt }}</p>
           </div>
           <div class="article__content" v-html="articleInfo.html"></div>
@@ -25,8 +25,11 @@ export default {
       articleInfo: {
         title: '',
         createdAt: '',
-        userInfo: {
-          email: ''
+        authorInfo: {
+          displayName: '',
+          email: '',
+          uid: '',
+          photoURL: ''
         }
       }
     }
