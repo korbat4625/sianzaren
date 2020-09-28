@@ -1,7 +1,52 @@
 <template>
   <div class="container">
-    <b-card-group header="名稱相關" header-tag="header" deck>
-      <b-card title="Title" class="m-3">
+    <b-card-group deck>
+      <b-card header="帳號資訊" header-tag="header" class="m-3">
+        <div role="group" class="m-3">
+          <label for="account">信箱 (帳號):</label>
+          <b-form-input
+            id = "account"
+            v-model="account"
+            disabled
+            trim
+          ></b-form-input>
+          <b-form-text id="input-live-help" v-if="!emailVerified">
+            <span>您的帳號尚未認證，點擊</span>
+            <span class="mail--verified"
+              v-b-tooltip.hover title="發送認證信"
+              @click="makeToast('success')"
+            >
+              連接
+            </span>發送認證信
+          </b-form-text>
+          <b-form-text id="input-live-help" v-if="emailVerified">
+            <span style="color: green;">已認證的帳號 !</span>
+          </b-form-text>
+        </div>
+
+        <div role="group" class="m-3">
+          <label for="password">密碼:</label>
+          <b-form-input
+            id = "password"
+            v-model="password"
+            trim
+          ></b-form-input>
+        </div>
+
+        <div role="group" class="m-3">
+          <label for="backupEmail">信箱 (備援):</label>
+          <b-form-input
+            id = "backupEmail"
+            v-model="backupEmail"
+            trim
+          ></b-form-input>
+        </div>
+
+      </b-card>
+    </b-card-group>
+
+    <b-card-group deck>
+      <b-card header="名稱相關" header-tag="header" class="m-3">
         <div role="group" class="m-3">
           <label for="">暱稱:</label>
           <b-form-input
@@ -11,7 +56,7 @@
           ></b-form-input>
         </div>
         <div role="group" class="m-3">
-          <label for="name">姓名:</label>
+          <label for="name">英文暱稱:</label>
           <b-form-input
             id = "name"
             v-model="name"
@@ -23,23 +68,6 @@
 
     <b-card-group deck>
       <b-card header="聯絡資訊" header-tag="header" class="m-3">
-        <div role="group" class="m-3">
-          <label for="email">信箱:</label>
-          <b-form-input
-            id = "email"
-            v-model="email"
-            trim
-          ></b-form-input>
-          <b-form-text id="input-live-help" v-if="!emailVerified">
-            您的信箱尚未認證，點擊
-            <span class="mail--verified"
-              v-b-tooltip.hover title="發送認證信"
-              @click="makeToast('success')"
-            >
-              連接
-            </span>發送認證信
-          </b-form-text>
-        </div>
         <div role="group" class="m-3">
           <label for="phoneNumber">電話號碼:</label>
           <b-form-input
@@ -92,54 +120,91 @@ export default {
   name: 'UserInfoEditor',
   data () {
     return {
+      account: '',
+      password: '',
+      backupEmail: '',
+
       displayName: '',
       name: '',
-      email: '',
+
       phoneNumber: '',
       address: '',
+
       skills: '',
       intro: '',
+
       photoURL: '',
       uid: '',
       emailVerified: ''
     }
   },
   created () {
-    this.F_showUser().then(user => {
-      console.log(user)
+    console.log(this.$route.params.who)
+    this.F_getManagerInfo(this.$route.params.who).then(manager => {
+      console.log(manager)
+      this.appendCurrentValue(manager)
     })
   },
   methods: {
     updateUserInfo () {
-      const info = {}
-      // info.displayName = this.displayName
-      // info.email = this.email
-      // info.phoneNumber = this.phoneNumber
-      // info.address = this.address
-      // info.skills = this.skills
-      // info.intro = this.intro
-      // info.photoURL = this.photoURL
-      // info.online = true
-
-      this.F_updateProfile(info).then(function (res) {
-        // Update successful.
-      }).catch(function (error) {
-        // An error happened.
-        console.log(error)
-      })
-
-      this.F_setManagerData(info).then(function () {
-        //
-      }).catch(function (error) {
-        console.error('Error writing document: ', error)
-      })
+      const info = this.appendCurrentValue({}, 'skip get cloud')
+      console.log(this.$route.params.who)
+      this.F_updateProfile(info)
+      this.F_updateManagerInfo(this.$route.params.who, info)
     },
 
     makeToast (variant = null) {
-      this.$bvToast.toast('我們已發送認證郵件至', {
+      this.F_sendEmailVerified()
+      this.$bvToast.toast('我們已發送認證郵件至 ' + this.account, {
         title: '提示訊息',
         variant: variant,
         solid: true
+      })
+    },
+
+    appendCurrentValue (manager, order) {
+      if (order === 'skip get cloud') {
+        // 返回更新值
+        return {
+          displayName: this.displayName,
+          name: this.name,
+          backupEmail: this.backupEmail,
+          phoneNumber: this.phoneNumber,
+          address: this.address,
+          // uid: this.uid,
+          skills: this.skills,
+          intro: this.intro
+          // photoURL: this.photoURL
+        }
+      }
+
+      // 取得雲端值
+      this.account = manager.account
+      this.password = manager.password
+      this.backupEmail = manager.backupEmail
+
+      this.displayName = manager.displayName
+      this.name = manager.name
+
+      this.phoneNumber = manager.phoneNumber
+      this.address = manager.address
+
+      this.skills = manager.skills
+      this.intro = manager.intro
+      this.emailVerified = manager.emailVerified
+      // this.uid = manager.uid
+      // this.photoURL = manager.photoURL
+    },
+
+    updateEmail () {
+
+    },
+
+    updateEmailVerified () {
+      this.F_updateProfile(this.$route.params.who, { emailVerified: true }).then(function (res) {
+        console.log('更新成功')
+      }).catch(function (error) {
+        console.log(error)
       })
     }
   }

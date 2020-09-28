@@ -21,7 +21,7 @@ export default {
     msg: String
   },
   created () {
-    this.F_getCollectionDocs('posts', { where: 'createdAt', order: 'desc' }).then(docs => {
+    this.F_getCollectionDocsSort('posts', { where: 'createdAt', order: 'desc' }).then(docs => {
       this.posts = docs
     })
   },

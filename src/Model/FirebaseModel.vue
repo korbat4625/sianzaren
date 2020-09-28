@@ -60,6 +60,7 @@ export default {
 
     F_stateWatcher () {
       console.log('監看者觸發')
+      const self = this
       firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
           // User is signed in.
@@ -70,6 +71,17 @@ export default {
           // var uid = user.uid
           // var providerData = user.providerData
           console.log('現在使用者: ', user)
+          if (user.emailVerified === true) {
+            console.log(self.$route.params)
+            self.F_getManagerInfo(self.$route.params.who).then(manager => {
+              if (manager.emailVerified === false) {
+                self.F_updateManagerInfo(self.$route.params.who, { emailVerified: true }).then(function (res) {
+                }).catch(function (error) {
+                  console.log(error)
+                })
+              }
+            })
+          }
         } else {
           console.log('logout')
           //
@@ -95,7 +107,7 @@ export default {
       })
     },
 
-    F_getCollectionDocs (collection, orderBy) {
+    F_getCollectionDocsSort (collection, orderBy) {
       const docs = []
       return db.collection(collection).orderBy(orderBy.where, orderBy.order).get().then(function (querySnapshot) {
         querySnapshot.forEach(function (doc) {
@@ -108,25 +120,52 @@ export default {
     },
 
     F_setManagerData (user) {
-      db.collection('manager').doc(user.name).set({
+      db.collection('managers').doc(user.uid).set({
         account: user.account,
         password: user.password,
         displayName: user.displayName,
         name: user.name,
-        email: user.email,
+        backupEmail: user.backupEmail,
         phoneNumber: user.phoneNumber,
-        address: user.address
+        address: user.address,
+        uid: user.uid,
+        emailVerified: false
       }).catch(function (error) {
         console.error('Error writing document: ', error)
       })
     },
 
-    F_getUserInfo () {
-
+    F_getManagerInfo (id) {
+      var docRef = db.collection('managers').doc(id)
+      return docRef.get().then(function (doc) {
+        if (doc.exists) {
+          return doc.data()
+        } else {
+          console.log('No such document!')
+        }
+      }).catch(function (error) {
+        console.log('Error getting document:', error)
+      })
     },
 
-    F_updateManagerInfo () {
+    F_updateManagerInfo (id, data) {
+      var docRef = db.collection('managers').doc(id)
+      // Set the 'capital' field of the city 'DC'
+      return docRef.update(data).then(function () {
+        console.log('Document successfully updated!')
+      }).catch(function (error) {
+        // The document probably doesn't exist.
+        console.error('Error updating document: ', error)
+      })
+    },
 
+    F_sendEmailVerified () {
+      var user = firebase.auth().currentUser
+      user.sendEmailVerification().then(function () {
+        // Email sent.
+      }).catch(function (error) {
+        console.log(error)
+      })
     }
   }
 }

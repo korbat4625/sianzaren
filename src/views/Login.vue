@@ -67,11 +67,11 @@
         <b-card-group deck>
           <b-card header="聯絡資訊" header-tag="header" class="m-3">
             <div role="group" class="m-3">
-              <label for="email">備用信箱:</label>
+              <label for="backupEmail">備用信箱:</label>
               <b-form-input
-                id = "email"
+                id = "backupEmail"
                 type="email"
-                v-model="email"
+                v-model="backupEmail"
                 trim
               ></b-form-input>
             </div>
@@ -79,7 +79,6 @@
               <label for="phoneNumber">電話號碼:</label>
               <b-form-input
                 id="phoneNumber"
-                type="number"
                 v-model="phoneNumber"
                 trim
               ></b-form-input>
@@ -126,9 +125,9 @@ export default {
 
       account: '',
       password: '',
+      backupEmail: '',
       displayName: '',
       name: '',
-      email: '',
       phoneNumber: '',
       address: ''
     }
@@ -159,15 +158,17 @@ export default {
             password: this.password,
             displayName: this.displayName,
             name: this.name,
-            email: this.email,
+            backupEmail: this.backupEmail,
             phoneNumber: this.phoneNumber,
             address: this.address
           }
           this.F_signUp(user).then(() => {
-            this.F_setManagerData(user)
             this.F_showUser().then(newUser => {
-              console.log('newUser::', newUser)
               if (newUser.uid === null) return
+              user.uid = newUser.uid
+              user.online = true
+              user.registerTime = new Date().getTime()
+              this.F_setManagerData(user)
               this.$router.push(`/backend/${newUser.uid}`)
             }).catch(error => {
               console.error(error)

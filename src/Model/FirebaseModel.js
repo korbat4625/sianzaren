@@ -112,7 +112,7 @@ function F_updateProfile (userInfo) {
   })
 }
 
-function F_getCollectionDocs () {
+function F_getCollectionDocsSort () {
   db.collection('posts').orderBy('createdAt', 'desc').get().then(function (querySnapshot) {
     querySnapshot.forEach(function (doc) {
       // doc.data() is never undefined for query doc snapshots
