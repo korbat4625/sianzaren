@@ -9,7 +9,7 @@
           <router-link :to="'/backend/'+ who +'/user_info_editor'">編輯個人資料</router-link>
         </div>
         <div @click="F_signOut">
-          <router-link to="/">登出</router-link>
+          <router-link to="#">登出</router-link>
         </div>
       </div>
       <template v-slot:footer="{ hide }">

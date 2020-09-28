@@ -5,7 +5,7 @@
         <label>請輸入帳號:</label>
       </b-col>
       <b-col sm="9">
-        <b-form-input v-model="account"></b-form-input>
+        <b-form-input v-model="loginAcc"></b-form-input>
       </b-col>
     </b-row>
     <b-row class="my-3" v-if="inOrUp === 1">
@@ -13,7 +13,7 @@
         <label>請輸入密碼:</label>
       </b-col>
       <b-col sm="9">
-        <b-form-input type="password" v-model="password"></b-form-input>
+        <b-form-input type="password" v-model="loginPsd"></b-form-input>
       </b-col>
     </b-row>
     <b-row class="my-3" v-if="inOrUp === 2">
@@ -116,6 +116,9 @@ export default {
   name: 'Login',
   data () {
     return {
+      loginAcc: '',
+      loginPsd: '',
+
       types: [
         'email',
         'password'
@@ -150,7 +153,7 @@ export default {
     submit () {
       switch (this.inOrUp) {
         case 1:
-          this.F_signIn(this.account, this.password)
+          this.F_signIn(this.loginAcc, this.loginPsd)
           break
         case 2: {
           const user = {

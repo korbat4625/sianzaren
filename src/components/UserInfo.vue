@@ -138,24 +138,24 @@ export default {
       emailVerified: ''
     }
   },
+
   created () {
-    console.log(this.$route.params.who)
     this.F_getManagerInfo(this.$route.params.who).then(manager => {
-      console.log(manager)
-      this.appendCurrentValue(manager)
+      if (manager.emailVerified === false) this.refreshVerified()
+      else this.appendCurrentValue(manager)
     })
   },
+
   methods: {
     updateUserInfo () {
       const info = this.appendCurrentValue({}, 'skip get cloud')
-      console.log(this.$route.params.who)
       this.F_updateProfile(info)
       this.F_updateManagerInfo(this.$route.params.who, info)
     },
 
     makeToast (variant = null) {
       this.F_sendEmailVerified()
-      this.$bvToast.toast('我們已發送認證郵件至 ' + this.account, {
+      this.$bvToast.toast('我們已發送認證郵件至 ' + this.account + '，請點選信箱連結認證後，再重新整理確認本頁狀態。', {
         title: '提示訊息',
         variant: variant,
         solid: true
@@ -196,16 +196,19 @@ export default {
       // this.photoURL = manager.photoURL
     },
 
-    updateEmail () {
-
-    },
-
-    updateEmailVerified () {
-      this.F_updateProfile(this.$route.params.who, { emailVerified: true }).then(function (res) {
-        console.log('更新成功')
-      }).catch(function (error) {
-        console.log(error)
-      })
+    refreshVerified () {
+      (async () => {
+        let currentUser = null
+        await this.F_showUser().then(user => {
+          console.log(user)
+          currentUser = user
+        })
+        await this.F_updateManagerInfo(this.$route.params.who, { emailVerified: currentUser.emailVerified })
+        this.F_getManagerInfo(this.$route.params.who).then(manager => {
+          console.log(manager)
+          this.appendCurrentValue(manager)
+        })
+      })()
     }
   }
 }

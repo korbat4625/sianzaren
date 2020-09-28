@@ -17,11 +17,15 @@ export default {
 
     F_signIn (account, password) {
       console.log('觸發了F_signIn')
+      const self = this
       firebase.auth().signInWithEmailAndPassword(account, password).then(function () {
         console.log('登入成功')
 
-        this.F_showUser().then(user => {
-          this.$router.push(`/backend/${user.uid}`)
+        self.F_showUser().then(user => {
+          console.log('user::', user)
+          self.$router.push(`/backend/${user.uid}`)
+        }).catch(error => {
+          console.log(error)
         })
       }).catch(function (error) {
         // Handle Errors here.
@@ -43,8 +47,12 @@ export default {
 
     F_signOut () {
       console.log('觸發了F_signOut')
+      const self = this
       firebase.auth().signOut().then(function () {
         // Sign-out successful.
+        console.log(self.$route.params)
+        self.F_updateManagerInfo(self.$route.params.who, { online: false })
+        self.$router.push('/')
         console.log('登出成功')
       })
     },
@@ -59,29 +67,9 @@ export default {
     },
 
     F_stateWatcher () {
-      console.log('監看者觸發')
-      const self = this
       firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
-          // User is signed in.
-          // var email = user.email
-          // var emailVerified = user.emailVerified
-          // var photoURL = user.photoURL
-          // var isAnonymous = user.isAnonymous
-          // var uid = user.uid
-          // var providerData = user.providerData
           console.log('現在使用者: ', user)
-          if (user.emailVerified === true) {
-            console.log(self.$route.params)
-            self.F_getManagerInfo(self.$route.params.who).then(manager => {
-              if (manager.emailVerified === false) {
-                self.F_updateManagerInfo(self.$route.params.who, { emailVerified: true }).then(function (res) {
-                }).catch(function (error) {
-                  console.log(error)
-                })
-              }
-            })
-          }
         } else {
           console.log('logout')
           //
@@ -129,7 +117,9 @@ export default {
         phoneNumber: user.phoneNumber,
         address: user.address,
         uid: user.uid,
-        emailVerified: false
+        emailVerified: false,
+        online: user.online,
+        registerTime: user.registerTime
       }).catch(function (error) {
         console.error('Error writing document: ', error)
       })
