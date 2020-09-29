@@ -1,7 +1,7 @@
 <template>
   <b-row>
-    <b-modal id="modal-1" title="是否新增文章" @ok="F_updateArticle(articleData)">
-      <p class="my-4">如要新增請按確認</p>
+    <b-modal id="modal-1" title="下一步?" @ok="F_updateArticle(articleData, addOrupdate , $attrs)">
+      <p class="my-4">如要{{ addOrupdate }}文章請按確認</p>
     </b-modal>
     <b-col cols="12">
       <label for="input-large">文章標題:</label>
@@ -10,9 +10,10 @@
     <b-col cols="12">
       <MarkdownPro
         @on-save="updateData"
+        v-model="value"
       ></MarkdownPro>
     </b-col>
-    <b-col class="mt-2"><b-button v-b-modal.modal-1 variant="primary">點擊新增文章</b-button></b-col>
+    <b-col class="mt-2"><b-button v-b-modal.modal-1 variant="primary">點擊{{ addOrupdate }}文章</b-button></b-col>
   </b-row>
 </template>
 
@@ -22,13 +23,17 @@ export default {
   name: 'AddArticle',
   data () {
     return {
-      articleData: {}
+      articleData: {},
+      title: '',
+      value: '',
+      addOrupdate: '新增'
     }
   },
-  props: {
-    title: {
-      type: String,
-      default: ''
+  watch: {
+    $attrs: function (newVal, oldVal) {
+      this.addOrupdate = '更新'
+      this.title = newVal.editTitle
+      this.value = newVal.editValue
     }
   },
   components: {

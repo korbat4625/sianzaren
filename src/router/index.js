@@ -46,13 +46,6 @@ const routes = [
         path: 'article_editor',
         name: 'ArticleEditor',
         component: () => import('../components/ArticleEditor.vue')
-        // children: [
-        //   {
-        //     path: ':theArticle',
-        //     name: 'AddArticle',
-        //     component: AddArticle
-        //   }
-        // ]
       }
     ]
   },

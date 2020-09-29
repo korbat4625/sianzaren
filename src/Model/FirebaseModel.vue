@@ -57,8 +57,20 @@ export default {
       })
     },
 
-    F_updateArticle (data) {
+    F_updateArticle (data, addOrupdate, attrs) {
       console.log('觸發了F_updateArticle')
+      console.log(data, addOrupdate, attrs)
+      if (addOrupdate === '更新') {
+        console.log('走入更新')
+        var docRef = db.collection('posts').doc(attrs.id)
+        return docRef.update(data).then(function () {
+          console.log('Document successfully updated!')
+        }).catch(function (error) {
+          // The document probably doesn't exist.
+          console.error('Error updating document: ', error)
+        })
+      }
+      console.log('走入更新就不會到這')
       db.collection('posts').add(data).then(function (res) {
         console.log('新增文章成功')
       }).catch(res => {

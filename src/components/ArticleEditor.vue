@@ -4,9 +4,10 @@
       <label>文章列表:</label>
       <b-list-group>
         <b-list-group-item
+          button
           v-for="post in posts"
           :key="post.id"
-          @click.native="putArticle(post.title)"
+          @click="putArticle(post)"
         >
           {{ post.title }}
         </b-list-group-item>
@@ -14,7 +15,9 @@
     </b-col>
     <b-col cols="8">
       <AddArticle
-        :title="title"
+        :editTitle="editTitle"
+        :editValue="editValue"
+        :id="id"
       ></AddArticle>
     </b-col>
   </b-row>
@@ -27,7 +30,9 @@ export default {
   data () {
     return {
       posts: [],
-      title: ''
+      editTitle: '',
+      editValue: '',
+      id: ''
     }
   },
   components: {
@@ -36,17 +41,14 @@ export default {
   created () {
     this.F_getCollectionDocsSort('posts', { where: 'createdAt', order: 'desc' }).then(docs => {
       this.posts = docs
-      console.log(this.posts)
     })
   },
   methods: {
     putArticle (articleInfo) {
-      this.title = articleInfo.title
+      this.editTitle = articleInfo.title
+      this.editValue = articleInfo.value
+      this.id = articleInfo.id
     }
   }
 }
 </script>
-
-<style lang="scss">
-
-</style>
