@@ -3,7 +3,10 @@
     <b-sidebar id="sidebar-1" title="Sidebar" shadow backdrop>
       <div class="px-3 py-2">
         <div>
-          <router-link :to="'/backend/'+ who +'/article_editor'">新增文章</router-link>
+          <router-link :to="'/backend/'+ who +'/add_article'">新增文章</router-link>
+        </div>
+        <div>
+          <router-link :to="'/backend/'+ who +'/article_editor'">編輯文章</router-link>
         </div>
         <div>
           <router-link :to="'/backend/'+ who +'/user_info_editor'">編輯個人資料</router-link>

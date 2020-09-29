@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Backend from '../views/Backend.vue'
-import ArticleEditor from '../components/ArticleEditor.vue'
+import AddArticle from '../components/AddArticle.vue'
 import UserInfo from '../components/UserInfo.vue'
 import '../Model/FirebaseModel.js'
 
@@ -31,19 +31,28 @@ const routes = [
     path: '/backend/:who',
     name: 'Backend',
     component: Backend,
-    beforeEnter: (to, from, next) => {
-      next()
-    },
     children: [
       {
-        path: 'article_editor',
-        name: 'ArticleEditor',
-        component: ArticleEditor
+        path: 'add_article',
+        name: 'AddArticle',
+        component: AddArticle
       },
       {
         path: 'user_info_editor',
         name: 'UserInfoEditor',
         component: UserInfo
+      },
+      {
+        path: 'article_editor',
+        name: 'ArticleEditor',
+        component: () => import('../components/ArticleEditor.vue')
+        // children: [
+        //   {
+        //     path: ':theArticle',
+        //     name: 'AddArticle',
+        //     component: AddArticle
+        //   }
+        // ]
       }
     ]
   },
