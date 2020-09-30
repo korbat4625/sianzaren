@@ -57,10 +57,10 @@ export default {
       })
     },
 
-    F_updateArticle (data, addOrupdate, attrs) {
+    F_updateArticle (data, addOrUpdate, attrs) {
       console.log('觸發了F_updateArticle')
-      console.log(data, addOrupdate, attrs)
-      if (addOrupdate === '更新') {
+      console.log(data, addOrUpdate, attrs)
+      if (addOrUpdate === '更新') {
         console.log('走入更新')
         var docRef = db.collection('posts').doc(attrs.id)
         return docRef.update(data).then(function () {

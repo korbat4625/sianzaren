@@ -29,9 +29,7 @@
         <b-button v-b-toggle.sidebar-1>Toggle Sidebar</b-button>
       </b-col>
     </b-row>
-    <b-row>
-      <router-view></router-view>
-    </b-row>
+    <router-view></router-view>
   </b-container>
 </template>
 
