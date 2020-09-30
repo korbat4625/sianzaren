@@ -5,11 +5,11 @@
       <b-list-group>
         <b-list-group-item
           button
-          v-for="post in posts"
+          v-for="post in editPosts"
           :key="post.id"
           @click="putArticle(post)"
         >
-          {{ post.title }}
+          {{ post.contentData.title }}
         </b-list-group-item>
       </b-list-group>
     </b-col>
@@ -18,6 +18,7 @@
         :editTitle="editTitle"
         :editValue="editValue"
         :id="id"
+        :createdAt="createdAt"
       ></AddArticle>
     </b-col>
   </b-row>
@@ -29,9 +30,10 @@ export default {
   name: 'ArticleEditor',
   data () {
     return {
-      posts: [],
+      editPosts: [],
       editTitle: '',
       editValue: '',
+      createdAt: null,
       id: ''
     }
   },
@@ -39,15 +41,17 @@ export default {
     AddArticle
   },
   created () {
-    this.F_getCollectionDocsSort('posts', { where: 'createdAt', order: 'desc' }).then(docs => {
-      this.posts = docs
+    this.F_getCollectionDocsSort('posts', { where: 'contentData.createdAt', order: 'desc' }).then(docs => {
+      console.log(docs)
+      this.editPosts = docs
     })
   },
   methods: {
     putArticle (articleInfo) {
-      this.editTitle = articleInfo.title
-      this.editValue = articleInfo.value
+      this.editTitle = articleInfo.contentData.title
+      this.editValue = articleInfo.contentData.value
       this.id = articleInfo.id
+      this.createdAt = articleInfo.contentData.createdAt
     }
   }
 }

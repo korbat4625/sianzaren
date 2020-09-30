@@ -1,6 +1,6 @@
 <template>
   <div class="recentlyArticle">
-    <b-card no-body class="mb-1">
+    <!-- <b-card no-body class="mb-1">
       <b-card-header header-tag="header" class="p-1" role="tab">
         <b-button block v-b-toggle.accordion-1 variant="info">Accordion 1</b-button>
       </b-card-header>
@@ -16,13 +16,18 @@
           </b-list-group-item>
         </b-list-group>
       </b-collapse>
-    </b-card>
+    </b-card> -->
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Recently'
+  name: 'Recently',
+  data () {
+    return {
+      // posts: []
+    }
+  }
 }
 </script>
 

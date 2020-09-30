@@ -1,11 +1,11 @@
 <template>
   <div class="article__blocks">
-    <div class="article__blocks__block" v-for="article in posts" :key="article.id">
+    <div class="article__blocks__block" v-for="article in mainPosts" :key="article.id">
       <div class="article__blocks__block_title">
-        <h3>{{ article.title }}</h3>
+        <h3>{{ article.contentData.title }}</h3>
       </div>
       <div class="article__blocks__block_content">
-        <p>{{ article.stopOnMore }}</p>
+        <p>{{ article.contentData.stopOnMore }}</p>
       </div>
       <div class="goto" @click="gotoArticle(article.id)"  :data-articleId="article.id">
         <p> >> 繼續閱讀</p>
@@ -21,21 +21,21 @@ export default {
     msg: String
   },
   created () {
-    this.F_getCollectionDocsSort('posts', { where: 'createdAt', order: 'desc' }).then(docs => {
-      this.posts = docs
+    this.F_getCollectionDocsSort('posts', { where: 'contentData.createdAt', order: 'desc' }).then(docs => {
+      console.log(docs)
+      this.mainPosts = docs
     })
   },
 
   data () {
     return {
-      posts: [
-      ]
+      mainPosts: []
     }
   },
 
   methods: {
     gotoArticle (articleID) {
-      const targetArticle = this.posts.find(ele => {
+      const targetArticle = this.mainPosts.find(ele => {
         return articleID === ele.id
       })
       this.$router.push(`/article/${targetArticle.id}`)

@@ -44,7 +44,8 @@ export default {
         { text: '心情', value: 'emotion' },
         { text: '遊戲', value: 'game' },
         { text: '技術', value: 'tech' }
-      ]
+      ],
+      createdAt: null
     }
   },
   watch: {
@@ -52,6 +53,7 @@ export default {
       this.addOrUpdate = '更新'
       this.title = newVal.editTitle
       this.value = newVal.editValue
+      this.createdAt = newVal.createdAt
     }
   },
   components: {
@@ -68,12 +70,15 @@ export default {
       saveEventInfo.stopOnMore = saveEventInfo.value.split(splitter)
       saveEventInfo.stopOnMore = saveEventInfo.stopOnMore[0] + '...'
 
+      if (this.addOrUpdate !== '更新') this.createdAt = new Date().getTime()
+
       this.F_showUser().then(res => {
         this.articleData.contentData = {
           title: self.title,
-          createdAt: new Date().getTime(),
+          createdAt: self.createdAt,
           value: saveEventInfo.value,
-          stopOnMore: saveEventInfo.stopOnMore
+          stopOnMore: saveEventInfo.stopOnMore,
+          html: saveEventInfo.html
         }
 
         this.articleData.authorInfo = {
