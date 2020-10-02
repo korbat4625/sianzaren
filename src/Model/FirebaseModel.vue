@@ -138,13 +138,10 @@ export default {
     },
 
     F_getManagerInfo (id) {
-      const docRef = db.collection('managers').doc(id)
-      return docRef.get().then(function (doc) {
-        if (doc.exists) {
-          return doc.data()
-        } else {
-          console.log('No such document!')
-        }
+      const managers = db.collection('managers').doc(id)
+      return managers.get().then(function (doc) {
+        if (doc.exists) return doc.data()
+        else console.log('No such document!')
       }).catch(function (error) {
         console.log('Error getting document:', error)
         // pass
@@ -152,8 +149,8 @@ export default {
     },
 
     F_updateManagerInfo (id, data) {
-      const docRef = db.collection('managers').doc(id)
-      return docRef.update(data).then(function () {
+      const managers = db.collection('managers').doc(id)
+      return managers.update(data).then(function () {
         console.log('Document successfully updated!')
       }).catch(function (error) {
         console.error('Error updating document: ', error)
