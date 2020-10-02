@@ -25,6 +25,8 @@ export default {
       console.log(docs)
       this.mainPosts = docs
     })
+    // f4i2cqdC1ncyMWDR2rlqC6OmS9o2
+    // this.F_updateManagerInfo('f4i2cqdC1ncyMWDR2rlqC6OmS9o2', { apple: 3 })
   },
 
   data () {

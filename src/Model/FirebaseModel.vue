@@ -11,6 +11,7 @@ export default {
       console.log('觸發了F_showUser')
       var user = firebase.auth().currentUser
       // var name, email, photoUrl, uid, emailVerified
+      console.log(firebase.auth())
       if (user != null) return user
       else return null
     },
@@ -45,13 +46,11 @@ export default {
       })
     },
 
-    F_signOut () {
+    async F_signOut () {
       console.log('觸發了F_signOut')
       const self = this
+      await self.F_updateManagerInfo(self.$route.params.who, { online: false })
       firebase.auth().signOut().then(function () {
-        // Sign-out successful.
-        console.log(self.$route.params)
-        self.F_updateManagerInfo(self.$route.params.who, { online: false })
         self.$router.push('/')
         console.log('登出成功')
       })
@@ -75,6 +74,7 @@ export default {
         console.log('新增文章成功')
       }).catch(res => {
         console.log('新增文章失敗')
+        console.log(res)
       })
     },
 
@@ -152,7 +152,6 @@ export default {
 
     F_updateManagerInfo (id, data) {
       var docRef = db.collection('managers').doc(id)
-      // Set the 'capital' field of the city 'DC'
       return docRef.update(data).then(function () {
         console.log('Document successfully updated!')
       }).catch(function (error) {
