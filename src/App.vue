@@ -58,6 +58,7 @@ export default {
           this.loginShow = false
         }, 3000)
       }
+      this.$nextTick()
     }
   }
 }

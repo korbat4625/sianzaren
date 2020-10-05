@@ -1,24 +1,26 @@
 <template>
   <b-container class="pageBackend">
-    <b-sidebar id="sidebar-1" title="Sidebar" shadow backdrop>
-      <div class="px-3 py-2">
-        <div>
-          <router-link :to="'/backend/'+ who +'/add_article'">新增文章</router-link>
-        </div>
-        <div>
-          <router-link :to="'/backend/'+ who +'/article_editor'">編輯文章</router-link>
-        </div>
-        <div>
-          <router-link :to="'/backend/'+ who +'/user_info_editor'">編輯個人資料</router-link>
-        </div>
-        <div @click="F_signOut">
-          <router-link to="#">登出</router-link>
-        </div>
-      </div>
+    <b-sidebar id="sidebar-1" title="鐵人賽後台" shadow backdrop>
       <template v-slot:footer="{ hide }">
-        <div class="d-flex bg-dark text-light align-items-center px-3 py-2">
-          <strong class="mr-auto">{{ $store.state.currentUser.displayName }}</strong>
+        <div class="d-flex flex-column bg-dark text-light px-3 py-2">
+          <strong class="mr-auto">footer</strong>
           <b-button size="sm" @click="hide">Close</b-button>
+        </div>
+      </template>
+      <template v-slot:default>
+        <div class="p-3">
+          <div>
+            <b-img :src="photoURL"></b-img>
+            <p>{{ displayName }}</p>
+          </div>
+          <nav class="mb-3">
+            <b-nav vertical>
+              <b-nav-item :to="'/backend/'+ who +'/user_info_editor'">編輯個人資料</b-nav-item>
+              <b-nav-item :to="'/backend/'+ who +'/add_article'">新增文章</b-nav-item>
+              <b-nav-item :to="'/backend/'+ who +'/article_editor'">編輯文章</b-nav-item>
+              <b-nav-item @click="F_signOut" to="#">登出</b-nav-item>
+            </b-nav>
+          </nav>
         </div>
       </template>
     </b-sidebar>
@@ -35,12 +37,21 @@
 
 <script>
 // import '../plugins/markdown.js'
+import { mapState } from 'vuex'
 export default {
   name: 'Backend',
   data () {
     return {
-      who: this.$route.params.who
+      who: this.$route.params.who,
+      avatorShow: false
     }
+  },
+  computed: {
+    ...mapState([
+      // 映射 this.count 为 store.state.count
+      'photoURL',
+      'displayName'
+    ])
   }
 }
 </script>

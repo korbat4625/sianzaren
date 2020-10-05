@@ -4,14 +4,18 @@
 </template>
 
 <script>
-import { firebase, db } from './FirebaseModel.js'
+import { firebase, db, storage } from './FirebaseModel.js'
 export default {
+  data () {
+    return {
+    }
+  },
   methods: {
     async F_showUser (e, msg) {
       console.log('觸發了F_showUser')
       var user = firebase.auth().currentUser
+      console.log(user, this.$store.state)
       // var name, email, photoUrl, uid, emailVerified
-      console.log(firebase.auth())
       if (user != null) return user
       else return null
     },
@@ -79,22 +83,35 @@ export default {
     },
 
     F_stateWatcher () {
+      console.log('監看者觸法')
+      const self = this
       firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
-          console.log('現在使用者: ', user)
+          let userInfo = {}
+          self.F_getManagerInfo(self.$route.params.who).then(manager => {
+            userInfo = {
+              displayName: user.displayName,
+              email: user.email,
+              emailVerified: user.emailVerified,
+              photoURL: user.photoURL,
+              phoneNumber: user.phoneNumber,
+              name: manager.name
+            }
+            console.log('userInfouserInfouserInfo111111111:', userInfo)
+            self.$store.commit('setCurrentUser', userInfo)
+          })
         } else {
-          console.log('logout')
-          //
+          self.$store.commit('setCurrentUser', {})
         }
       })
     },
 
     F_updateProfile (userInfo) {
-      console.log('觸發了F_updateProfile')
+      console.log('觸發了F_updateProfile', userInfo)
       var user = firebase.auth().currentUser
       return user.updateProfile({
-        displayName: userInfo.displayName
-        // photoURL: photoURL
+        displayName: userInfo.displayName,
+        photoURL: userInfo.photoURL
       })
     },
 
@@ -149,6 +166,7 @@ export default {
     },
 
     F_updateManagerInfo (id, data) {
+      console.log('要更新的 data: 要更新的 data: 要更新的 data: ', data)
       const managers = db.collection('managers').doc(id)
       return managers.update(data).then(function () {
         console.log('Document successfully updated!')
@@ -164,6 +182,62 @@ export default {
         // Email sent.
       }).catch(function (error) {
         console.log(error)
+      })
+    },
+
+    async F_getStorageURL (ref) {
+      // Create a storage reference from our storage service
+      var storageRef = storage.ref()
+      var pathReference = storageRef.child(ref)
+      return pathReference.getDownloadURL().then(function (url) {
+        return url
+      }).catch(function (error) {
+      // Handle any errors
+        console.log(error)
+      })
+    },
+
+    F_uploadImg (file, ref) {
+      const self = this
+      if (ref.indexOf('managers/' + this.$store.state.name) !== -1) {
+        const storageRef = storage.ref()
+        const listToRemoveRef = storageRef.child('managers/' + this.$store.state.name)
+        return listToRemoveRef.listAll().then(function (res) {
+          res.items.forEach(function (itemRef) {
+            console.log(itemRef)
+            // Delete the file
+            const deleteItem = storageRef.child('managers/' + self.$store.state.name + '/' + itemRef.name)
+            deleteItem.delete().then(function () {
+              console.log(itemRef.name + ' 刪除成功')
+            }).catch(function (error) {
+              console.log(error)
+              // Uh-oh, an error occurred!
+            })
+          })
+          const uploadRef = storageRef.child(ref)
+          return uploadRef.put(file).then(function (snapshot) {
+            console.log('Uploaded a blob or file!')
+          })
+        }).catch(function (error) {
+          console.log(error)
+          // Uh-oh, an error occurred!
+        })
+      }
+    },
+
+    async F_listStorageRef (ref) {
+      const storageRef = storage.ref()
+      const listToShow = storageRef.child(ref)
+      return listToShow.listAll().then(function (res) {
+        const item = []
+        res.items.forEach(function (itemRef) {
+          console.log('itemRefitemRefitemRef:', itemRef)
+          item.push(itemRef)
+        })
+        return item
+      }).catch(function (error) {
+        console.log(error)
+        // Uh-oh, an error occurred!
       })
     }
   }
