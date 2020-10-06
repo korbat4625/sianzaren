@@ -88,7 +88,7 @@ export default {
       firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
           let userInfo = {}
-          self.F_getManagerInfo(self.$route.params.who).then(manager => {
+          self.F_getManagerInfo(user.uid).then(manager => {
             userInfo = {
               displayName: user.displayName,
               email: user.email,
