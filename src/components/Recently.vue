@@ -13,8 +13,10 @@
 </template>
 
 <script>
+import firebase from '../Model/FirebaseModel.vue'
 export default {
   name: 'Recently',
+  mixins: [firebase],
   props: ['tags'],
   data () {
     return {

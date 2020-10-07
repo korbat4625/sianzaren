@@ -5,8 +5,8 @@
         <b-col cols="12">
           <div class="hero--chooseHero">
             <div class="hero--chooseHero__content">
-              <h1 @click="showLoginClick">IT幫幫忙 - 鐵人賽 30 天</h1>
-              <p @click="F_showUser">自討苦吃</p>
+              <h1>IT幫幫忙 - 鐵人賽 30 天</h1>
+              <p>自討苦吃</p>
             </div>
           </div>
         </b-col>
@@ -19,7 +19,7 @@
       <b-navbar-nav>
         <b-nav-item to="/">Home</b-nav-item>
         <b-nav-item to="/about">About Me</b-nav-item>
-        <b-nav-item v-if="loginShow" @click="F_checkLogin">登入</b-nav-item>
+        <b-nav-item v-if="loginShow">登入</b-nav-item>
       </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto">
@@ -36,8 +36,10 @@
 </template>
 
 <script>
+// import firebase from './Model/FirebaseModel.vue'
 export default {
   name: 'App',
+  // mixins: [firebase],
   data () {
     return {
       loginShow: false,
@@ -45,7 +47,7 @@ export default {
     }
   },
   created () {
-    this.F_stateWatcher()
+    // this.F_stateWatcher()
   },
   methods: {
     showLoginClick () {

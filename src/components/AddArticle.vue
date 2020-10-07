@@ -95,7 +95,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scope>
+<style lang="scss">
 .pageAddArticle {
   padding: 1rem;
 

@@ -36,10 +36,11 @@
 </template>
 
 <script>
-// import '../plugins/markdown.js'
 import { mapState } from 'vuex'
+import firebase from '../Model/FirebaseModel.vue'
 export default {
   name: 'Backend',
+  mixins: [firebase],
   data () {
     return {
       who: this.$route.params.who,
@@ -56,7 +57,7 @@ export default {
 }
 </script>
 
-<style language="scss" scope>
+<style language="scss">
 .pageBackend {
   padding: 1rem;
 }

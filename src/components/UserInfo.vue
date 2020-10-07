@@ -277,7 +277,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 %vertical-center {
   position: relative;
   top: 50%;

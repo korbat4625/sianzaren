@@ -1,7 +1,7 @@
 <template>
   <div class="article__blocks">
     <div class="article__blocks__block" v-for="article in filterPosts" :key="article.id">
-      <div class="article__blocks__block_title">
+      <div class="article__blocks__block_title card-title">
         <h3>{{ article.contentData.title }}</h3>
       </div>
       <div class="article__blocks__block_content">
@@ -22,8 +22,10 @@
 </template>
 
 <script>
+import firebase from '../Model/FirebaseModel.vue'
 export default {
   name: 'ArticleList',
+  mixins: [firebase],
   props: ['chooseTag'],
   data () {
     return {
@@ -67,9 +69,6 @@ export default {
       this.tagsFiltered = new Set(buffer)
       this.tagsFiltered = Array.from(this.tagsFiltered)
     })
-
-    // f4i2cqdC1ncyMWDR2rlqC6OmS9o2
-    // this.F_updateManagerInfo('f4i2cqdC1ncyMWDR2rlqC6OmS9o2', { apple: 3 })
   },
 
   methods: {
@@ -84,7 +83,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss" scoped>
+<style lang="scss">
 .article__blocks {
   padding: 2rem;
   display: grid;
