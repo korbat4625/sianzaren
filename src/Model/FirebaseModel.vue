@@ -21,14 +21,12 @@ export default {
     },
 
     F_signIn (account, password) {
-      console.log('觸發了F_signIn')
+      console.log('觸發了F_signIn', account, password)
       const self = this
       firebase.auth().signInWithEmailAndPassword(account, password).then(function () {
-        console.log('登入成功')
-
         self.F_showUser().then(user => {
-          console.log('user::', user)
           self.$router.push(`/backend/${user.uid}`)
+          self.F_updateManagerInfo(self.$route.params.who, { online: true })
         }).catch(error => {
           console.log(error)
         })
@@ -61,10 +59,8 @@ export default {
     },
 
     F_updateArticle (data, addOrUpdate, attrs) {
-      console.log('觸發了F_updateArticle')
       console.log(data, addOrUpdate, attrs)
       if (addOrUpdate === '更新') {
-        console.log('走入更新')
         var docRef = db.collection('posts').doc(attrs.id)
         return docRef.update(data).then(function () {
           console.log('Document successfully updated!')
@@ -73,7 +69,6 @@ export default {
           console.error('Error updating document: ', error)
         })
       }
-      console.log('走入更新就不會到這')
       db.collection('posts').add(data).then(function (res) {
         console.log('新增文章成功')
       }).catch(res => {
@@ -83,9 +78,10 @@ export default {
     },
 
     F_stateWatcher () {
-      console.log('監看者觸法')
+      console.log('監看者啟動')
       const self = this
       firebase.auth().onAuthStateChanged(function (user) {
+        console.log('監看者監聽觸發')
         if (user) {
           let userInfo = {}
           self.F_getManagerInfo(user.uid).then(manager => {
@@ -97,7 +93,6 @@ export default {
               phoneNumber: user.phoneNumber,
               name: manager.name
             }
-            console.log('userInfouserInfouserInfo111111111:', userInfo)
             self.$store.commit('setCurrentUser', userInfo)
           })
         } else {
@@ -155,6 +150,7 @@ export default {
     },
 
     F_getManagerInfo (id) {
+      console.log('觸發F_getManagerInfo')
       const managers = db.collection('managers').doc(id)
       return managers.get().then(function (doc) {
         if (doc.exists) return doc.data()

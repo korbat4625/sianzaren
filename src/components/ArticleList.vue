@@ -1,15 +1,22 @@
 <template>
   <div class="article__blocks">
-    <div class="article__blocks__block" v-for="article in mainPosts" :key="article.id">
+    <div class="article__blocks__block" v-for="article in filterPosts" :key="article.id">
       <div class="article__blocks__block_title">
         <h3>{{ article.contentData.title }}</h3>
       </div>
       <div class="article__blocks__block_content">
+        <p>{{ article.aboutCategory.tags }}</p>
+      </div>
+      <div class="article__blocks__block_tags">
         <p>{{ article.contentData.stopOnMore }}</p>
       </div>
       <div class="goto" @click="gotoArticle(article.id)"  :data-articleId="article.id">
         <p> >> 繼續閱讀</p>
       </div>
+    </div>
+
+    <div class="article__tags--expose" v-show="false">
+      <slot name="tagsFiltered" :tagsFiltered="tagsFiltered"></slot>
     </div>
   </div>
 </template>
@@ -17,27 +24,57 @@
 <script>
 export default {
   name: 'ArticleList',
-  props: {
-    msg: String
+  props: ['chooseTag'],
+  data () {
+    return {
+      mainPosts: [],
+      tags: [],
+      tagsFiltered: null,
+      filterPosts: []
+    }
   },
+
+  watch: {
+    chooseTag: function (newVal, oldVal) {
+      console.log(newVal)
+      if (newVal === 'all') {
+        this.filterPosts = this.mainPosts
+        return 'done'
+      }
+      const filterPost = this.mainPosts.filter(ele => {
+        return ele.aboutCategory.tags.indexOf(newVal) !== -1
+      })
+      this.filterPosts = filterPost
+      console.log('目前文章:', filterPost)
+    }
+  },
+
   created () {
+    const buffer = []
     this.F_getCollectionDocsSort('posts', { where: 'contentData.createdAt', order: 'desc' }).then(docs => {
       console.log(docs)
       this.mainPosts = docs
+      this.filterPosts = JSON.parse(JSON.stringify(this.mainPosts))
+
+      this.tags = this.filterPosts.map(ele => {
+        return ele.aboutCategory.tags
+      })
+
+      this.tags.forEach(ele => [
+        buffer.push(...ele)
+      ])
+
+      this.tagsFiltered = new Set(buffer)
+      this.tagsFiltered = Array.from(this.tagsFiltered)
     })
+
     // f4i2cqdC1ncyMWDR2rlqC6OmS9o2
     // this.F_updateManagerInfo('f4i2cqdC1ncyMWDR2rlqC6OmS9o2', { apple: 3 })
   },
 
-  data () {
-    return {
-      mainPosts: []
-    }
-  },
-
   methods: {
     gotoArticle (articleID) {
-      const targetArticle = this.mainPosts.find(ele => {
+      const targetArticle = this.filterPosts.find(ele => {
         return articleID === ele.id
       })
       this.$router.push(`/article/${targetArticle.id}`)

@@ -12,7 +12,7 @@ export default {
     }
   },
   created () {
-    this.F_getDownloadURL()
+    // this.F_getDownloadURL()
   }
 }
 </script>

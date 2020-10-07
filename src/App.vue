@@ -32,7 +32,6 @@
 
     <!-- 負責顯示所有內容 -->
     <router-view/>
-
   </div>
 </template>
 

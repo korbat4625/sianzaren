@@ -14,15 +14,19 @@
       ></MarkdownPro>
     </b-col>
     <b-col cols="12">
-      <b-form-group label="請選擇文章分類">
-        <b-form-checkbox-group
-          id="categories"
-          size="lg"
+      <div>
+        <label for="tags-pills">請輸入文章標籤</label>
+        <b-form-tags
+          input-id="tags-pills"
           v-model="tags"
-          :options="options"
-          name="categories"
-        ></b-form-checkbox-group>
-      </b-form-group>
+          tag-variant="info"
+          size="lg"
+          separator=" ,;"
+          placeholder="可以使用空格、逗號、分號、enter 鍵來輸入標籤"
+          remove-on-delete
+        ></b-form-tags>
+        <p class="mt-2">Value: {{ tags }}</p>
+      </div>
     </b-col>
     <b-col class="mt-2"><b-button v-b-modal.modal-1 variant="primary">點擊{{ addOrUpdate }}文章</b-button></b-col>
   </b-row>
@@ -39,12 +43,6 @@ export default {
       value: '',
       addOrUpdate: '新增',
       tags: [],
-      options: [
-        { text: '閒聊雜談', value: 'chat' },
-        { text: '心情', value: 'emotion' },
-        { text: '遊戲', value: 'game' },
-        { text: '技術', value: 'tech' }
-      ],
       createdAt: null
     }
   },
