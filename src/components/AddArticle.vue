@@ -34,8 +34,10 @@
 
 <script>
 import { MarkdownPro } from 'vue-meditor'
+import firebase from '../Model/FirebaseModel.vue'
 export default {
   name: 'AddArticle',
+  mixins: [firebase],
   data () {
     return {
       articleData: {},

@@ -1,66 +1,28 @@
 <template>
   <div id="app">
-    <b-container fluid class="hero" v-if="$router.history.current.fullPath.search('backend') === -1">
-      <b-row>
-        <b-col cols="12">
-          <div class="hero--chooseHero">
-            <div class="hero--chooseHero__content">
-              <h1>IT幫幫忙 - 鐵人賽 30 天</h1>
-              <p>自討苦吃</p>
-            </div>
-          </div>
-        </b-col>
-      </b-row>
-    </b-container>
-
-    <b-navbar type="dark" variant="dark" v-if="$router.history.current.fullPath.search('backend') === -1">
-
-      <!-- 這邊使用 BV 支援 <router-link to=...>的元件 -->
-      <b-navbar-nav>
-        <b-nav-item to="/">Home</b-nav-item>
-        <b-nav-item to="/about">About Me</b-nav-item>
-        <b-nav-item v-if="loginShow">登入</b-nav-item>
-      </b-navbar-nav>
-
-      <b-navbar-nav class="ml-auto">
-        <b-nav-form>
-          <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
-          <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
-        </b-nav-form>
-      </b-navbar-nav>
-    </b-navbar>
-
+    <Header v-if="$router.history.current.fullPath.search('backend') === -1"></Header>
     <!-- 負責顯示所有內容 -->
     <router-view/>
   </div>
 </template>
 
 <script>
-// import firebase from './Model/FirebaseModel.vue'
+import firebase from './Model/FirebaseModel.vue'
+import Header from './views/Header.vue'
 export default {
   name: 'App',
-  // mixins: [firebase],
+  mixins: [firebase],
+  components: {
+    Header
+  },
   data () {
     return {
-      loginShow: false,
-      loginClick: 0
     }
   },
   created () {
-    // this.F_stateWatcher()
+    this.F_stateWatcher()
   },
   methods: {
-    showLoginClick () {
-      this.loginClick++
-      if (this.loginClick > 2) {
-        this.loginShow = true
-        setTimeout(() => {
-          this.loginClick = 0
-          this.loginShow = false
-        }, 3000)
-      }
-      this.$nextTick()
-    }
   }
 }
 
@@ -72,36 +34,15 @@ export default {
   box-sizing: border-box;
 }
 
+body, html {
+  height: 100%;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-}
-
-.container-fluid.hero {
-  background-color: #024e82;
-  .hero--chooseHero {
-    position: relative;
-    padding: 1rem;
-    height: 300px;
-    color: #ddd;
-
-    & > .hero--chooseHero__content {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      padding: 3rem;
-      border: solid 2px #ddd;
-      border-radius: 5px;
-      text-align: center;
-
-      & > h1,p {
-        user-select: none;
-      }
-    }
-  }
 }
 
 nav {

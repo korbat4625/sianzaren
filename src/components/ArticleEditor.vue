@@ -26,8 +26,10 @@
 
 <script>
 import AddArticle from '../components/AddArticle.vue'
+import firebase from '../Model/FirebaseModel.vue'
 export default {
   name: 'ArticleEditor',
+  mixins: [firebase],
   data () {
     return {
       editPosts: [],

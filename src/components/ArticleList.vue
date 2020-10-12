@@ -54,7 +54,6 @@ export default {
   created () {
     const buffer = []
     this.F_getCollectionDocsSort('posts', { where: 'contentData.createdAt', order: 'desc' }).then(docs => {
-      console.log(docs)
       this.mainPosts = docs
       this.filterPosts = JSON.parse(JSON.stringify(this.mainPosts))
 

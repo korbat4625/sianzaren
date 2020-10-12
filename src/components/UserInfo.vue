@@ -134,8 +134,10 @@
 
 <script>
 import { mapState } from 'vuex'
+import firebase from '../Model/FirebaseModel.vue'
 export default {
   name: 'UserInfoEditor',
+  mixins: [firebase],
   data () {
     return {
       account: '',

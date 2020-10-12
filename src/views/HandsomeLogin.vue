@@ -112,8 +112,10 @@
 <script>
 import cButton from '../components/CButton.vue'
 
+import firebase from '../Model/FirebaseModel.vue'
 export default {
-  name: 'Login',
+  name: 'handsomeLogin',
+  mixins: [firebase],
   data () {
     return {
       loginAcc: '',
