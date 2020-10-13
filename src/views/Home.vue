@@ -1,7 +1,7 @@
 <template>
-  <b-container class="pageHome">
+  <b-container fluid class="pageHome">
     <b-row>
-      <b-col cols="9">
+      <b-col cols="11">
         <ArticleList
           :chooseTag="storeChooseTags"
         >
@@ -10,7 +10,7 @@
           </template>
         </ArticleList>
       </b-col>
-      <b-col cols="3">
+      <b-col cols="1">
         <Recently
           :tags="storeAllTags"
         >

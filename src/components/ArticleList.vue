@@ -1,19 +1,33 @@
 <template>
   <div class="article__blocks">
-    <div class="article__blocks__block" v-for="article in filterPosts" :key="article.id">
-      <div class="article__blocks__block_title card-title">
-        <h3>{{ article.contentData.title }}</h3>
-      </div>
-      <div class="article__blocks__block_content">
-        <p>{{ article.aboutCategory.tags }}</p>
-      </div>
-      <div class="article__blocks__block_tags">
-        <p>{{ article.contentData.stopOnMore }}</p>
-      </div>
-      <div class="goto" @click="gotoArticle(article.id)"  :data-articleId="article.id">
-        <p> >> 繼續閱讀</p>
-      </div>
-    </div>
+    <b-card
+      no-body
+      style="max-width: 20rem;"
+      img-src="https://placekitten.com/380/200"
+      img-alt="Image"
+      img-top
+      v-for="article in filterPosts"
+      :key="article.id"
+    >
+      <b-card-body>
+        <b-card-title>{{ article.contentData.title }}</b-card-title>
+        <b-card-text>
+          {{ article.contentData.stopOnMore }}
+        </b-card-text>
+      </b-card-body>
+      <b-card-footer>
+        <div class="tags">
+          <label
+            class="label-tag"
+            :key="tag"
+            v-for="tag in article.aboutCategory.tags"
+          >
+            {{ tag }}
+          </label>
+        </div>
+        <span class="goto" @click="gotoArticle(article.id)"  :data-articleId="article.id">繼續閱讀</span>
+      </b-card-footer>
+    </b-card>
 
     <div class="article__tags--expose" v-show="false">
       <slot name="tagsFiltered" :tagsFiltered="tagsFiltered"></slot>
@@ -84,49 +98,30 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .article__blocks {
-  padding: 2rem;
-  display: grid;
-  grid-template-rows: auto;
+  display: flex;
+}
 
-  & > .article__blocks__block {
-    position: relative;
-    margin: 2rem;
-    border: solid #aaa 1px;
-    border-radius: 5px;
-    padding: 1rem;
-    height: 200px;
-    box-shadow: 2px 2px 1px 0px #444;
+.card {
+  margin: 1rem;
+}
 
-    &:hover {
-      background-color: #ddd;
-    }
-    & > div {
-      user-select: none;
-    }
-
-    .article__blocks__block_title {
-      margin: .5rem
-    }
-
-    .article__blocks__block_content {
-      margin: .5rem
-    }
-
-    .goto {
-      position: absolute;
-      right: 5%;
-      bottom: 5%;
-      cursor: pointer;
-
-      &:hover {
-        color: #333;
-        border-bottom: 1px solid brown;
-      }
-
-      &:active {
-        border-bottom: 0;
-      }
+.card-footer {
+  .tags {
+    display: flex;
+    .label-tag {
+      position: relative;
+      background-color: #0089E0;
+      padding: 5px;
+      border-radius: 5px;
+      color: white;
+      text-align: center;
+      margin: 5px;
     }
   }
+
+  .goto {
+    margin: 5px;
+  }
 }
+
 </style>

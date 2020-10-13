@@ -1,8 +1,7 @@
 <template>
-  <b-container fluid class="hero">
+  <b-container fluid id="HeroPaper" class="mx-auto">
+    <!--
     <b-navbar type="dark" variant="dark" v-if="$router.history.current.fullPath.search('backend') === -1">
-
-      <!-- 這邊使用 BV 支援 <router-link to=...>的元件 -->
       <b-navbar-nav align="center">
         <b-nav-item to="/">Home</b-nav-item>
         <b-nav-item to="/about">About Me</b-nav-item>
@@ -11,6 +10,9 @@
     </b-navbar>
     <h1 class="text-center">閒咱人等</h1>
     <p class="text-center">你們、我們、他們</p>
+    -->
+    <h2 @click="goto('/')">閒咱人等</h2>
+    <div>你們、我們、他們</div>
   </b-container>
 </template>
 
@@ -27,16 +29,29 @@ export default {
       if (newVal === 'loginpls') this.loginShow = true
       else this.loginShow = false
     }
+  },
+  methods: {
+    goto (url) {
+      this.$router.replace('/')
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.hero {
-  background-color: #343A40;
+#HeroPaper {
+  background-color: #221E1F;
+  width: 100%;
   padding: 1rem;
-  h1, h2, h3, h4, p {
-    color: #c9c9c9;
+  opacity: 0.8;
+  * {
+    color: #fff;
+  }
+
+  h2 {
+    user-select: none;
+    cursor: pointer;
+    display: inline-block;
   }
 }
 </style>
