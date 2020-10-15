@@ -23,6 +23,7 @@
             {{ tag }}
         </label>
       </div>
+      <div><span class="goto" @click="gotoArticle(article.id)"  :data-articleId="article.id">繼續閱讀</span></div>
     </div>
   </section>
 </template>
@@ -55,7 +56,9 @@ export default {
     }
   },
   methods: {
-
+    gotoArticle (articleID) {
+      this.$router.push(`/article/${articleID}`)
+    }
   }
 }
 </script>

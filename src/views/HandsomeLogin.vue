@@ -105,7 +105,7 @@
         </div>
       </b-col>
     </b-row>
-    <c-button variant="primary" @click.native="submit">送出</c-button>
+    <b-button variant="primary" @click="submit">送出</b-button>
   </b-container>
 </template>
 

@@ -13,19 +13,19 @@
       </b-col>
 
       <b-col md="12">
-        <b-card
+        <section
             border-variant="secondary"
             header="討論板"
             header-border-variant="secondary"
             align="center"
           >
           <div v-for="comment in comments" :key="comment.id">{{ comment.who }} : {{ comment.value }}</div>
-          <b-card-text v-if="!noComments">看起來目前乏人問津呢...</b-card-text>
-        </b-card>
+          <div v-if="!noComments">看起來目前乏人問津呢...</div>
+        </section>
       </b-col>
 
       <b-col md="5">
-        <b-card border-variant="info" header="我想說話..." align="center">
+        <section border-variant="info" header="我想說話..." align="center">
           <div>
             <b-form-input v-model="iAm" placeholder="我叫做..." autocomplete="off"></b-form-input>
           </div>
@@ -39,7 +39,7 @@
             class="mt-2"
           ></b-form-textarea>
           <b-button variant="light" class="mt-2" @click="leaveAMessage(commentTextarea)">留言</b-button>
-        </b-card>
+        </section>
       </b-col>
     </b-row>
   </b-container>

@@ -1,134 +1,147 @@
 <template>
   <div class="container">
-    <b-card-group deck>
-      <b-card header="帳號資訊" header-tag="header" class="m-3">
-        <div role="group" class="m-3">
-          <b-form-group>
-            <b-form-row class="upload">
-              <b-col cols="12" md="2 mt-2">
-                <div class="upload-file">
-                  <input @change="uploadChange" ref="inputFile" type="file" id="avatar" accept=".jpg,.jpeg,.png">
-                  <b-button variant="info">
-                    <label for="avatar" ref="fileText">選擇你的頭貼檔案</label>
-                  </b-button>
-                </div>
-              </b-col>
-              <b-col cols="12" md="8 mt-2">
-                <div class="upload__connect-line"></div>
-              </b-col>
-              <b-col cols="12" md="2 mt-2">
-                <div class="upload-picture">
-                  <b-img ref="img" :src="url"></b-img>
-                  <span v-if="!url">空空如也</span>
-                </div>
-              </b-col>
-            </b-form-row>
-          </b-form-group>
 
-          <label for="account">信箱 (帳號):</label>
-          <b-form-input
-            id = "account"
-            v-model="account"
-            disabled
-            trim
-          ></b-form-input>
-          <b-form-text id="input-live-help" v-if="!emailVerified">
-            <span>您的帳號尚未認證，點擊</span>
-            <span class="mail--verified"
-              v-b-tooltip.hover title="發送認證信"
-              @click="makeToast('success')"
-            >
-              連接
-            </span>發送認證信
-          </b-form-text>
-          <b-form-text id="input-live-help" v-if="emailVerified">
-            <span style="color: green;">已認證的帳號 !</span>
-          </b-form-text>
+    <b-button @click="$bvModal.show('modal-scoped')">Open Modal</b-button>
+    <b-modal size="lg" id="modal-scoped">
+      <template v-slot:modal-header="{ close }">
+        <!-- Emulate built in modal header close button action -->
+        <b-button size="sm" variant="outline-danger" @click="close()">
+          不儲存關閉
+        </b-button>
+        <h5>編輯個人資料</h5>
+      </template>
 
-          <label for="password">密碼:</label>
-          <b-form-input
-            id = "password"
-            v-model="password"
-            trim
-          ></b-form-input>
+      <div class="hero--cover"></div>
 
-          <label for="backupEmail">信箱 (備援):</label>
-          <b-form-input
-            id = "backupEmail"
-            v-model="backupEmail"
-            trim
-          ></b-form-input>
-        </div>
-      </b-card>
-    </b-card-group>
+      <div class="upload-picture">
+        <label for="avatar" class="container-camera-icon">
+          <div class="mask">
+            <b-icon icon="camera"></b-icon>
+          </div>
+          <b-img ref="avatarImg" :src="url" class="avatar"></b-img>
+        </label>
+        <span v-if="!url">空空如也</span>
+      </div>
 
-    <b-card-group deck>
-      <b-card header="名稱相關" header-tag="header" class="m-3">
-        <div role="group" class="m-3">
-          <label for="">暱稱:</label>
-          <b-form-input
-            id="displayName"
-            v-model="displayName"
-            trim
-          ></b-form-input>
-        </div>
-        <div role="group" class="m-3">
-          <label for="name">英文暱稱:</label>
-          <b-form-input
-            id = "name"
-            v-model="name"
-            trim
-          ></b-form-input>
-        </div>
-      </b-card>
-    </b-card-group>
+      <b-card-group deck>
+        <b-card header="簡介" header-tag="header" class="m-3">
+          <div role="group" class="m-3">
+            <label for="skills">專長:</label>
+            <b-form-textarea
+              id="skills"
+              v-model="skills"
+              placeholder="Enter something..."
+              rows="3"
+              max-rows="6"
+            ></b-form-textarea>
+          </div>
+          <div role="group" class="m-3">
+            <label for="intro">自我介紹:</label>
+            <b-form-textarea
+              id="intro"
+              v-model="intro"
+              placeholder="Enter something..."
+              rows="3"
+              max-rows="6"
+            ></b-form-textarea>
+          </div>
+        </b-card>
+      </b-card-group>
 
-    <b-card-group deck>
-      <b-card header="聯絡資訊" header-tag="header" class="m-3">
-        <div role="group" class="m-3">
-          <label for="phoneNumber">電話號碼:</label>
-          <b-form-input
-            id="phoneNumber"
-            v-model="phoneNumber"
-            trim
-          ></b-form-input>
-        </div>
-        <div role="group" class="m-3">
-          <label for="address">住址:</label>
-          <b-form-input
-            id = "address"
-            v-model="address"
-            trim
-          ></b-form-input>
-        </div>
-      </b-card>
-    </b-card-group>
+      <b-card-group deck>
+        <b-card header="帳號資訊" header-tag="header" class="m-3">
+          <div role="group" class="m-3">
+            <label for="account">信箱 (帳號):</label>
+            <b-form-input
+              id = "account"
+              v-model="account"
+              disabled
+              trim
+            ></b-form-input>
+            <b-form-text id="input-live-help" v-if="!emailVerified">
+              <span>您的帳號尚未認證，點擊</span>
+              <span class="mail--verified"
+                v-b-tooltip.hover title="發送認證信"
+                @click="makeToast('success')"
+              >
+                連接
+              </span>發送認證信
+            </b-form-text>
+            <b-form-text id="input-live-help" v-if="emailVerified">
+              <span style="color: green;">已認證的帳號 !</span>
+            </b-form-text>
 
-    <b-card-group deck>
-      <b-card header="簡介" header-tag="header" class="m-3">
-        <div role="group" class="m-3">
-          <label for="skills">專長:</label>
-          <b-form-textarea
-            id="skills"
-            v-model="skills"
-            placeholder="Enter something..."
-            rows="3"
-            max-rows="6"
-          ></b-form-textarea>
-        </div>
-        <div role="group" class="m-3">
-          <label for="intro">自我介紹:</label>
-          <b-form-textarea
-            id="intro"
-            v-model="intro"
-            placeholder="Enter something..."
-            rows="3"
-            max-rows="6"
-          ></b-form-textarea>
-        </div>
-      </b-card>
-    </b-card-group>
-    <b-button @click.native="updateUserInfo" href="#" variant="primary" class="m-3">更新資料</b-button>
+            <label for="password">密碼:</label>
+            <b-form-input
+              id = "password"
+              v-model="password"
+              trim
+            ></b-form-input>
+
+            <label for="backupEmail">信箱 (備援):</label>
+            <b-form-input
+              id = "backupEmail"
+              v-model="backupEmail"
+              trim
+            ></b-form-input>
+          </div>
+        </b-card>
+      </b-card-group>
+
+      <b-card-group deck>
+        <b-card header="名稱相關" header-tag="header" class="m-3">
+          <div role="group" class="m-3">
+            <label for="">暱稱:</label>
+            <b-form-input
+              id="displayName"
+              v-model="displayName"
+              trim
+            ></b-form-input>
+          </div>
+          <div role="group" class="m-3">
+            <label for="name">英文暱稱:</label>
+            <b-form-input
+              id = "name"
+              v-model="name"
+              trim
+            ></b-form-input>
+          </div>
+        </b-card>
+      </b-card-group>
+
+      <b-card-group deck>
+        <b-card header="聯絡資訊" header-tag="header" class="m-3">
+          <div role="group" class="m-3">
+            <label for="phoneNumber">電話號碼:</label>
+            <b-form-input
+              id="phoneNumber"
+              v-model="phoneNumber"
+              trim
+            ></b-form-input>
+          </div>
+          <div role="group" class="m-3">
+            <label for="address">住址:</label>
+            <b-form-input
+              id = "address"
+              v-model="address"
+              trim
+            ></b-form-input>
+          </div>
+        </b-card>
+      </b-card-group>
+
+      <template v-slot:modal-footer="{ hide }">
+        <b>Custom Footer</b>
+        <b-button size="sm" variant="success" @click="updateUserInfo">
+          更新資料
+        </b-button>
+        <b-button size="sm" variant="outline-secondary" @click="hide('forget')">
+          不儲存關閉
+        </b-button>
+      </template>
+    </b-modal>
+
+    <input @change="uploadChange" ref="inputFile" type="file" id="avatar" accept=".jpg,.jpeg,.png">
   </div>
 </template>
 
@@ -159,7 +172,6 @@ export default {
 
       file: '',
       fileName: '',
-      uploaded: false,
       targetRef: ''
     }
   },
@@ -260,17 +272,11 @@ export default {
     },
 
     uploadChange () {
-      this.uploaded = false
-      this.$refs.fileText.innerText = '請選擇你的頭貼檔案'
       try {
         this.file = this.$refs.inputFile.files[0]
         this.fileName = this.$refs.inputFile.files[0].name
         this.targetRef = 'managers/' + this.name + '/' + this.$refs.inputFile.files[0].name
-        this.$refs.img.src = URL.createObjectURL(this.file)
-        if (this.$refs.inputFile.files.length !== 0) {
-          this.uploaded = !this.uploaded
-          this.$refs.fileText.innerText = this.file.name
-        }
+        this.$refs.avatarImg.src = URL.createObjectURL(this.file)
       } catch (e) {
         console.log(e)
       }
@@ -291,50 +297,61 @@ export default {
   cursor: pointer;
 }
 
-.upload {
-  .upload-file {
-    @extend %vertical-center;
-    width: 100%;
-    & > button {
-      border-radius: 5px;
-      width: 100%;
-      & > label {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-      }
-    }
-    input {
-      display: none;
-    }
-  }
-  .upload__connect-line{
-    width: 80%;
-    height: 0px;
-    border-top: 1px dashed black;
-    margin: 0 auto;
-    @extend %vertical-center;
-  }
-  .upload-picture {
-    width: 100%;
-    height: 100%;
-    border: solid 2px #ccc;
-    border-radius: 5px;
-    box-shadow: 1px 1px 1px 0;
+.hero--cover {
+  width: 100%;
+  height: 200px;
+  background-color: #ccc;
+  background-image: url('../assets/cover.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.upload-picture {
+  display: block;
+  border-radius: 50%;
+  padding-left: 1rem;
+  box-shadow: 0px 0px 0px 3px #fff;
+  margin-top: -2.5rem;
+
+  label.container-camera-icon {
+    width: 4.5rem;
+    height: 4.5rem;
+    margin: 0px;
+    color: white;
     position: relative;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0px 0px 0px 3px #fff;
 
-    & > span {
-      position: absolute;
-      white-space: nowrap;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+    img.avatar {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
     }
 
-    img {
+    .mask {
+      font-size: 2rem;
+      background: rgba(0, 0, 0, 0.3);
+      position: absolute;
       width: 100%;
       height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
+
+  & > span {
+    position: absolute;
+    white-space: nowrap;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+input[type=file] {
+  display: none;
 }
 </style>

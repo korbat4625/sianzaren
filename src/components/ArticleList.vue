@@ -7,7 +7,7 @@
       :key="article.id"
       article-img="https://placekitten.com/380/200"
       titleImageDescription="a ate"
-      author-img=""
+      :author-img="article.authorInfo.photoURL"
     >
     </ArticleCard>
     <!-- <b-card
@@ -84,6 +84,7 @@ export default {
     this.F_getCollectionDocsSort('posts', { where: 'contentData.createdAt', order: 'desc' }).then(docs => {
       this.mainPosts = docs
       this.filterPosts = JSON.parse(JSON.stringify(this.mainPosts))
+      console.log(this.filterPosts)
 
       this.tags = this.filterPosts.map(ele => {
         return ele.aboutCategory.tags

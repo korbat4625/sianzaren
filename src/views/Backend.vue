@@ -9,13 +9,14 @@
       </template>
       <template v-slot:default>
         <div class="p-3">
-          <div>
+          <picture>
+            <source>
             <b-img :src="photoURL"></b-img>
             <p>{{ displayName }}</p>
-          </div>
+          </picture>
           <nav class="mb-3">
             <b-nav vertical>
-              <b-nav-item :to="'/backend/'+ who +'/user_info_editor'">編輯個人資料</b-nav-item>
+              <b-nav-item :to="'/backend/'+ who +'/user_info_editor'">個人主頁</b-nav-item>
               <b-nav-item :to="'/backend/'+ who +'/add_article'">新增文章</b-nav-item>
               <b-nav-item :to="'/backend/'+ who +'/article_editor'">編輯文章</b-nav-item>
               <b-nav-item @click="F_signOut" to="#">登出</b-nav-item>
@@ -57,8 +58,13 @@ export default {
 }
 </script>
 
-<style language="scss">
+<style lang="scss" scope>
 .pageBackend {
   padding: 1rem;
+  picture {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+  }
 }
 </style>
