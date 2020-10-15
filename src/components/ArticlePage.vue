@@ -139,7 +139,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 .container-fluid {
   padding: 3rem;
 

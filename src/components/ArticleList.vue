@@ -1,6 +1,16 @@
 <template>
   <div class="article__blocks">
-    <b-card
+
+    <ArticleCard
+      v-for="article in filterPosts"
+      :article="article"
+      :key="article.id"
+      article-img="https://placekitten.com/380/200"
+      titleImageDescription="a ate"
+      author-img=""
+    >
+    </ArticleCard>
+    <!-- <b-card
       no-body
       style="max-width: 20rem;"
       img-src="https://placekitten.com/380/200"
@@ -27,8 +37,7 @@
         </div>
         <span class="goto" @click="gotoArticle(article.id)"  :data-articleId="article.id">繼續閱讀</span>
       </b-card-footer>
-    </b-card>
-
+    </b-card> -->
     <div class="article__tags--expose" v-show="false">
       <slot name="tagsFiltered" :tagsFiltered="tagsFiltered"></slot>
     </div>
@@ -37,6 +46,7 @@
 
 <script>
 import firebase from '../Model/FirebaseModel.vue'
+import ArticleCard from './ArticleCard'
 export default {
   name: 'ArticleList',
   mixins: [firebase],
@@ -48,6 +58,10 @@ export default {
       tagsFiltered: null,
       filterPosts: []
     }
+  },
+
+  components: {
+    ArticleCard
   },
 
   watch: {
@@ -98,11 +112,14 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .article__blocks {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 1rem;
+  column-gap: 5px;
 }
 
 .card {
-  margin: 1rem;
+  border-radius: 5px;
 }
 
 .card-footer {

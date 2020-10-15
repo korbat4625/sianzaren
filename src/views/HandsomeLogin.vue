@@ -110,8 +110,6 @@
 </template>
 
 <script>
-import cButton from '../components/CButton.vue'
-
 import firebase from '../Model/FirebaseModel.vue'
 export default {
   name: 'handsomeLogin',
@@ -140,10 +138,6 @@ export default {
 
   mounted () {
     this.setStatus.prevStatus = 1
-  },
-
-  components: {
-    cButton
   },
 
   methods: {
