@@ -53,7 +53,7 @@ export default {
     return {
       articleId: this.$route.params.articleId,
       articleInfo: {
-        aboutCategory: {
+        others: {
           tags: []
         },
         authorInfo: {

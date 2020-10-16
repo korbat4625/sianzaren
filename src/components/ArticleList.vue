@@ -30,7 +30,7 @@
           <label
             class="label-tag"
             :key="tag"
-            v-for="tag in article.aboutCategory.tags"
+            v-for="tag in article.others.tags"
           >
             {{ tag }}
           </label>
@@ -72,7 +72,7 @@ export default {
         return 'done'
       }
       const filterPost = this.mainPosts.filter(ele => {
-        return ele.aboutCategory.tags.indexOf(newVal) !== -1
+        return ele.others.tags.indexOf(newVal) !== -1
       })
       this.filterPosts = filterPost
       console.log('目前文章:', filterPost)
@@ -87,7 +87,7 @@ export default {
       console.log(this.filterPosts)
 
       this.tags = this.filterPosts.map(ele => {
-        return ele.aboutCategory.tags
+        return ele.others.tags
       })
 
       this.tags.forEach(ele => [

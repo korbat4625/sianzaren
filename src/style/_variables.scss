@@ -1,0 +1,13 @@
+
+
+// padding 相關配置
+$base-pd: .5rem;
+$page-level-pd: 2rem;
+
+// icon 相關配置
+$icon-base-size: 1.5rem;
+$icon-base-color: #000;
+
+@import './components/mixins';
+@import './components/extends';
+@import './components/mask'; 

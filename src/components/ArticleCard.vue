@@ -18,12 +18,12 @@
         <label
             class="label-tag"
             :key="tag"
-            v-for="tag in article.aboutCategory.tags"
+            v-for="tag in article.others.tags"
           >
             {{ tag }}
         </label>
       </div>
-      <div><span class="goto" @click="gotoArticle(article.id)"  :data-articleId="article.id">繼續閱讀</span></div>
+      <div><span class="goto" @click="gotoArticle(article.id)" :data-articleId="article.id">繼續閱讀</span></div>
     </div>
   </section>
 </template>

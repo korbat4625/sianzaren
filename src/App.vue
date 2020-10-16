@@ -29,8 +29,19 @@ export default {
 </script>
 
 <style lang="scss">
+@import "./style/_variables.scss";
+
 * {
   font-family: 微軟正黑體;
   box-sizing: border-box;
+}
+
+.icon-size-black {
+  @extend %icon-size-base;
+  @include icon-size-color;
+}
+
+input[type=file] {
+  display: none;
 }
 </style>

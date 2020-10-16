@@ -1,6 +1,6 @@
 <template>
   <b-container class="pageBackend">
-    <b-sidebar id="sidebar-1" title="鐵人賽後台" shadow backdrop>
+    <b-sidebar id="sidebar-1" title="後台ㄏㄏ" shadow backdrop>
       <template v-slot:footer="{ hide }">
         <div class="d-flex flex-column bg-dark text-light px-3 py-2">
           <strong class="mr-auto">footer</strong>
@@ -28,7 +28,7 @@
 
     <b-row>
       <b-col cols="12">
-        <h1 @click="F_showUser">30天鐵人賽，後台</h1>
+        <h1 @click="F_showUser">後台ㄏㄏ</h1>
         <b-button v-b-toggle.sidebar-1>Toggle Sidebar</b-button>
       </b-col>
     </b-row>

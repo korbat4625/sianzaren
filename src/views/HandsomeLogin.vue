@@ -1,18 +1,17 @@
 <template>
   <b-container class="pageLogin">
-    <b-row class="my-3" v-if="inOrUp === 1">
-      <b-col sm="3">
-        <label>請輸入帳號:</label>
-      </b-col>
-      <b-col sm="9">
-        <b-form-input v-model="loginAcc"></b-form-input>
+    <b-row>
+      <b-col sm="8 status d-flex" offset-sm="2">
+        <b-button pill variant="outline-primary" @click="setStatus(1)" :class="{ active: setActive }">登入</b-button>
+        <div class="icon-size-black" @click="swapBtn"><b-icon icon="arrow-left-right"></b-icon></div>
+        <b-button pill variant="outline-primary" @click="setStatus(2)" :class="{ active: !setActive }">註冊</b-button>
       </b-col>
     </b-row>
     <b-row class="my-3" v-if="inOrUp === 1">
-      <b-col sm="3">
+      <b-col sm="8" offset="2">
+        <label>請輸入帳號:</label>
+        <b-form-input v-model="loginAcc"></b-form-input>
         <label>請輸入密碼:</label>
-      </b-col>
-      <b-col sm="9">
         <b-form-input type="password" v-model="loginPsd"></b-form-input>
       </b-col>
     </b-row>
@@ -96,16 +95,10 @@
       </b-col>
     </b-row>
     <b-row>
-      <b-col sm="3" class="status">請選擇登入或註冊: </b-col>
-      <b-col sm="9">
-        <div class="status">
-          <span @click="setStatus(1)" :class="{ active: setActive }">登入</span>
-          <span @click="setStatus(2)" :class="{ active: !setActive }">註冊</span>
-          <!-- <input v-model="inOrUp" type="text" style="display: block;"> -->
-        </div>
+      <b-col cols="4 d-flex justify-content-center align-items-center" offset-sm="4">
+        <b-button variant="primary" @click="submit">送出</b-button>
       </b-col>
     </b-row>
-    <b-button variant="primary" @click="submit">送出</b-button>
   </b-container>
 </template>
 
@@ -141,10 +134,19 @@ export default {
   },
 
   methods: {
+    swapBtn () {
+      if (this.inOrUp === 1) {
+        this.inOrUp = 2
+        this.setActive = false
+      } else {
+        this.inOrUp = 1
+        this.setActive = true
+      }
+    },
     setStatus (status) {
       this.inOrUp = status
-      if (status !== this.setStatus.prevStatus) this.setActive = !this.setActive
-      this.setStatus.prevStatus = status
+      if (this.status === 1) this.setActive = true
+      else this.setActive = false
     },
     submit () {
       switch (this.inOrUp) {
@@ -186,27 +188,40 @@ export default {
 
 <style lang="scss">
 .pageLogin {
-  padding: 2rem;
+  padding: $page-level-pd;
+}
+
+div.label--left {
+  padding: 1rem;
+  padding-left: 0px;
 }
 
 .status {
   padding: 1rem;
-  & > span {
+  display: flex;
+  div {
+    position: relative;
+  }
+
+  & > div:nth-child(2) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    & > svg {
+      cursor: pointer;
+    }
+  }
+
+  & > div:not(:nth-child(2)) {
     user-select: none;
     cursor: pointer;
-    margin: .5rem 1rem .5rem 0;
-    padding: .5rem;
+    padding: $base-pd;
     border-radius: 5px;
 
     &:hover {
       background-color: #ccc;
     }
   }
-}
-
-.active {
-  background-color: #595;
-  color: white;
 }
 
 .card-deck {

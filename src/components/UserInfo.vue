@@ -286,12 +286,6 @@ export default {
 </script>
 
 <style lang="scss">
-%vertical-center {
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
 .mail--verified {
   color: #33f;
   cursor: pointer;
@@ -311,7 +305,6 @@ export default {
   display: block;
   border-radius: 50%;
   padding-left: 1rem;
-  box-shadow: 0px 0px 0px 3px #fff;
   margin-top: -2.5rem;
 
   label.container-camera-icon {
@@ -329,17 +322,6 @@ export default {
       height: 72px;
       object-fit: cover;
     }
-
-    .mask {
-      font-size: 2rem;
-      background: rgba(0, 0, 0, 0.3);
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
   }
 
   & > span {
@@ -349,9 +331,5 @@ export default {
     left: 50%;
     transform: translate(-50%, -50%);
   }
-}
-
-input[type=file] {
-  display: none;
 }
 </style>
