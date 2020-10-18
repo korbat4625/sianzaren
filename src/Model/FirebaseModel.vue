@@ -22,8 +22,9 @@ export default {
 
     F_signIn (account, password) {
       const self = this
-      firebase.auth().signInWithEmailAndPassword(account, password).then(function () {
+      return firebase.auth().signInWithEmailAndPassword(account, password).then(function () {
         self.F_showUser().then(user => {
+          self.F_updateManagerInfo(`${user.uid}`, { online: true })
           self.$router.replace(`/backend/${user.uid}`)
         }).catch(error => {
           console.log(error)
@@ -49,7 +50,7 @@ export default {
     async F_signOut () {
       const self = this
       await self.F_updateManagerInfo(self.$route.params.who, { online: false })
-      firebase.auth().signOut().then(function () {
+      return firebase.auth().signOut().then(function () {
         self.$router.replace('/')
       })
     },
@@ -72,7 +73,6 @@ export default {
         console.log('新增文章成功')
       }).catch(res => {
         console.log('新增文章失敗')
-        console.log(res)
       })
     },
 
@@ -107,7 +107,7 @@ export default {
     },
 
     F_checkLogin () {
-      this.F_showUser().then(res => {
+      return this.F_showUser().then(res => {
         console.log(res)
         if (res === null) this.$router.replace('HandsomeLogin')
         else this.$router.replace(`backend/${res.uid}`)
@@ -127,7 +127,7 @@ export default {
     },
 
     F_setManagerData (user) {
-      db.collection('managers').doc(user.uid).set({
+      return db.collection('managers').doc(user.uid).set({
         account: user.account,
         password: user.password,
         displayName: user.displayName,
@@ -168,14 +168,14 @@ export default {
 
     F_sendEmailVerified () {
       var user = firebase.auth().currentUser
-      user.sendEmailVerification().then(function () {
+      return user.sendEmailVerification().then(function () {
         // Email sent.
       }).catch(function (error) {
         console.log(error)
       })
     },
 
-    async F_getStorageURL (ref) {
+    F_getStorageURL (ref) {
       // Create a storage reference from our storage service
       var storageRef = storage.ref()
       var pathReference = storageRef.child(ref)
@@ -189,8 +189,10 @@ export default {
 
     F_uploadImg (file, ref) {
       const self = this
+      const storageRef = storage.ref()
+      const uploadRef = storageRef.child(ref)
+      console.log('uploadRef: ', uploadRef)
       if (ref.indexOf('managers/' + this.$store.state.name) !== -1) {
-        const storageRef = storage.ref()
         const listToRemoveRef = storageRef.child('managers/' + this.$store.state.name)
         return listToRemoveRef.listAll().then(function (res) {
           res.items.forEach(function (itemRef) {
@@ -204,7 +206,6 @@ export default {
               // Uh-oh, an error occurred!
             })
           })
-          const uploadRef = storageRef.child(ref)
           return uploadRef.put(file).then(function (snapshot) {
             console.log('Uploaded a blob or file!')
           })
@@ -212,17 +213,23 @@ export default {
           console.log(error)
           // Uh-oh, an error occurred!
         })
+      } else {
+        return uploadRef.put(file).then(function (snapshot) {
+          console.log('Uploaded a blob or file!')
+        })
       }
     },
 
     async F_listStorageRef (ref) {
       const storageRef = storage.ref()
       const listToShow = storageRef.child(ref)
+      console.log('ref: ', ref)
+      console.log('listToShow: ', listToShow)
       return listToShow.listAll().then(function (res) {
         const item = []
         res.items.forEach(function (itemRef) {
           console.log('itemRefitemRefitemRef:', itemRef)
-          item.replace(itemRef)
+          item.push(itemRef)
         })
         return item
       }).catch(function (error) {

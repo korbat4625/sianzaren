@@ -28,7 +28,7 @@
 
     <b-row>
       <b-col cols="12">
-        <h1 @click="F_showUser">後台ㄏㄏ</h1>
+        <h1 @click="F_showUser();app()">後台ㄏㄏ</h1>
         <b-button v-b-toggle.sidebar-1>Toggle Sidebar</b-button>
       </b-col>
     </b-row>
@@ -54,6 +54,11 @@ export default {
       'photoURL',
       'displayName'
     ])
+  },
+  methods: {
+    app () {
+      console.log(this.$route.params)
+    }
   }
 }
 </script>

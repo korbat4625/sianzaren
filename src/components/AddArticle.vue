@@ -1,6 +1,6 @@
 <template>
   <b-row class="pageAddArticle">
-    <b-modal id="modal-1" title="下一步?" @ok="F_updateArticle(articleData, addOrUpdate , $attrs)">
+    <b-modal id="modal-1" title="下一步?" @ok="task">
       <p class="my-4">如要{{ addOrUpdate }}文章請按確認</p>
     </b-modal>
     <b-col cols="12">
@@ -107,6 +107,11 @@ export default {
       })
     },
 
+    async task () {
+      await this.uploadImg()
+      return this.F_updateArticle(this.articleData, this.addOrUpdate, this.$attrs)
+    },
+
     previewImg () {
       try {
         console.log(this.$refs.preview__input.files)
@@ -119,20 +124,18 @@ export default {
       }
     },
 
-    uploadImg () {
-      const self = this
-      try {
-        (async function () {
-          await self.F_uploadImg(self.file, self.targetRef)
-          await self.F_listStorageRef('posts/' + self.name).then(item => {
-            self.F_getStorageURL('posts/' + self.name + '/' + item[0].name).then(url => {
-              self.articleImgURL = url
-            })
-          })
-        })()
-      } catch (e) {
-        console.log(e)
-      }
+    async uploadImg () {
+      let item = null
+      this.targetRef = 'posts/img/' + this.$route.params.who
+      await this.F_uploadImg(this.file, this.targetRef + '/' + this.fileName)
+      await this.F_listStorageRef(this.targetRef).then(listedItem => {
+        item = listedItem
+      })
+      console.log(item)
+      return this.F_getStorageURL(this.targetRef + '/' + item[0].name).then(url => {
+        this.articleImgURL = url
+        console.log('調查影像: ', url)
+      })
     }
   }
 }

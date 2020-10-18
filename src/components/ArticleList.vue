@@ -10,34 +10,6 @@
       :author-img="article.authorInfo.photoURL"
     >
     </ArticleCard>
-    <!-- <b-card
-      no-body
-      style="max-width: 20rem;"
-      img-src="https://placekitten.com/380/200"
-      img-alt="Image"
-      img-top
-      v-for="article in filterPosts"
-      :key="article.id"
-    >
-      <b-card-body>
-        <b-card-title>{{ article.contentData.title }}</b-card-title>
-        <b-card-text>
-          {{ article.contentData.stopOnMore }}
-        </b-card-text>
-      </b-card-body>
-      <b-card-footer>
-        <div class="tags">
-          <label
-            class="label-tag"
-            :key="tag"
-            v-for="tag in article.others.tags"
-          >
-            {{ tag }}
-          </label>
-        </div>
-        <span class="goto" @click="gotoArticle(article.id)"  :data-articleId="article.id">繼續閱讀</span>
-      </b-card-footer>
-    </b-card> -->
     <div class="article__tags--expose" v-show="false">
       <slot name="tagsFiltered" :tagsFiltered="tagsFiltered"></slot>
     </div>
