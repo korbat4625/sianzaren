@@ -130,7 +130,7 @@ export default {
 
       articleRef.add(comment).then(function (commentData) {
         comment.id = commentData.id
-        self.comments.replace(comment)
+        self.comments.push(comment)
       }).catch(err => {
         console.log(err)
       })
