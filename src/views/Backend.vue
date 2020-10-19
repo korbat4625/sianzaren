@@ -66,6 +66,7 @@ export default {
 <style lang="scss" scope>
 .pageBackend {
   padding: 1rem;
+  height: 100%;
   picture {
     width: 72px;
     height: 72px;

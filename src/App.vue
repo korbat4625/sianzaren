@@ -28,6 +28,14 @@ export default {
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+}
+
+#app {
+  height: 100%;
+}
+
 .icon-size-black {
   @extend %icon-size-base;
   @include icon-size-color;

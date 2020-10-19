@@ -3,23 +3,46 @@
     <b-modal id="modal-1" title="下一步?" @ok="task">
       <p class="my-4">如要{{ addOrUpdate }}文章請按確認</p>
     </b-modal>
+
+    <b-col cols="12 imgManager-container">
+      <div class="imgManager">
+        <div class="img-store">
+          <h4>我的圖庫:</h4>
+        </div>
+        <div class="imgManager-upload--list">
+          <div v-for="preview in prewFiles" :key="preview.name" class="preview-select-item">
+            <img :src="preview" ref="preview__img--little" class="preview__img--little">
+          </div>
+          <div class="upload-icon">
+            <label for="preview__input"><b-icon icon="plus-square-fill"></b-icon></label>
+          </div>
+        </div>
+        <div class="imgManager-preview">
+          <h4>預覽:</h4>
+          <img ref="preview__img" class="preview__img">
+          <input @change="previewImg"
+            type="file"
+            id="preview__input"
+            ref="preview__input"
+            accept=".jpg,.jpeg,.png"
+            multiple
+          >
+        </div>
+      </div>
+    </b-col>
+
     <b-col cols="12">
       <label for="input-large">文章標題:</label>
       <b-form-input id="input-large" size="lg" placeholder="請輸入文章標題" v-model="title"></b-form-input>
     </b-col>
+
     <b-col cols="12">
       <MarkdownPro
         @on-save="updateData"
         v-model="value"
       ></MarkdownPro>
     </b-col>
-    <b-col cols="12">
-      <div class="preview">
-        <label for="preview__input" class="preview__label">為文章上個縮圖</label>
-        <input @change="previewImg" type="file" id="preview__input" ref="preview__input" accept=".jpg,.jpeg,.png">
-        <img ref="preview__img" class="preview__img">
-      </div>
-    </b-col>
+
     <b-col cols="12">
       <div>
         <label for="tags-pills">請輸入文章標籤</label>
@@ -54,10 +77,7 @@ export default {
       tags: [],
       createdAt: null,
 
-      file: null,
-      fileName: null,
-      targetRef: null,
-      articleImgURL: ''
+      prewFiles: []
     }
   },
   watch: {
@@ -115,10 +135,10 @@ export default {
     previewImg () {
       try {
         console.log(this.$refs.preview__input.files)
-        this.file = this.$refs.preview__input.files[0]
-        this.fileName = this.$refs.preview__input.files[0].name
-        this.$refs.preview__img.src = URL.createObjectURL(this.file)
-        this.articleImgURL = this.$refs.preview__img.src
+
+        for (const currentFile of this.$refs.preview__input.files) {
+          this.prewFiles.push(URL.createObjectURL(currentFile))
+        }
       } catch (e) {
         console.log(e)
       }
@@ -144,10 +164,59 @@ export default {
 <style lang="scss" scope>
 .pageAddArticle {
   padding: 1rem;
+  height: 100%;
 
-  & > .row {
-    & > div {
-      margin: 1rem;;
+  .imgManager-container {
+    height: 30%;
+  }
+  .imgManager {
+    border-radius: 5px;
+    border: solid 1px #ddd;
+    padding: 1rem 1rem 0rem 1rem;
+    height: 100%;
+    display: grid;
+    grid-template-areas:
+      '      store  preview'
+      'upload-list  preview';
+    grid-template-columns: 70% 30%;
+    gap: 1rem;
+    .img-store {
+      grid-area: store;
+    }
+
+    .imgManager-upload--list {
+      display: flex;
+      align-items: center;
+      border-top: solid 1px #ccc;
+      padding: .5rem;
+      grid-area: upload-list;
+      .preview-select-item {
+        width: 50px;
+        height: 50px;
+        border: solid 1px #ccc;
+        position: relative;
+        .preview__img--little {
+          width: 50px;
+          height: 50px;
+          object-fit: cover;
+        }
+      }
+      .upload-icon {
+        font-size: 3rem;
+        height: 50px;
+        width: 50px;
+        position: relative;
+        margin-left: .25rem;
+        svg {
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+      }
+    }
+
+    .imgManager-preview {
+      grid-area: preview;
     }
   }
 
