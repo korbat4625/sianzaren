@@ -1,18 +1,18 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
 import Backend from '../views/Backend.vue'
 import AddArticle from '../components/AddArticle.vue'
 import UserInfo from '../components/UserInfo.vue'
 import '../Model/FirebaseModel.js'
 
 Vue.use(VueRouter)
+const siteCondition = 'fixing'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: siteCondition === 'fixing' ? () => import('../views/Building.vue') : () => import('../views/Home.vue')
   },
   {
     path: '/about',
@@ -53,6 +53,11 @@ const routes = [
     path: '/article/:articleId',
     name: 'ArticlePage',
     component: () => import('../components/ArticlePage.vue')
+  },
+  {
+    path: '*',
+    name: 'NotFound',
+    component: () => import('../views/404.vue')
   }
 ]
 

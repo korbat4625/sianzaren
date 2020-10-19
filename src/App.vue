@@ -15,22 +15,14 @@ export default {
   components: {
     Header
   },
-  data () {
-    return {
-    }
-  },
   created () {
     this.F_stateWatcher()
-  },
-  methods: {
   }
 }
 
 </script>
 
 <style lang="scss">
-@import "./style/_variables.scss";
-
 * {
   font-family: 微軟正黑體;
   box-sizing: border-box;
