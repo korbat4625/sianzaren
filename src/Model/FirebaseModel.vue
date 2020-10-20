@@ -226,7 +226,6 @@ export default {
       return listToShow.listAll().then(function (res) {
         const item = []
         res.items.forEach(function (itemRef) {
-          console.log('itemRefitemRefitemRef:', itemRef)
           item.push(itemRef)
         })
         return item
@@ -236,7 +235,7 @@ export default {
       })
     },
 
-    async F_uploadFiles (ref, file) {
+    F_uploadFiles_with_watcher (ref, file) {
       const storageRef = storage.ref()
 
       // Create the file metadata
@@ -245,7 +244,7 @@ export default {
       // }
 
       // Upload file and metadata to the object 'images/mountains.jpg'
-      var uploadTask = storageRef.child(ref + '/' + file.name).put(file)
+      var uploadTask = storageRef.child(ref).put(file)
 
       // Listen for state changes, errors, and completion of the upload.
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
@@ -284,6 +283,7 @@ export default {
         // Upload completed successfully, now we can get the download URL
           uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
             console.log('File available at', downloadURL)
+            return downloadURL
           })
         })
     }

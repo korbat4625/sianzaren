@@ -4,30 +4,37 @@
       <p class="my-4">如要{{ addOrUpdate }}文章請按確認</p>
     </b-modal>
 
-    <b-col cols="12 imgManager-container">
+    <b-col cols="4 imgManager-container">
       <div class="imgManager">
-        <div class="img-store">
-          <h4>我的圖庫:</h4>
+        <div class="img-store--list">
+          <h3 id="picture-list">圖庫清單</h3>
+          <b-button size="sm" variant="outline-primary" @click="$refs.preview__input.click()">上傳檔案</b-button>
+
+          <ul class="">
+            <li v-for="img in uploadedSuccessImg" :key="img.key"></li>
+          </ul>
         </div>
-        <div class="imgManager-upload--list">
-          <div v-for="preview in prewFiles" :key="preview.name" class="preview-select-item">
-            <img :src="preview" ref="preview__img--little" class="preview__img--little">
-          </div>
-          <div class="upload-icon">
-            <label for="preview__input"><b-icon icon="plus-square-fill"></b-icon></label>
-          </div>
+        <div class="imgManager-upload">
+          <ul>
+            <li v-for="preview in prewFiles" :key="preview.name" class="preview-select-item">
+              {{ preview.name }}
+            </li>
+          </ul>
         </div>
-        <div class="imgManager-preview">
-          <h4>預覽:</h4>
-          <img ref="preview__img" class="preview__img">
-          <input @change="previewImg"
-            type="file"
-            id="preview__input"
-            ref="preview__input"
-            accept=".jpg,.jpeg,.png"
-            multiple
-          >
-        </div>
+      </div>
+    </b-col>
+
+    <b-col cols="8">
+      <div class="imgManager-preview">
+        <h4>預覽:</h4>
+        <img ref="preview__img" class="preview__img">
+        <input @change="previewImg"
+          type="file"
+          id="preview__input"
+          ref="preview__input"
+          accept=".jpg,.jpeg,.png"
+          multiple
+        >
       </div>
     </b-col>
 
@@ -77,7 +84,8 @@ export default {
       tags: [],
       createdAt: null,
 
-      prewFiles: []
+      prewFiles: [],
+      uploadedSuccessImg: []
     }
   },
   watch: {
@@ -134,10 +142,14 @@ export default {
 
     previewImg () {
       try {
-        console.log(this.$refs.preview__input.files)
-
         for (const currentFile of this.$refs.preview__input.files) {
-          this.prewFiles.push(URL.createObjectURL(currentFile))
+          console.log(currentFile)
+          const fileBuffer = {
+            file: currentFile,
+            name: currentFile.name,
+            URL: URL.createObjectURL(currentFile)
+          }
+          this.prewFiles.push(fileBuffer)
         }
       } catch (e) {
         console.log(e)
@@ -146,12 +158,19 @@ export default {
 
     async uploadImg () {
       let item = null
-      this.targetRef = 'posts/img/' + this.$route.params.who
-      await this.F_uploadImg(this.file, this.targetRef + '/' + this.fileName)
+      this.targetRef = 'posts/img/' + this.$route.params.who + '/'
+      for (let i = 0; i < this.prewFiles.length; i++) {
+        setTimeout(() => {
+          console.log('上船路徑:', 'posts/img/' + this.$route.params.who + '/' + this.prewFiles[i].name)
+          console.log('上船檔案:', this.prewFiles[i].file)
+          const ref = this.targetRef + this.prewFiles[i].name
+          this.F_uploadFiles_with_watcher(ref, this.prewFiles[i].file)
+        }, 0)
+      }
       await this.F_listStorageRef(this.targetRef).then(listedItem => {
         item = listedItem
       })
-      console.log(item)
+      console.log('item::', item)
       return this.F_getStorageURL(this.targetRef + '/' + item[0].name).then(url => {
         this.articleImgURL = url
         console.log('調查影像: ', url)
@@ -168,56 +187,53 @@ export default {
 
   .imgManager-container {
     height: 30%;
-  }
-  .imgManager {
-    border-radius: 5px;
-    border: solid 1px #ddd;
-    padding: 1rem 1rem 0rem 1rem;
-    height: 100%;
-    display: grid;
-    grid-template-areas:
-      '      store  preview'
-      'upload-list  preview';
-    grid-template-columns: 70% 30%;
-    gap: 1rem;
-    .img-store {
-      grid-area: store;
-    }
 
-    .imgManager-upload--list {
-      display: flex;
-      align-items: center;
-      border-top: solid 1px #ccc;
-      padding: .5rem;
-      grid-area: upload-list;
-      .preview-select-item {
-        width: 50px;
-        height: 50px;
-        border: solid 1px #ccc;
+    .imgManager {
+      border-radius: 5px;
+      border: solid 1px #ddd;
+      padding: 1rem 1rem 0rem 1rem;
+      height: 100%;
+      overflow-y: auto;
+
+      .img-store--list {
         position: relative;
-        .preview__img--little {
-          width: 50px;
-          height: 50px;
-          object-fit: cover;
-        }
-      }
-      .upload-icon {
-        font-size: 3rem;
-        height: 50px;
-        width: 50px;
-        position: relative;
-        margin-left: .25rem;
-        svg {
+        #picture-list {
           position: absolute;
+          right: 0;
           top: 0;
-          left: 0;
+          text-shadow: 6px 6px 3px rgba(0,0,0,0.2);
+        }
+      }
+
+      .imgManager-upload > div:first-child {
+        margin-left: 0;
+      }
+
+      .imgManager-upload {
+        .preview-select-item {
+
+        }
+        .upload-icon {
+          font-size: 3rem;
+          height: 50px;
+          width: 50px;
+          position: relative;
+          margin-left: .25rem;
+          svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+          }
         }
       }
     }
+  }
 
-    .imgManager-preview {
-      grid-area: preview;
-    }
+  .imgManager-preview {
+    border: solid 1px #ddd;
+    height: 100%;
+    border-radius: 5px;
+    padding: 1rem 1rem 0rem 1rem;
   }
 
   .markdown-body {
