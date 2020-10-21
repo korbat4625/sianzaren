@@ -6,25 +6,32 @@
 
     <b-col cols="4 imgManager-container">
       <div class="imgManager">
-        <div class="img-store--list">
-          <h3 id="picture-list">圖庫清單</h3>
-          <b-button size="sm" variant="outline-primary" @click="$refs.preview__input.click()">上傳檔案</b-button>
-
-          <ul class="">
-            <li v-for="img in uploadedSuccessImg" :key="img.key"></li>
-          </ul>
+        <div>
+          <b-button size="sm" variant="outline-primary" @click="$refs.preview__input.click()">上傳檔案</b-button>&nbsp;
+          <b-button size="sm" variant="outline-primary" @click="uploadImg">確認上傳</b-button>
         </div>
         <div class="imgManager-upload">
           <ul>
             <li v-for="preview in prewFiles" :key="preview.name" class="preview-select-item">
-              {{ preview.name }}
+              {{ preview.name }} {{ uploadStatus }}
             </li>
           </ul>
         </div>
       </div>
     </b-col>
 
-    <b-col cols="8">
+    <b-col cols="4 imgManager-container">
+      <div class="imgManager">
+        <div class="img-store--list">
+          <h3 id="picture-list">圖庫清單</h3>
+          <ul class="list-style-none">
+            <li v-for="img in uploadedSuccessImg" :key="img.key"></li>
+          </ul>
+        </div>
+      </div>
+    </b-col>
+
+    <b-col cols="4">
       <div class="imgManager-preview">
         <h4>預覽:</h4>
         <img ref="preview__img" class="preview__img">
@@ -83,10 +90,22 @@ export default {
       addOrUpdate: '新增',
       tags: [],
       createdAt: null,
-
+      targetRef: 'posts/img/' + this.$route.params.who + '/',
       prewFiles: [],
-      uploadedSuccessImg: []
+      uploadedSuccessImg: [],
+      uploadStatus: '',
+      storeImgURLs: []
     }
+  },
+  mounted () {
+    this.F_listStorageRef(this.targetRef).then(itemList => {
+      for (const item of itemList) {
+        this.F_getStorageURL(item.fullPath).then(url => {
+          this.storeImgURLs.push(url)
+        })
+      }
+      console.log(this.storeImgURLs)
+    })
   },
   watch: {
     $attrs: function (newVal, oldVal) {
@@ -143,7 +162,6 @@ export default {
     previewImg () {
       try {
         for (const currentFile of this.$refs.preview__input.files) {
-          console.log(currentFile)
           const fileBuffer = {
             file: currentFile,
             name: currentFile.name,
@@ -158,15 +176,16 @@ export default {
 
     async uploadImg () {
       let item = null
-      this.targetRef = 'posts/img/' + this.$route.params.who + '/'
-      for (let i = 0; i < this.prewFiles.length; i++) {
-        setTimeout(() => {
-          console.log('上船路徑:', 'posts/img/' + this.$route.params.who + '/' + this.prewFiles[i].name)
-          console.log('上船檔案:', this.prewFiles[i].file)
-          const ref = this.targetRef + this.prewFiles[i].name
-          this.F_uploadFiles_with_watcher(ref, this.prewFiles[i].file)
-        }, 0)
-      }
+      await Promise.all(
+        this.prewFiles.map(file => {
+          const ref = this.targetRef + file.name
+          return this.F_uploadFiles_with_watcher(ref, file.file)
+        })
+      ).then(res => {
+        console.log('url: ', res)
+      }).catch(e => {
+        console.log(e)
+      })
       await this.F_listStorageRef(this.targetRef).then(listedItem => {
         item = listedItem
       })
@@ -195,24 +214,11 @@ export default {
       height: 100%;
       overflow-y: auto;
 
-      .img-store--list {
-        position: relative;
-        #picture-list {
-          position: absolute;
-          right: 0;
-          top: 0;
-          text-shadow: 6px 6px 3px rgba(0,0,0,0.2);
-        }
-      }
-
       .imgManager-upload > div:first-child {
         margin-left: 0;
       }
 
       .imgManager-upload {
-        .preview-select-item {
-
-        }
         .upload-icon {
           font-size: 3rem;
           height: 50px;

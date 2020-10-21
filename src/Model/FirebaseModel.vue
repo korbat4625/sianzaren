@@ -236,56 +236,58 @@ export default {
     },
 
     F_uploadFiles_with_watcher (ref, file) {
-      const storageRef = storage.ref()
+      return new Promise((resolve, reject) => {
+        const storageRef = storage.ref()
 
-      // Create the file metadata
-      // var metadata = {
-      //   contentType: 'image/jpeg'
-      // }
+        // Create the file metadata
+        // var metadata = {
+        //   contentType: 'image/jpeg'
+        // }
 
-      // Upload file and metadata to the object 'images/mountains.jpg'
-      var uploadTask = storageRef.child(ref).put(file)
+        // Upload file and metadata to the object 'images/mountains.jpg'
+        var uploadTask = storageRef.child(ref).put(file)
 
-      // Listen for state changes, errors, and completion of the upload.
-      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-        function (snapshot) {
+        // Listen for state changes, errors, and completion of the upload.
+        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+          function (snapshot) {
           // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-          var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          console.log('Upload is ' + progress + '% done')
-          switch (snapshot.state) {
-            case firebase.storage.TaskState.PAUSED: // or 'paused'
-              console.log('Upload is paused')
-              break
-            case firebase.storage.TaskState.RUNNING: // or 'running'
-              console.log('Upload is running')
-              break
-          }
-        }, function (error) {
-        // A full list of error codes is available at
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            console.log('Upload is ' + progress + '% done')
+            switch (snapshot.state) {
+              case firebase.storage.TaskState.PAUSED: // or 'paused'
+                console.log('Upload is paused')
+                break
+              case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log('Upload is running')
+                break
+            }
+          }, function (error) {
+            // A full list of error codes is available at
           // https://firebase.google.com/docs/storage/web/handle-errors
-          switch (error.code) {
-            case 'storage/unauthorized':
-            // User doesn't have permission to access the object
-              console.log('目前使用者無權限上傳檔案')
-              break
+            switch (error.code) {
+              case 'storage/unauthorized':
+                // User doesn't have permission to access the object
+                console.log('目前使用者無權限上傳檔案')
+                break
 
-            case 'storage/canceled':
-            // User canceled the upload
-              console.log('使用者取消上傳檔案')
-              break
+              case 'storage/canceled':
+                // User canceled the upload
+                console.log('使用者取消上傳檔案')
+                break
 
-            case 'storage/unknown':
-            // Unknown error occurred, inspect error.serverResponse
-              console.log('未知的錯誤', error)
-              break
-          }
-        }, function () {
-        // Upload completed successfully, now we can get the download URL
-          uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-            console.log('File available at', downloadURL)
-            return downloadURL
+              case 'storage/unknown':
+                // Unknown error occurred, inspect error.serverResponse
+                console.log('未知的錯誤', error)
+                break
+            }
+          }, function () {
+            // Upload completed successfully, now we can get the download URL
+            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+              console.log(file.name + '上船完成', downloadURL)
+              resolve(downloadURL)
+            })
           })
-        })
+      })
     }
   }
 }
