@@ -4,7 +4,7 @@
       <p class="my-4">如要{{ addOrUpdate }}文章請按確認</p>
     </b-modal>
 
-    <b-col cols="4 imgManager-container">
+    <b-col cols="3 imgManager-container">
       <div class="imgManager">
         <div>
           <b-button size="sm" variant="outline-primary" @click="$refs.preview__input.click()">上傳檔案</b-button>&nbsp;
@@ -20,21 +20,29 @@
       </div>
     </b-col>
 
-    <b-col cols="4 imgManager-container">
+    <b-col cols="9 imgManager-container">
       <div class="imgManager">
         <div class="img-store--list">
-          <h3 id="picture-list">圖庫清單</h3>
-          <ul class="list-style-none">
-            <li v-for="img in uploadedSuccessImg" :key="img.key"></li>
-          </ul>
+          <h3>圖庫清單</h3>
+          <div class="picture-wrap">
+            <div class="picture" v-for="url in storeImgURLs" :key="url">
+              <img :src="url" alt="" srcset="" @click="loadImg">
+            </div>
+          </div>
         </div>
       </div>
     </b-col>
 
-    <b-col cols="4">
+    <b-col cols="4 mt-2">
       <div class="imgManager-preview">
-        <h4>預覽:</h4>
-        <img ref="preview__img" class="preview__img">
+        <div class="header">
+          <h3>預覽:</h3>
+          <b-button size="sm" variant="outline-primary" @click="crop">裁切</b-button>
+          <b-button size="sm" variant="outline-primary" @click="saveCropData">確認</b-button>
+        </div>
+        <div class="preview-wrap mt-2 mb-2">
+          <img ref="preview__img" class="preview__img">
+        </div>
         <input @change="previewImg"
           type="file"
           id="preview__input"
@@ -79,6 +87,7 @@
 <script>
 import { MarkdownPro } from 'vue-meditor'
 import firebase from '../Model/FirebaseModel.vue'
+import Cropper from 'cropperjs'
 export default {
   name: 'AddArticle',
   mixins: [firebase],
@@ -94,18 +103,10 @@ export default {
       prewFiles: [],
       uploadedSuccessImg: [],
       uploadStatus: '',
-      storeImgURLs: []
+      storeImgURLs: [],
+      cropper: null,
+      croppedData: null
     }
-  },
-  mounted () {
-    this.F_listStorageRef(this.targetRef).then(itemList => {
-      for (const item of itemList) {
-        this.F_getStorageURL(item.fullPath).then(url => {
-          this.storeImgURLs.push(url)
-        })
-      }
-      console.log(this.storeImgURLs)
-    })
   },
   watch: {
     $attrs: function (newVal, oldVal) {
@@ -118,7 +119,44 @@ export default {
   components: {
     MarkdownPro
   },
+  created () {
+    console.log(Cropper)
+    this.F_listStorageRef(this.targetRef).then(itemList => {
+      for (const item of itemList) {
+        this.F_getStorageURL(item.fullPath).then(url => {
+          this.storeImgURLs.push(url)
+        })
+      }
+      console.log(this.storeImgURLs)
+    })
+  },
   methods: {
+    loadImg (e) {
+      // console.log(e.target.currentSrc)
+      this.$refs.preview__img.src = e.target.currentSrc
+    },
+
+    crop () {
+      const image = this.$refs.preview__img
+      this.cropper = new Cropper(image, {
+        aspectRatio: 16 / 9,
+        crop (event) {
+          console.log(event.detail.x)
+          console.log(event.detail.y)
+          console.log(event.detail.width)
+          console.log(event.detail.height)
+          console.log(event.detail.rotate)
+          console.log(event.detail.scaleX)
+          console.log(event.detail.scaleY)
+        }
+      })
+      this.cropper.crop()
+    },
+
+    saveCropData () {
+      this.cropper.getCroppedCanvas()
+    },
+
     updateData (saveEventInfo) {
       const splitter = '<!-- more -->'
       const self = this
@@ -175,7 +213,6 @@ export default {
     },
 
     async uploadImg () {
-      let item = null
       await Promise.all(
         this.prewFiles.map(file => {
           const ref = this.targetRef + file.name
@@ -185,14 +222,6 @@ export default {
         console.log('url: ', res)
       }).catch(e => {
         console.log(e)
-      })
-      await this.F_listStorageRef(this.targetRef).then(listedItem => {
-        item = listedItem
-      })
-      console.log('item::', item)
-      return this.F_getStorageURL(this.targetRef + '/' + item[0].name).then(url => {
-        this.articleImgURL = url
-        console.log('調查影像: ', url)
       })
     }
   }
@@ -213,6 +242,23 @@ export default {
       padding: 1rem 1rem 0rem 1rem;
       height: 100%;
       overflow-y: auto;
+
+      .picture-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        .picture {
+          width: 100px;
+          height: 80px;
+          margin-top: 1rem;
+          border: solid 1px #ccc;
+          img {
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
+            cursor: pointer;
+          }
+        }
+      }
 
       .imgManager-upload > div:first-child {
         margin-left: 0;
@@ -240,6 +286,16 @@ export default {
     height: 100%;
     border-radius: 5px;
     padding: 1rem 1rem 0rem 1rem;
+    .preview-wrap {
+      width: 100%;
+      img {
+        width: 100%;
+      }
+    }
+  }
+
+  .preview__img {
+    border: solid 1px #ccc;
   }
 
   .markdown-body {
@@ -249,14 +305,8 @@ export default {
     padding: 1rem;
   }
 
-  .preview {
-    width: 100%;
-    .preview__img {
-      width: 300px;
-      border: 1px solid black;
-      object-fit: contain;
-      object-position: 0 0;
-    }
+  .header {
+    display: flex;
   }
 }
 
