@@ -1,9 +1,15 @@
 <template>
   <b-container fluid id="HeroPaper" class="mx-auto">
-    <b-col cols="8" offset="2">
-      <h1 @click="goto('/')">閒咱人等</h1>
-      <p>你們、我們、他們</p>
-    </b-col>
+
+    <b-row>
+      <b-col cols="1">
+        <span class="toggle_sidebar" v-b-toggle.sidebar-1 ><b-icon icon="grid3x2-gap"></b-icon></span>
+      </b-col>
+      <b-col cols="8" offset="3">
+        <h1 @click="goto('/')">閒咱人等</h1>
+        <p>你們、我們、他們</p>
+      </b-col>
+    </b-row>
     <!-- <b-navbar type="dark" variant="dark" v-if="$router.history.current.fullPath.search('backend') === -1">
       <b-navbar-nav align="center">
         <b-nav-item to="/">Home</b-nav-item>
@@ -53,6 +59,11 @@ export default {
     cursor: pointer;
     display: inline-block;
     margin-bottom: 0px;
+  }
+
+  .toggle_sidebar {
+    font-size: 2rem;
+    outline: none;
   }
 }
 </style>

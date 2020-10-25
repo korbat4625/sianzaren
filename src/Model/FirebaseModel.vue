@@ -191,12 +191,10 @@ export default {
       const self = this
       const storageRef = storage.ref()
       const uploadRef = storageRef.child(ref)
-      console.log('uploadRef: ', uploadRef)
       if (ref.indexOf('managers/' + this.$store.state.name) !== -1) {
         const listToRemoveRef = storageRef.child('managers/' + this.$store.state.name)
         return listToRemoveRef.listAll().then(function (res) {
           res.items.forEach(function (itemRef) {
-            console.log(itemRef)
             // Delete the file
             const deleteItem = storageRef.child('managers/' + self.$store.state.name + '/' + itemRef.name)
             deleteItem.delete().then(function () {
@@ -231,7 +229,6 @@ export default {
         return item
       }).catch(function (error) {
         console.log(error)
-        // Uh-oh, an error occurred!
       })
     },
 
@@ -287,6 +284,19 @@ export default {
               resolve(downloadURL)
             })
           })
+      })
+    },
+
+    deleteAllImg () {
+      const listToRemoveRef = 'posts/img/' + this.$route.params.who
+      return this.F_listStorageRef(listToRemoveRef).then(list => {
+        console.log(list)
+        list.forEach(item => {
+          const storageRef = storage.ref()
+          const toDelete = storageRef.child(item.fullPath)
+          toDelete.delete()
+        })
+        return 'done'
       })
     }
   }

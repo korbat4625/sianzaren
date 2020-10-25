@@ -4,56 +4,98 @@
       <p class="my-4">如要{{ addOrUpdate }}文章請按確認</p>
     </b-modal>
 
-    <b-col cols="3 imgManager-container">
-      <div class="imgManager">
-        <div>
-          <b-button size="sm" variant="outline-primary" @click="$refs.preview__input.click()">上傳檔案</b-button>&nbsp;
-          <b-button size="sm" variant="outline-primary" @click="uploadImg">確認上傳</b-button>
-        </div>
-        <div class="imgManager-upload">
+    <b-modal ref="info-modal" hide-footer title="Using Component Methods">
+      <div class="d-block text-center">
+        <h3>Hello From My Modal!</h3>
+      </div>
+      <b-button class="mt-2" variant="outline-primary" block @click="hideModal">還是先取消好了ㄏㄏ</b-button>
+      <b-button class="mt-3" variant="outline-danger" block @click="deleteAllCloudImg">不管了!刪除!</b-button>
+    </b-modal>
+
+    <b-col cols="12">
+      <div class="accordion cloud" role="tablist">
+        <b-card no-body class="mb-1">
+          <b-card-header header-tag="header" class="p-1" role="tab">
+            <b-button block v-b-toggle.accordion-1 variant="info">點擊以顯示或隱藏雲端圖庫</b-button>
+          </b-card-header>
+          <b-collapse id="accordion-1" visible accordion="my-accordion" role="tabpanel">
+            <b-card-body>
+              <div class="cloud_img_container d-flex flex-wrap">
+                <div class="cloud_img" v-for="url in storeImgURLs" :key="url">
+                  <img class="img_item" :src="url" alt="" srcset="" @click="loadImg">
+                </div>
+              </div>
+            </b-card-body>
+          </b-collapse>
+          <template v-slot:footer>
+            <b-button variant="outline-danger" @click="showModal">清空圖庫</b-button>
+          </template>
+        </b-card>
+      </div>
+    </b-col>
+
+    <b-col cols="3 mt-3">
+      <b-card-group deck>
+        <b-card
+          header="資訊窗口"
+          header-tag="header"
+          footer-tag="footer"
+        >
+          <div id="cropperPreview"></div>
           <ul>
             <li v-for="preview in prewFiles" :key="preview.name" class="preview-select-item">
               {{ preview.name }} {{ uploadStatus }}
             </li>
           </ul>
-        </div>
-      </div>
+          <template v-slot:footer>
+            <b-button size="sm" variant="outline-primary" @click="$refs.preview__input.click()">選擇檔案</b-button>&nbsp;
+            <b-button size="sm" variant="outline-primary" @click="clearFile">取消上傳</b-button>&nbsp;
+            <b-button size="sm" variant="outline-primary" @click="uploadImg">確認上傳</b-button>
+          </template>
+        </b-card>
+      </b-card-group>
     </b-col>
 
-    <b-col cols="9 imgManager-container">
-      <div class="imgManager">
-        <div class="img-store--list">
-          <h3>圖庫清單</h3>
-          <div class="picture-wrap">
-            <div class="picture" v-for="url in storeImgURLs" :key="url">
-              <img :src="url" alt="" srcset="" @click="loadImg">
-            </div>
-          </div>
-        </div>
-      </div>
-    </b-col>
-
-    <b-col cols="4 mt-2">
-      <div class="imgManager-preview">
-        <div class="header">
-          <h3>預覽:</h3>
-          <b-button size="sm" variant="outline-primary" @click="crop">裁切</b-button>
-          <b-button size="sm" variant="outline-primary" @click="saveCropData">確認</b-button>
-        </div>
-        <div class="preview-wrap mt-2 mb-2">
-          <img ref="preview__img" class="preview__img">
-        </div>
-        <input @change="previewImg"
-          type="file"
-          id="preview__input"
-          ref="preview__input"
-          accept=".jpg,.jpeg,.png"
-          multiple
+    <b-col cols="6 mt-3">
+      <b-card-group deck>
+        <b-card
+          header="裁切處"
+          header-tag="header"
+          footer-tag="footer"
         >
-      </div>
+          <div class="preview_wrap">
+            <img ref="preview__img" class="preview__img">
+          </div>
+          <template v-slot:footer>
+            <b-button size="sm" variant="outline-primary" @click="crop">進行裁切</b-button>&nbsp;
+            <b-button size="sm" variant="outline-primary" @click="cancelCrop">取消</b-button>&nbsp;
+            <b-button size="sm" variant="outline-primary" @click="crop">產生網址</b-button>&nbsp;
+          </template>
+        </b-card>
+      </b-card-group>
     </b-col>
 
-    <b-col cols="12">
+    <b-col cols="3 mt-3">
+      <b-card-group deck>
+        <b-card
+          header="工具列"
+          header-tag="header"
+          footer-tag="footer"
+        >
+          <b-button size="md" variant="outline-primary" @click="changeViewBox('16/9')">16:9</b-button>&nbsp;
+          <b-button size="md" variant="outline-primary" @click="changeViewBox('4/3')">4:3</b-button>&nbsp;
+          <b-button size="md" variant="outline-primary" @click="changeViewBox('2/3')">2:3</b-button>&nbsp;
+          <b-button size="md" variant="outline-primary" @click="changeViewBox('1/1')">1:1</b-button>&nbsp;
+          <b-button size="md" variant="outline-primary" @click="changeViewBox('free')">任意範圍</b-button>
+          <b-button size="md" variant="outline-primary" @click="resetCropper">重置</b-button>
+          <br />
+          <b-button size="md" variant="outline-primary" @click="uploadImg('cropped')">上傳並取得圖像連結</b-button>
+
+        </b-card>
+      </b-card-group>
+    </b-col>
+
+    <b-col cols="12 mt-3">
       <label for="input-large">文章標題:</label>
       <b-form-input id="input-large" size="lg" placeholder="請輸入文章標題" v-model="title"></b-form-input>
     </b-col>
@@ -81,6 +123,14 @@
       </div>
     </b-col>
     <b-col class="mt-2"><b-button v-b-modal.modal-1 variant="primary">點擊{{ addOrUpdate }}文章</b-button></b-col>
+
+    <input @change="previewImg"
+      type="file"
+      id="preview__input"
+      ref="preview__input"
+      accept=".jpg,.jpeg,.png"
+      multiple
+    >
   </b-row>
 </template>
 
@@ -120,7 +170,6 @@ export default {
     MarkdownPro
   },
   created () {
-    console.log(Cropper)
     this.F_listStorageRef(this.targetRef).then(itemList => {
       for (const item of itemList) {
         this.F_getStorageURL(item.fullPath).then(url => {
@@ -131,23 +180,55 @@ export default {
     })
   },
   methods: {
+    resetCropper () {
+      return this.cropper.reset()
+    },
+
+    changeViewBox (viewboxSize) {
+      console.log(this.cropper)
+      if (this.$refs.preview__img.src === '') return 'none'
+      if (this.$refs.preview__img.src === '') return 'none'
+      viewboxSize = viewboxSize.split('/')
+      const ratio = viewboxSize[0] / viewboxSize[1]
+      if (this.cropper === null) {
+        this.crop(ratio)
+      } else {
+        if (this.cropper.ready === false) {
+          this.crop(ratio)
+        }
+        this.cropper.setAspectRatio(ratio)
+      }
+
+      return 'done'
+    },
+
     loadImg (e) {
       // console.log(e.target.currentSrc)
       this.$refs.preview__img.src = e.target.currentSrc
+      return 'done'
     },
 
-    crop () {
+    cancelCrop () {
+      this.cropper.clear()
+      this.cropper.destroy()
+      this.cropper = null
+      return 'done'
+    },
+
+    clearFile () {
+      this.prewFiles = []
+      return 'done'
+    },
+
+    crop (viewBoxSize = 16 / 9) {
+      if (this.cropper !== null) return 'none'
+      if (this.$refs.preview__img.src === '') return 'none'
       const image = this.$refs.preview__img
       this.cropper = new Cropper(image, {
-        aspectRatio: 16 / 9,
+        aspectRatio: viewBoxSize,
+        preview: '#cropperPreview',
         crop (event) {
-          console.log(event.detail.x)
-          console.log(event.detail.y)
-          console.log(event.detail.width)
-          console.log(event.detail.height)
-          console.log(event.detail.rotate)
-          console.log(event.detail.scaleX)
-          console.log(event.detail.scaleY)
+          console.log(event)
         }
       })
       this.cropper.crop()
@@ -212,17 +293,34 @@ export default {
       }
     },
 
-    async uploadImg () {
+    async uploadImg (mode) {
       await Promise.all(
         this.prewFiles.map(file => {
           const ref = this.targetRef + file.name
           return this.F_uploadFiles_with_watcher(ref, file.file)
         })
       ).then(res => {
-        console.log('url: ', res)
+        console.log('res: ', res)
+        this.storeImgURLs = this.storeImgURLs.concat(res)
       }).catch(e => {
         console.log(e)
       })
+      console.log(this.storeImgURLs)
+    },
+
+    deleteAllCloudImg () {
+      this.deleteAllImg().then((res) => {
+        console.log(res)
+        this.storeImgURLs = []
+      })
+    },
+
+    showModal () {
+      this.$refs['info-modal'].show()
+    },
+
+    hideModal () {
+      this.$refs['info-modal'].hide()
     }
   }
 }
@@ -232,82 +330,52 @@ export default {
 .pageAddArticle {
   padding: 1rem;
   height: 100%;
-
-  .imgManager-container {
-    height: 30%;
-
-    .imgManager {
-      border-radius: 5px;
-      border: solid 1px #ddd;
-      padding: 1rem 1rem 0rem 1rem;
+  .cloud {
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    .card {
       height: 100%;
-      overflow-y: auto;
-
-      .picture-wrap {
-        display: flex;
-        flex-wrap: wrap;
-        .picture {
-          width: 100px;
-          height: 80px;
-          margin-top: 1rem;
-          border: solid 1px #ccc;
-          img {
-            height: 100%;
-            width: 100%;
-            object-fit: contain;
-            cursor: pointer;
-          }
-        }
-      }
-
-      .imgManager-upload > div:first-child {
-        margin-left: 0;
-      }
-
-      .imgManager-upload {
-        .upload-icon {
-          font-size: 3rem;
-          height: 50px;
-          width: 50px;
-          position: relative;
-          margin-left: .25rem;
-          svg {
-            position: absolute;
-            top: 0;
-            left: 0;
-          }
-        }
+      #accordion-1 {
+        height: 100%;
       }
     }
   }
+  .cloud_img_container {
 
-  .imgManager-preview {
-    border: solid 1px #ddd;
-    height: 100%;
-    border-radius: 5px;
-    padding: 1rem 1rem 0rem 1rem;
-    .preview-wrap {
+    .cloud_img {
+      width: 100px;
+      height: 100px;
+      box-shadow: 0 0 0 1px #ccc;
+      margin: 5px;
+
+      .img_item {
+        object-fit: cover;
+        width: 100px;
+        height: 100px;
+      }
+    }
+  }
+  .preview_wrap {
+    width: 100%;
+    height: 270px;
+    img {
+      height: 270px;
       width: 100%;
-      img {
-        width: 100%;
-      }
+      object-fit: cover;
     }
   }
+}
 
-  .preview__img {
-    border: solid 1px #ccc;
-  }
+.card-deck {
+  height: 100%;
+}
 
-  .markdown-body {
-    border: #aaa 2px solid;
-    border-radius: 5px;
-    height: 100%;
-    padding: 1rem;
-  }
-
-  .header {
-    display: flex;
-  }
+#cropperPreview {
+  width: 100%;
+  height: 56.25%;
+  overflow: hidden;
+  border: solid 2px #ccc;
 }
 
 </style>

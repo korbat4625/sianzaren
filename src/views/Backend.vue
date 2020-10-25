@@ -25,12 +25,6 @@
         </div>
       </template>
     </b-sidebar>
-
-    <b-row>
-      <b-col cols="12">
-        <b-button v-b-toggle.sidebar-1>Toggle Sidebar</b-button>
-      </b-col>
-    </b-row>
     <router-view></router-view>
   </b-container>
 </template>
@@ -70,6 +64,9 @@ export default {
     width: 72px;
     height: 72px;
     border-radius: 50%;
+  }
+  .toggle_sidebar {
+    position: absolute;
   }
 }
 </style>
