@@ -1,6 +1,6 @@
 <template>
   <b-row>
-    <b-col cols="4">
+    <b-col cols="2">
       <label>文章列表:</label>
       <b-list-group>
         <b-list-group-item
@@ -13,7 +13,7 @@
         </b-list-group-item>
       </b-list-group>
     </b-col>
-    <b-col cols="8">
+    <b-col cols="10">
       <AddArticle
         :editTitle="editTitle"
         :editValue="editValue"

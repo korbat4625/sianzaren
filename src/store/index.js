@@ -10,7 +10,8 @@ export default new Vuex.Store({
     emailVerified: '',
     email: '',
     photoURL: '',
-    phoneNumber: ''
+    phoneNumber: '',
+    uploadProgress: ''
   },
   mutations: {
     setCurrentUser (state, currentUser) {
@@ -20,6 +21,14 @@ export default new Vuex.Store({
       state.email = currentUser.email
       state.photoURL = currentUser.photoURL
       state.phoneNumber = currentUser.phoneNumber
+    },
+
+    setUploadProgress (state, progress) {
+      state.uploadProgress = progress.status
+    },
+
+    clearProgress (state) {
+      state.uploadProgress = ''
     }
   },
   actions: {

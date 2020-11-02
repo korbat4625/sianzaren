@@ -235,7 +235,7 @@ export default {
     F_uploadFiles_with_watcher (ref, file) {
       return new Promise((resolve, reject) => {
         const storageRef = storage.ref()
-
+        const self = this
         // Create the file metadata
         // var metadata = {
         //   contentType: 'image/jpeg'
@@ -249,7 +249,7 @@ export default {
           function (snapshot) {
           // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
             var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            console.log('Upload is ' + progress + '% done')
+            self.$store.commit('setUploadProgress', { status: 'Upload is ' + progress + '% done' })
             switch (snapshot.state) {
               case firebase.storage.TaskState.PAUSED: // or 'paused'
                 console.log('Upload is paused')
@@ -281,6 +281,7 @@ export default {
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
               console.log(file.name + '上船完成', downloadURL)
+              self.$store.commit('setUploadProgress', { status: '上傳完成' })
               resolve(downloadURL)
             })
           })

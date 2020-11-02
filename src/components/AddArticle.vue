@@ -4,9 +4,39 @@
       <p class="my-4">如要{{ addOrUpdate }}文章請按確認</p>
     </b-modal>
 
+    <b-modal size="xl" ref="modalCropper" scrollable title="Scrollable Content">
+      <b-card-group deck>
+        <b-card
+          header="裁切處"
+          header-tag="header"
+          footer-tag="footer"
+        >
+          <div class="preview_wrap full-width d-flex">
+            <div class="half-width">
+              <img ref="preview__img" class="preview__img">
+            </div>
+            <div class="half-width">
+              <div id="cropperPreview"></div>
+            </div>
+          </div>
+          <template v-slot:footer>
+            <b-button size="md" variant="outline-primary" @click="crop">進行裁切</b-button>&nbsp;
+            <b-button size="md" variant="outline-primary" @click="cancelCrop">取消</b-button>&nbsp;
+            <b-button size="md" variant="outline-primary" @click="changeViewBox('16/9')">16:9</b-button>
+            <b-button size="md" variant="outline-primary" @click="changeViewBox('4/3')">4:3</b-button>
+            <b-button size="md" variant="outline-primary" @click="changeViewBox('2/3')">2:3</b-button>
+            <b-button size="md" variant="outline-primary" @click="changeViewBox('1/1')">1:1</b-button>
+            <b-button size="md" variant="outline-primary" @click="changeViewBox('free')">任意範圍</b-button>
+            <b-button size="md" variant="outline-primary" @click="resetCropper">重置</b-button>
+            <b-button size="md" variant="warning" @click="uploadAndShowURL">產生網址</b-button>
+          </template>
+        </b-card>
+      </b-card-group>
+    </b-modal>
+
     <b-modal ref="info-modal" hide-footer title="Using Component Methods">
       <div class="d-block text-center">
-        <h3>Hello From My Modal!</h3>
+        <h3>是否要清空所有圖片?</h3>
       </div>
       <b-button class="mt-2" variant="outline-primary" block @click="hideModal">還是先取消好了ㄏㄏ</b-button>
       <b-button class="mt-3" variant="outline-danger" block @click="deleteAllCloudImg">不管了!刪除!</b-button>
@@ -22,77 +52,19 @@
             <b-card-body>
               <div class="cloud_img_container d-flex flex-wrap">
                 <div class="cloud_img" v-for="url in storeImgURLs" :key="url">
-                  <img class="img_item" :src="url" alt="" srcset="" @click="loadImg">
+                  <img v-b-modal class="img_item" :src="url" alt="" srcset="" @click="loadImg(url)">
                 </div>
               </div>
             </b-card-body>
           </b-collapse>
           <template v-slot:footer>
-            <b-button variant="outline-danger" @click="showModal">清空圖庫</b-button>
+            <b-button size="sm" variant="outline-primary" @click="$refs.preview__input.click()">選擇檔案</b-button>
+            <b-button size="sm" variant="outline-primary" @click="clearFile">取消上傳</b-button>
+            <b-button size="sm" variant="outline-primary" @click="uploadImg">確認上傳</b-button>
+            <b-button size="sm" variant="outline-danger" @click="showModal">清空圖庫</b-button>
           </template>
         </b-card>
       </div>
-    </b-col>
-
-    <b-col cols="3 mt-3">
-      <b-card-group deck>
-        <b-card
-          header="資訊窗口"
-          header-tag="header"
-          footer-tag="footer"
-        >
-          <div id="cropperPreview"></div>
-          <ul>
-            <li v-for="preview in prewFiles" :key="preview.name" class="preview-select-item">
-              {{ preview.name }} {{ uploadStatus }}
-            </li>
-          </ul>
-          <template v-slot:footer>
-            <b-button size="sm" variant="outline-primary" @click="$refs.preview__input.click()">選擇檔案</b-button>&nbsp;
-            <b-button size="sm" variant="outline-primary" @click="clearFile">取消上傳</b-button>&nbsp;
-            <b-button size="sm" variant="outline-primary" @click="uploadImg">確認上傳</b-button>
-          </template>
-        </b-card>
-      </b-card-group>
-    </b-col>
-
-    <b-col cols="6 mt-3">
-      <b-card-group deck>
-        <b-card
-          header="裁切處"
-          header-tag="header"
-          footer-tag="footer"
-        >
-          <div class="preview_wrap">
-            <img ref="preview__img" class="preview__img">
-          </div>
-          <template v-slot:footer>
-            <b-button size="sm" variant="outline-primary" @click="crop">進行裁切</b-button>&nbsp;
-            <b-button size="sm" variant="outline-primary" @click="cancelCrop">取消</b-button>&nbsp;
-            <b-button size="sm" variant="outline-primary" @click="crop">產生網址</b-button>&nbsp;
-          </template>
-        </b-card>
-      </b-card-group>
-    </b-col>
-
-    <b-col cols="3 mt-3">
-      <b-card-group deck>
-        <b-card
-          header="工具列"
-          header-tag="header"
-          footer-tag="footer"
-        >
-          <b-button size="md" variant="outline-primary" @click="changeViewBox('16/9')">16:9</b-button>&nbsp;
-          <b-button size="md" variant="outline-primary" @click="changeViewBox('4/3')">4:3</b-button>&nbsp;
-          <b-button size="md" variant="outline-primary" @click="changeViewBox('2/3')">2:3</b-button>&nbsp;
-          <b-button size="md" variant="outline-primary" @click="changeViewBox('1/1')">1:1</b-button>&nbsp;
-          <b-button size="md" variant="outline-primary" @click="changeViewBox('free')">任意範圍</b-button>
-          <b-button size="md" variant="outline-primary" @click="resetCropper">重置</b-button>
-          <br />
-          <b-button size="md" variant="outline-primary" @click="uploadImg('cropped')">上傳並取得圖像連結</b-button>
-
-        </b-card>
-      </b-card-group>
     </b-col>
 
     <b-col cols="12 mt-3">
@@ -180,12 +152,23 @@ export default {
     })
   },
   methods: {
+    uploadAndShowURL () {
+      // getCroppedCanvas 會轉為 canvas， toBlob 為 canvas 原生 WEB API
+      this.cropper.getCroppedCanvas({
+        minWidth: 540,
+        minHeight: 360
+      }).toBlob(blob => {
+        this.prewFiles = []
+        this.prewFiles[0] = blob
+        this.uploadAsBlob()
+      })
+    },
+
     resetCropper () {
       return this.cropper.reset()
     },
 
     changeViewBox (viewboxSize) {
-      console.log(this.cropper)
       if (this.$refs.preview__img.src === '') return 'none'
       if (this.$refs.preview__img.src === '') return 'none'
       viewboxSize = viewboxSize.split('/')
@@ -202,9 +185,14 @@ export default {
       return 'done'
     },
 
-    loadImg (e) {
+    loadImg (imgUrl) {
       // console.log(e.target.currentSrc)
-      this.$refs.preview__img.src = e.target.currentSrc
+      console.log(this.$refs)
+      this.$refs.modalCropper.show()
+      setTimeout(() => {
+        this.$refs.preview__img.src = imgUrl
+        this.crop()
+      }, 0)
       return 'done'
     },
 
@@ -217,6 +205,7 @@ export default {
 
     clearFile () {
       this.prewFiles = []
+      this.$store.commit('clearProgress')
       return 'done'
     },
 
@@ -226,10 +215,7 @@ export default {
       const image = this.$refs.preview__img
       this.cropper = new Cropper(image, {
         aspectRatio: viewBoxSize,
-        preview: '#cropperPreview',
-        crop (event) {
-          console.log(event)
-        }
+        preview: '#cropperPreview'
       })
       this.cropper.crop()
     },
@@ -293,19 +279,30 @@ export default {
       }
     },
 
-    async uploadImg (mode) {
+    async uploadImg () {
       await Promise.all(
         this.prewFiles.map(file => {
           const ref = this.targetRef + file.name
           return this.F_uploadFiles_with_watcher(ref, file.file)
         })
       ).then(res => {
-        console.log('res: ', res)
         this.storeImgURLs = this.storeImgURLs.concat(res)
       }).catch(e => {
         console.log(e)
       })
-      console.log(this.storeImgURLs)
+    },
+
+    async uploadAsBlob () {
+      await Promise.all(
+        this.prewFiles.map(file => {
+          const ref = this.targetRef
+          return this.F_uploadFiles_with_watcher(ref, file)
+        })
+      ).then(res => {
+        this.storeImgURLs = this.storeImgURLs.concat(res)
+      }).catch(e => {
+        console.log(e)
+      })
     },
 
     deleteAllCloudImg () {
@@ -356,15 +353,6 @@ export default {
       }
     }
   }
-  .preview_wrap {
-    width: 100%;
-    height: 270px;
-    img {
-      height: 270px;
-      width: 100%;
-      object-fit: cover;
-    }
-  }
 }
 
 .card-deck {
@@ -376,6 +364,28 @@ export default {
   height: 56.25%;
   overflow: hidden;
   border: solid 2px #ccc;
+}
+
+button {
+  display: inline-block;
+}
+
+.preview_wrap {
+  width: 100%;
+  height: 270px;
+  img {
+    height: 270px;
+    width: 100%;
+    object-fit: cover;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.half-width {
+  width: 50%;
 }
 
 </style>
