@@ -4,41 +4,43 @@
       <p class="my-4">如要{{ addOrUpdate }}文章請按確認</p>
     </b-modal>
 
+    <b-modal ref="modalUploadInfo" title="上傳本地電腦圖檔" @ok="uploadImg">
+      <div v-for="img in storeLocalImgURLs" :key="img.URL">
+        <img :src="img.URL" alt="">
+        <span>{{ img.name }}</span>
+      </div>
+      <div v-if="$store.state.uploadProgress !== ''">
+        上傳進度: <br />
+        {{ $store.state.uploadProgress }}
+      </div>
+    </b-modal>
+
     <b-modal size="xl" ref="modalCropper" scrollable title="Scrollable Content">
-      <b-card-group deck>
-        <b-card
-          header="裁切處"
-          header-tag="header"
-          footer-tag="footer"
-        >
-          <div class="preview_wrap full-width d-flex">
-            <div class="half-width">
-              <img ref="preview__img" class="preview__img">
-            </div>
-            <div class="half-width">
-              <div id="cropperPreview"></div>
-            </div>
-          </div>
-          <template v-slot:footer>
-            <b-button size="md" variant="outline-primary" @click="crop">進行裁切</b-button>&nbsp;
-            <b-button size="md" variant="outline-primary" @click="cancelCrop">取消</b-button>&nbsp;
-            <b-button size="md" variant="outline-primary" @click="changeViewBox('16/9')">16:9</b-button>
-            <b-button size="md" variant="outline-primary" @click="changeViewBox('4/3')">4:3</b-button>
-            <b-button size="md" variant="outline-primary" @click="changeViewBox('2/3')">2:3</b-button>
-            <b-button size="md" variant="outline-primary" @click="changeViewBox('1/1')">1:1</b-button>
-            <b-button size="md" variant="outline-primary" @click="changeViewBox('free')">任意範圍</b-button>
-            <b-button size="md" variant="outline-primary" @click="resetCropper">重置</b-button>
-            <b-button size="md" variant="warning" @click="uploadAndShowURL">產生網址</b-button>
-          </template>
-        </b-card>
-      </b-card-group>
+      <div class="preview_wrap full-width d-flex">
+        <div class="half-width">
+          <img ref="preview__img" class="preview__img">
+        </div>
+        <div class="half-width">
+          <div id="cropperPreview"></div>
+        </div>
+      </div>
+      <b-button size="md" variant="outline-primary" @click="crop">進行裁切</b-button>
+      <b-button size="md" variant="outline-primary" @click="cancelCrop">取消</b-button>
+      <b-button size="md" variant="outline-primary" @click="changeViewBox('16/9')">16:9</b-button>
+      <b-button size="md" variant="outline-primary" @click="changeViewBox('4/3')">4:3</b-button>
+      <b-button size="md" variant="outline-primary" @click="changeViewBox('2/3')">2:3</b-button>
+      <b-button size="md" variant="outline-primary" @click="changeViewBox('1/1')">1:1</b-button>
+      <b-button size="md" variant="outline-primary" @click="changeViewBox('free')">任意範圍</b-button>
+      <b-button size="md" variant="outline-primary" @click="resetCropper">重置</b-button>
+      <b-button size="md" variant="warning" @click="uploadAndShowURL">產生網址</b-button>
+      <b-form-input size="lg" placeholder="請輸入剪裁後檔案名稱" v-model="croppedName"></b-form-input>
     </b-modal>
 
     <b-modal ref="info-modal" hide-footer title="Using Component Methods">
       <div class="d-block text-center">
         <h3>是否要清空所有圖片?</h3>
       </div>
-      <b-button class="mt-2" variant="outline-primary" block @click="hideModal">還是先取消好了ㄏㄏ</b-button>
+      <b-button class="mt-2" variant="outline-primary" block @click="hideModal('info-modal')">還是先取消好了ㄏㄏ</b-button>
       <b-button class="mt-3" variant="outline-danger" block @click="deleteAllCloudImg">不管了!刪除!</b-button>
     </b-modal>
 
@@ -51,20 +53,33 @@
           <b-collapse id="accordion-1" visible accordion="my-accordion" role="tabpanel">
             <b-card-body>
               <div class="cloud_img_container d-flex flex-wrap">
-                <div class="cloud_img" v-for="url in storeImgURLs" :key="url">
-                  <img v-b-modal class="img_item" :src="url" alt="" srcset="" @click="loadImg(url)">
+                <div class="cloud_img" v-for="item in storeImgURLs" :key="item.url">
+                  <div>
+                    <img v-b-modal class="img_item" :src="item.url" alt="" srcset="" @click="chooseTools(item)">
+                  </div>
+                  <div>
+                    {{ item.name }}
+                  </div>
                 </div>
               </div>
             </b-card-body>
           </b-collapse>
           <template v-slot:footer>
-            <b-button size="sm" variant="outline-primary" @click="$refs.preview__input.click()">選擇檔案</b-button>
+            <b-button size="sm" variant="outline-primary" @click="uploadLocalImgs">上傳電腦圖檔</b-button>
             <b-button size="sm" variant="outline-primary" @click="clearFile">取消上傳</b-button>
             <b-button size="sm" variant="outline-primary" @click="uploadImg">確認上傳</b-button>
-            <b-button size="sm" variant="outline-danger" @click="showModal">清空圖庫</b-button>
+            <b-button :class="{ active : wantToCrop }" size="sm" variant="outline-primary" @click="switchTools('cropper')">我要裁切</b-button>
+            <b-button :class="{ active : wantTogetURL }" size="sm" variant="outline-primary" @click="switchTools('getURL')">我要取得網址</b-button>
+            <b-button :class="{ active : wantToPreview }" size="sm" variant="outline-primary" @click="switchTools('preview')">我要檢視</b-button>
+            <b-button size="sm" variant="outline-danger" @click="showModal('info-modal')">清空圖庫</b-button>
+            <b-button size="sm" variant="outline-danger">選擇刪除</b-button>
           </template>
         </b-card>
       </div>
+    </b-col>
+
+    <b-col cols="12 mt-3" v-if="wantToPreview" style="height: 300px; overflow: auto;">
+      <img :src="wantToPreviewImgURL" alt="">
     </b-col>
 
     <b-col cols="12 mt-3">
@@ -123,11 +138,16 @@ export default {
       createdAt: null,
       targetRef: 'posts/img/' + this.$route.params.who + '/',
       prewFiles: [],
-      uploadedSuccessImg: [],
       uploadStatus: '',
       storeImgURLs: [],
+      storeLocalImgURLs: [],
       cropper: null,
-      croppedData: null
+      croppedData: null,
+      croppedName: '',
+      wantToCrop: false,
+      wantTogetURL: false,
+      wantToPreview: false,
+      wantToPreviewImgURL: ''
     }
   },
   watch: {
@@ -145,10 +165,12 @@ export default {
     this.F_listStorageRef(this.targetRef).then(itemList => {
       for (const item of itemList) {
         this.F_getStorageURL(item.fullPath).then(url => {
-          this.storeImgURLs.push(url)
+          this.storeImgURLs.push({
+            name: item.name,
+            url: url
+          })
         })
       }
-      console.log(this.storeImgURLs)
     })
   },
   methods: {
@@ -158,6 +180,7 @@ export default {
         minWidth: 540,
         minHeight: 360
       }).toBlob(blob => {
+        blob.name = this.croppedName
         this.prewFiles = []
         this.prewFiles[0] = blob
         this.uploadAsBlob()
@@ -186,8 +209,6 @@ export default {
     },
 
     loadImg (imgUrl) {
-      // console.log(e.target.currentSrc)
-      console.log(this.$refs)
       this.$refs.modalCropper.show()
       setTimeout(() => {
         this.$refs.preview__img.src = imgUrl
@@ -273,6 +294,7 @@ export default {
             URL: URL.createObjectURL(currentFile)
           }
           this.prewFiles.push(fileBuffer)
+          this.storeLocalImgURLs.push(fileBuffer)
         }
       } catch (e) {
         console.log(e)
@@ -295,11 +317,14 @@ export default {
     async uploadAsBlob () {
       await Promise.all(
         this.prewFiles.map(file => {
-          const ref = this.targetRef
+          const ref = this.targetRef + file.name
           return this.F_uploadFiles_with_watcher(ref, file)
         })
       ).then(res => {
-        this.storeImgURLs = this.storeImgURLs.concat(res)
+        this.storeImgURLs.push({
+          name: res[0].name,
+          url: res[0].url
+        })
       }).catch(e => {
         console.log(e)
       })
@@ -307,17 +332,52 @@ export default {
 
     deleteAllCloudImg () {
       this.deleteAllImg().then((res) => {
-        console.log(res)
         this.storeImgURLs = []
       })
     },
 
-    showModal () {
-      this.$refs['info-modal'].show()
+    showModal (modalRef) {
+      this.$refs[modalRef].show()
     },
 
-    hideModal () {
-      this.$refs['info-modal'].hide()
+    hideModal (modalRef) {
+      this.$refs[modalRef].hide()
+    },
+
+    switchTools (tools) {
+      this.wantToCrop = false
+      this.wantTogetURL = false
+      this.wantToPreview = false
+      if (tools === 'cropper') this.wantToCrop = true
+      if (tools === 'getURL') this.wantTogetURL = true
+      if (tools === 'preview') this.wantToPreview = true
+    },
+
+    chooseTools (item) {
+      if (this.wantToCrop) {
+        this.loadImg(item.url)
+      }
+
+      if (this.wantTogetURL) {
+        this.makeToast('success', item)
+      }
+
+      if (this.wantToPreview) {
+        this.wantToPreviewImgURL = item.url
+      }
+    },
+
+    makeToast (variant = null, data) {
+      this.$bvToast.toast(data.url, {
+        title: '檔案名稱: ' + data.name,
+        variant: variant,
+        solid: true
+      })
+    },
+
+    uploadLocalImgs () {
+      this.showModal('modalUploadInfo')
+      this.$refs.preview__input.click()
     }
   }
 }
