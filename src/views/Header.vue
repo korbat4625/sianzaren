@@ -2,7 +2,7 @@
   <b-container fluid id="HeroPaper" class="mx-auto">
 
     <b-row>
-      <b-col cols="1">
+      <b-col cols="1" v-if="$route.path.indexOf('backend') !== -1">
         <span class="toggle_sidebar" v-b-toggle.sidebar-1 ><b-icon icon="grid3x2-gap"></b-icon></span>
       </b-col>
       <b-col cols="8" offset="3">

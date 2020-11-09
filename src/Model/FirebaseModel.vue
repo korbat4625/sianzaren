@@ -299,6 +299,16 @@ export default {
         })
         return 'done'
       })
+    },
+
+    F_deleteImg (imgName) {
+      const storageRef = storage.ref()
+      var desertRef = storageRef.child('posts/img/' + this.$route.params.who + '/' + imgName)
+      desertRef.delete().then(function () {
+        console.log('刪除成功')
+      }).catch(function (error) {
+        console.log(error)
+      })
     }
   }
 }

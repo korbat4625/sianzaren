@@ -44,6 +44,14 @@
       <b-button class="mt-3" variant="outline-danger" block @click="deleteAllCloudImg">不管了!刪除!</b-button>
     </b-modal>
 
+    <b-modal ref="delete-modal" hide-footer title="Using Component Methods">
+      <div class="d-block text-center">
+        <h3>是否刪除 {{ currentFileName }}</h3>
+      </div>
+      <b-button class="mt-2" variant="outline-primary" block @click="hideModal('delete-modal')">還是先取消好了ㄏㄏ</b-button>
+      <b-button class="mt-3" variant="outline-danger" block @click="deleteImg(currentFileName)">不管了!刪除!</b-button>
+    </b-modal>
+
     <b-col cols="12">
       <div class="accordion cloud" role="tablist">
         <b-card no-body class="mb-1">
@@ -72,7 +80,7 @@
             <b-button :class="{ active : wantTogetURL }" size="sm" variant="outline-primary" @click="switchTools('getURL')">我要取得網址</b-button>
             <b-button :class="{ active : wantToPreview }" size="sm" variant="outline-primary" @click="switchTools('preview')">我要檢視</b-button>
             <b-button size="sm" variant="outline-danger" @click="showModal('info-modal')">清空圖庫</b-button>
-            <b-button size="sm" variant="outline-danger">選擇刪除</b-button>
+            <b-button :class="{ active : wantToDelete }"  size="sm" variant="outline-danger" @click="switchTools('delete')">選擇刪除</b-button>
           </template>
         </b-card>
       </div>
@@ -147,7 +155,9 @@ export default {
       wantToCrop: false,
       wantTogetURL: false,
       wantToPreview: false,
-      wantToPreviewImgURL: ''
+      wantToDelete: false,
+      wantToPreviewImgURL: '',
+      currentFileName: ''
     }
   },
   watch: {
@@ -162,18 +172,22 @@ export default {
     MarkdownPro
   },
   created () {
-    this.F_listStorageRef(this.targetRef).then(itemList => {
-      for (const item of itemList) {
-        this.F_getStorageURL(item.fullPath).then(url => {
-          this.storeImgURLs.push({
-            name: item.name,
-            url: url
-          })
-        })
-      }
-    })
+    this.listedImg()
   },
   methods: {
+    listedImg () {
+      this.F_listStorageRef(this.targetRef).then(itemList => {
+        for (const item of itemList) {
+          this.F_getStorageURL(item.fullPath).then(url => {
+            this.storeImgURLs.push({
+              name: item.name,
+              url: url
+            })
+          })
+        }
+      })
+    },
+
     uploadAndShowURL () {
       // getCroppedCanvas 會轉為 canvas， toBlob 為 canvas 原生 WEB API
       this.cropper.getCroppedCanvas({
@@ -308,7 +322,8 @@ export default {
           return this.F_uploadFiles_with_watcher(ref, file.file)
         })
       ).then(res => {
-        this.storeImgURLs = this.storeImgURLs.concat(res)
+        this.storeImgURLs = []
+        this.listedImg()
       }).catch(e => {
         console.log(e)
       })
@@ -336,6 +351,13 @@ export default {
       })
     },
 
+    deleteImg (itemName) {
+      this.F_deleteImg(itemName)
+      this.hideModal('delete-modal')
+      this.storeImgURLs = []
+      this.listedImg()
+    },
+
     showModal (modalRef) {
       this.$refs[modalRef].show()
     },
@@ -348,9 +370,11 @@ export default {
       this.wantToCrop = false
       this.wantTogetURL = false
       this.wantToPreview = false
+      this.wantToDelete = false
       if (tools === 'cropper') this.wantToCrop = true
       if (tools === 'getURL') this.wantTogetURL = true
       if (tools === 'preview') this.wantToPreview = true
+      if (tools === 'delete') this.wantToDelete = true
     },
 
     chooseTools (item) {
@@ -364,6 +388,11 @@ export default {
 
       if (this.wantToPreview) {
         this.wantToPreviewImgURL = item.url
+      }
+
+      if (this.wantToDelete) {
+        this.currentFileName = item.name
+        this.showModal('delete-modal')
       }
     },
 
