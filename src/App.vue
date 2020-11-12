@@ -37,8 +37,8 @@ html, body {
 }
 
 .icon-size-black {
-  @extend %icon-size-base;
-  @include icon-size-color;
+  @extend %icon_size_base;
+  @include icon_size_color;
 }
 
 input[type=file] {

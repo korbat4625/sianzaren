@@ -1,0 +1,24 @@
+@mixin pc-width() {
+  @media all and (min-width: $pc_media) {
+    @content;
+  }
+}
+
+//平板
+@mixin pad-width() {
+  @media all and (min-width: $pad_media) and (max-width: $pcs_media) {
+    @content;
+  }
+}
+//小平板
+@mixin small-pad-width() {
+  @media all and (min-width: $phone_media) and (max-width: $pads_media) {
+    @content;
+  }
+}
+//手機
+@mixin phone-width() {
+  @media all and (max-width: $phones_media) {
+    @content;
+  }
+}

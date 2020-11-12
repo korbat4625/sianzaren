@@ -1,29 +1,47 @@
 <template>
   <b-row class="pageAddArticle">
-    <b-modal id="modal-1" title="下一步?" @ok="task">
+    <b-modal id="modal-1" title="下一步?">
       <p class="my-4">如要{{ addOrUpdate }}文章請按確認</p>
     </b-modal>
 
-    <b-modal ref="modalUploadInfo" title="上傳本地電腦圖檔" @ok="uploadImg">
-      <div v-for="img in storeLocalImgURLs" :key="img.URL">
-        <img :src="img.URL" alt="">
-        <span>{{ img.name }}</span>
-      </div>
+    <b-modal size="lg" ref="modalUploadInfo" title="上傳本地電腦圖檔"
+      @hide="clear"
+      @ok="uploadImg">
+      <b-row>
+        <b-col cols="12">
+          <div class="responsiveImg mx-auto">
+            <img ref="toBeUploadImg">
+          </div>
+          <span :style="{ display: invalid }" style="color: red;">圖片過大，請先進行裁切</span>
+          <span>{{ storeLocalImgURL.name }}</span>
+        </b-col>
+      </b-row>
       <div v-if="$store.state.uploadProgress !== ''">
         上傳進度: <br />
         {{ $store.state.uploadProgress }}
       </div>
+      <template #modal-footer>
+        <b-button size="sm" variant="outline-primary" @click="$refs.preview__input.click()">
+          選擇檔案
+        </b-button>
+        <b-button size="sm" variant="secondary" @click="hideModal('modalUploadInfo')">
+          取消上傳
+        </b-button>
+        <b-button size="sm" variant="success" @click="task">
+          上傳
+        </b-button>
+      </template>
     </b-modal>
 
     <b-modal size="xl" ref="modalCropper" scrollable title="Scrollable Content">
-      <div class="preview_wrap full-width d-flex">
-        <div class="half-width">
+      <b-row>
+        <b-col cols="12">
           <img ref="preview__img" class="preview__img">
-        </div>
-        <div class="half-width">
+        </b-col>
+        <b-col cols="12 mt-2">
           <div id="cropperPreview"></div>
-        </div>
-      </div>
+        </b-col>
+      </b-row>
       <b-button size="md" variant="outline-primary" @click="crop">進行裁切</b-button>
       <b-button size="md" variant="outline-primary" @click="cancelCrop">取消</b-button>
       <b-button size="md" variant="outline-primary" @click="changeViewBox('16/9')">16:9</b-button>
@@ -38,9 +56,9 @@
 
     <b-modal ref="info-modal" hide-footer title="Using Component Methods">
       <div class="d-block text-center">
-        <h3>是否要清空所有圖片?</h3>
+        <h3>真的要清空所有圖片 ?</h3>
       </div>
-      <b-button class="mt-2" variant="outline-primary" block @click="hideModal('info-modal')">還是先取消好了ㄏㄏ</b-button>
+      <b-button class="mt-2" variant="outline-primary" block @click="hideModal('info-modal')">再想想...</b-button>
       <b-button class="mt-3" variant="outline-danger" block @click="deleteAllCloudImg">不管了!刪除!</b-button>
     </b-modal>
 
@@ -48,7 +66,7 @@
       <div class="d-block text-center">
         <h3>是否刪除 {{ currentFileName }}</h3>
       </div>
-      <b-button class="mt-2" variant="outline-primary" block @click="hideModal('delete-modal')">還是先取消好了ㄏㄏ</b-button>
+      <b-button class="mt-2" variant="outline-primary" block @click="hideModal('delete-modal')">再想想...</b-button>
       <b-button class="mt-3" variant="outline-danger" block @click="deleteImg(currentFileName)">不管了!刪除!</b-button>
     </b-modal>
 
@@ -118,13 +136,11 @@
       </div>
     </b-col>
     <b-col class="mt-2"><b-button v-b-modal.modal-1 variant="primary">點擊{{ addOrUpdate }}文章</b-button></b-col>
-
-    <input @change="previewImg"
+    <input
+      @input="previewImg"
       type="file"
-      id="preview__input"
       ref="preview__input"
       accept=".jpg,.jpeg,.png"
-      multiple
     >
   </b-row>
 </template>
@@ -145,10 +161,14 @@ export default {
       tags: [],
       createdAt: null,
       targetRef: 'posts/img/' + this.$route.params.who + '/',
+      targetRefCompression: 'posts/img/' + this.$route.params.who + '/compression/',
       prewFiles: [],
       uploadStatus: '',
       storeImgURLs: [],
       storeLocalImgURLs: [],
+      storeLocalImgURL: {
+        name: ''
+      },
       cropper: null,
       croppedData: null,
       croppedName: '',
@@ -157,7 +177,8 @@ export default {
       wantToPreview: false,
       wantToDelete: false,
       wantToPreviewImgURL: '',
-      currentFileName: ''
+      currentFileName: '',
+      invalid: 'none'
     }
   },
   watch: {
@@ -191,7 +212,7 @@ export default {
     uploadAndShowURL () {
       // getCroppedCanvas 會轉為 canvas， toBlob 為 canvas 原生 WEB API
       this.cropper.getCroppedCanvas({
-        minWidth: 540,
+        minWidth: 640,
         minHeight: 360
       }).toBlob(blob => {
         blob.name = this.croppedName
@@ -226,7 +247,7 @@ export default {
       this.$refs.modalCropper.show()
       setTimeout(() => {
         this.$refs.preview__img.src = imgUrl
-        this.crop()
+        this.crop(this.$refs.preview__img)
       }, 0)
       return 'done'
     },
@@ -238,16 +259,22 @@ export default {
       return 'done'
     },
 
+    clear (obj) {
+      this.storeLocalImgURL.name = ''
+      this.$refs.preview__input.value = ''
+      console.log(this.$refs.preview__input.files)
+    },
+
     clearFile () {
       this.prewFiles = []
       this.$store.commit('clearProgress')
       return 'done'
     },
 
-    crop (viewBoxSize = 16 / 9) {
+    crop (img, viewBoxSize = 16 / 9) {
       if (this.cropper !== null) return 'none'
-      if (this.$refs.preview__img.src === '') return 'none'
-      const image = this.$refs.preview__img
+      if (img.src === '') return 'none'
+      const image = img
       this.cropper = new Cropper(image, {
         aspectRatio: viewBoxSize,
         preview: '#cropperPreview'
@@ -301,15 +328,22 @@ export default {
 
     previewImg () {
       try {
-        for (const currentFile of this.$refs.preview__input.files) {
-          const fileBuffer = {
-            file: currentFile,
-            name: currentFile.name,
-            URL: URL.createObjectURL(currentFile)
+        const file = this.$refs.preview__input.files[0]
+        this.storeLocalImgURL.name = file.name
+        this.$refs.toBeUploadImg.src = URL.createObjectURL(file)
+        const img = new Image()
+        img.src = URL.createObjectURL(file)
+        img.onload = () => {
+          console.log(img.width, img.height)
+          if (img.width > 800 || img.height > 450) {
+            this.invalid = 'block'
+            console.log('block', this.$refs.toBeUploadImg)
+            this.crop(this.$refs.toBeUploadImg)
           }
-          this.prewFiles.push(fileBuffer)
-          this.storeLocalImgURLs.push(fileBuffer)
         }
+        // this.prewFiles.push(fileBuffer)
+        // this.storeLocalImgURLs.push(fileBuffer)
+        console.log(img)
       } catch (e) {
         console.log(e)
       }
@@ -405,76 +439,15 @@ export default {
     },
 
     uploadLocalImgs () {
+      if (this.cropper !== null) this.cancelCrop()
       this.showModal('modalUploadInfo')
       this.$refs.preview__input.click()
+      this.invalid = 'none'
+      this.key++
     }
   }
 }
 </script>
 
 <style lang="scss" scope>
-.pageAddArticle {
-  padding: 1rem;
-  height: 100%;
-  .cloud {
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    .card {
-      height: 100%;
-      #accordion-1 {
-        height: 100%;
-      }
-    }
-  }
-  .cloud_img_container {
-
-    .cloud_img {
-      width: 100px;
-      height: 100px;
-      box-shadow: 0 0 0 1px #ccc;
-      margin: 5px;
-
-      .img_item {
-        object-fit: cover;
-        width: 100px;
-        height: 100px;
-      }
-    }
-  }
-}
-
-.card-deck {
-  height: 100%;
-}
-
-#cropperPreview {
-  width: 100%;
-  height: 56.25%;
-  overflow: hidden;
-  border: solid 2px #ccc;
-}
-
-button {
-  display: inline-block;
-}
-
-.preview_wrap {
-  width: 100%;
-  height: 270px;
-  img {
-    height: 270px;
-    width: 100%;
-    object-fit: cover;
-  }
-}
-
-.full-width {
-  width: 100%;
-}
-
-.half-width {
-  width: 50%;
-}
-
 </style>

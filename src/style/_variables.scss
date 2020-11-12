@@ -1,20 +1,28 @@
+// responsive var settings
+$pc_media: 992px;
+$pcs_media: 991px;
+$pad_media: 768px;
+$pads_media: 767px;
+$phone_media: 576px;
+$phones_media: 575px;
+
 // padding 相關配置
-$base-pd: .5rem;
-$block-level-pd: 1rem;
-$page-level-pd: 2rem;
+$base_pd: .5rem;
+$block_level_pd: 1rem;
+$page_level_pd: 2rem;
 
 // icon 相關配置
-$icon-base-size: 1.5rem;
-$icon-base-color: #000;
+$icon_base_size: 1.5rem;
+$icon_base_color: #000;
 
-// border-radius
-$border-radius: 5px;
+// border_radius
+$border_radius: 5px;
 
 // html body bgc
-$bgc-body: #2d2d2d;
+$bgc_body: #2d2d2d;
 
 //on deep body color based color
-$based-on-body: #242424;
+$based_on_body: #242424;
 
 // colors:
 

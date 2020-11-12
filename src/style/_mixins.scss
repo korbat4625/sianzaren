@@ -1,4 +1,4 @@
-@mixin icon-size-color($color: $icon-base-color) {
+@mixin icon_size_color($color: $icon_base_color) {
   color: $color;
   opacity: 0.5;
 }
