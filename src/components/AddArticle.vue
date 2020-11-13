@@ -5,15 +5,14 @@
     </b-modal>
 
     <b-modal size="lg" ref="modalUploadInfo" title="上傳本地電腦圖檔"
-      @hide="clear"
-      @ok="uploadImg">
+      @hide="clear">
       <b-row>
         <b-col cols="12">
           <div class="responsiveImg mx-auto">
             <img ref="toBeUploadImg">
           </div>
           <span :style="{ display: invalid }" style="color: red;">圖片過大，請先進行裁切</span>
-          <span>{{ storeLocalImgURL.name }}</span>
+          <span>{{ localImgPreview.name }}</span>
         </b-col>
       </b-row>
       <div v-if="$store.state.uploadProgress !== ''">
@@ -27,7 +26,7 @@
         <b-button size="sm" variant="secondary" @click="hideModal('modalUploadInfo')">
           取消上傳
         </b-button>
-        <b-button size="sm" variant="success" @click="task">
+        <b-button size="sm" variant="success" @click="task('uploadSingleImg')">
           上傳
         </b-button>
       </template>
@@ -81,7 +80,7 @@
               <div class="cloud_img_container d-flex flex-wrap">
                 <div class="cloud_img" v-for="item in storeImgURLs" :key="item.url">
                   <div>
-                    <img v-b-modal class="img_item" :src="item.url" alt="" srcset="" @click="chooseTools(item)">
+                    <img v-b-modal class="img_item" :src="item.url" alt="" srcset="" @click="useTool(item)">
                   </div>
                   <div>
                     {{ item.name }}
@@ -93,7 +92,6 @@
           <template v-slot:footer>
             <b-button size="sm" variant="outline-primary" @click="uploadLocalImgs">上傳電腦圖檔</b-button>
             <b-button size="sm" variant="outline-primary" @click="clearFile">取消上傳</b-button>
-            <b-button size="sm" variant="outline-primary" @click="uploadImg">確認上傳</b-button>
             <b-button :class="{ active : wantToCrop }" size="sm" variant="outline-primary" @click="switchTools('cropper')">我要裁切</b-button>
             <b-button :class="{ active : wantTogetURL }" size="sm" variant="outline-primary" @click="switchTools('getURL')">我要取得網址</b-button>
             <b-button :class="{ active : wantToPreview }" size="sm" variant="outline-primary" @click="switchTools('preview')">我要檢視</b-button>
@@ -162,11 +160,11 @@ export default {
       createdAt: null,
       targetRef: 'posts/img/' + this.$route.params.who + '/',
       targetRefCompression: 'posts/img/' + this.$route.params.who + '/compression/',
-      prewFiles: [],
+      previewCroppedFile: [],
+      previewCompressionFile: null,
       uploadStatus: '',
       storeImgURLs: [],
-      storeLocalImgURLs: [],
-      storeLocalImgURL: {
+      localImgPreview: {
         name: ''
       },
       cropper: null,
@@ -216,8 +214,8 @@ export default {
         minHeight: 360
       }).toBlob(blob => {
         blob.name = this.croppedName
-        this.prewFiles = []
-        this.prewFiles[0] = blob
+        this.previewCroppedFile = []
+        this.previewCroppedFile[0] = blob
         this.uploadAsBlob()
       })
     },
@@ -260,13 +258,13 @@ export default {
     },
 
     clear (obj) {
-      this.storeLocalImgURL.name = ''
+      this.localImgPreview.name = ''
       this.$refs.preview__input.value = ''
       console.log(this.$refs.preview__input.files)
     },
 
     clearFile () {
-      this.prewFiles = []
+      this.previewCroppedFile = []
       this.$store.commit('clearProgress')
       return 'done'
     },
@@ -321,38 +319,45 @@ export default {
       })
     },
 
-    async task () {
-      await this.uploadImg()
+    async task (task) {
+      if (task === 'uploadSingleImg') {
+        await this.uploadImg(this.targetRefCompression)
+        await this.uploadImg(this.targetRef)
+        this.hideModal('modalUploadInfo')
+        return 'done'
+      }
+      await this.uploadImg(this.targetRef)
       return this.F_updateArticle(this.articleData, this.addOrUpdate, this.$attrs)
+    },
+
+    compressPicture (pic) {
+
     },
 
     previewImg () {
       try {
         const file = this.$refs.preview__input.files[0]
-        this.storeLocalImgURL.name = file.name
+        this.localImgPreview.name = file.name
         this.$refs.toBeUploadImg.src = URL.createObjectURL(file)
         const img = new Image()
         img.src = URL.createObjectURL(file)
         img.onload = () => {
-          console.log(img.width, img.height)
           if (img.width > 800 || img.height > 450) {
             this.invalid = 'block'
-            console.log('block', this.$refs.toBeUploadImg)
             this.crop(this.$refs.toBeUploadImg)
           }
         }
-        // this.prewFiles.push(fileBuffer)
-        // this.storeLocalImgURLs.push(fileBuffer)
+        // this.previewCroppedFile.push(fileBuffer)
         console.log(img)
       } catch (e) {
         console.log(e)
       }
     },
 
-    async uploadImg () {
+    async uploadImg (targetRef) {
       await Promise.all(
-        this.prewFiles.map(file => {
-          const ref = this.targetRef + file.name
+        this.previewCroppedFile.map(file => {
+          const ref = targetRef + file.name
           return this.F_uploadFiles_with_watcher(ref, file.file)
         })
       ).then(res => {
@@ -365,7 +370,7 @@ export default {
 
     async uploadAsBlob () {
       await Promise.all(
-        this.prewFiles.map(file => {
+        this.previewCroppedFile.map(file => {
           const ref = this.targetRef + file.name
           return this.F_uploadFiles_with_watcher(ref, file)
         })
@@ -411,7 +416,7 @@ export default {
       if (tools === 'delete') this.wantToDelete = true
     },
 
-    chooseTools (item) {
+    useTool (item) {
       if (this.wantToCrop) {
         this.loadImg(item.url)
       }
@@ -443,7 +448,6 @@ export default {
       this.showModal('modalUploadInfo')
       this.$refs.preview__input.click()
       this.invalid = 'none'
-      this.key++
     }
   }
 }
