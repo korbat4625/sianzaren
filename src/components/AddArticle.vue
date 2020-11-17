@@ -32,16 +32,20 @@
       </template>
     </b-modal>
 
-    <b-modal size="xl" ref="modalCropper" scrollable title="Scrollable Content">
+    <b-modal @hide="cancelCrop" size="lg" ref="modalCropper" scrollable title="Scrollable Content">
       <b-row>
         <b-col cols="12">
-          <img ref="preview__img" class="preview__img">
+          <div class="responsiveImg mx-auto">
+            <img ref="preview__img" class="preview__img">
+          </div>
         </b-col>
         <b-col cols="12 mt-2">
-          <div id="cropperPreview"></div>
+          <div class="responsivePreviewImg mx-auto">
+            <div class="mx-auto" id="cropperPreview"></div>
+          </div>
         </b-col>
       </b-row>
-      <b-button size="md" variant="outline-primary" @click="crop">進行裁切</b-button>
+      <b-button size="md" variant="outline-primary" @click="crop($refs.preview__img)">進行裁切</b-button>
       <b-button size="md" variant="outline-primary" @click="cancelCrop">取消</b-button>
       <b-button size="md" variant="outline-primary" @click="changeViewBox('16/9')">16:9</b-button>
       <b-button size="md" variant="outline-primary" @click="changeViewBox('4/3')">4:3</b-button>
@@ -224,20 +228,28 @@ export default {
       return this.cropper.reset()
     },
 
+    crop (img, viewBoxSize = 16 / 9) {
+      console.log('img:', img)
+      if (this.cropper !== null) return 'none'
+      if (img.src === '') return 'none'
+      const image = img
+      this.cropper = new Cropper(image, {
+        aspectRatio: viewBoxSize,
+        preview: '#cropperPreview'
+      })
+      this.cropper.crop()
+    },
+
     changeViewBox (viewboxSize) {
       if (this.$refs.preview__img.src === '') return 'none'
       if (this.$refs.preview__img.src === '') return 'none'
-      viewboxSize = viewboxSize.split('/')
-      const ratio = viewboxSize[0] / viewboxSize[1]
       if (this.cropper === null) {
-        this.crop(ratio)
+        this.crop(this.$refs.preview__img, viewboxSize)
       } else {
         if (this.cropper.ready === false) {
-          this.crop(ratio)
+          this.crop(this.$refs.preview__img, viewboxSize)
         }
-        this.cropper.setAspectRatio(ratio)
       }
-
       return 'done'
     },
 
@@ -267,17 +279,6 @@ export default {
       this.previewCroppedFile = []
       this.$store.commit('clearProgress')
       return 'done'
-    },
-
-    crop (img, viewBoxSize = 16 / 9) {
-      if (this.cropper !== null) return 'none'
-      if (img.src === '') return 'none'
-      const image = img
-      this.cropper = new Cropper(image, {
-        aspectRatio: viewBoxSize,
-        preview: '#cropperPreview'
-      })
-      this.cropper.crop()
     },
 
     saveCropData () {
@@ -336,6 +337,8 @@ export default {
 
     previewImg () {
       try {
+        // this.$refs.toBeUploadImg.src = ''
+        if (this.cropper !== null) this.cancelCrop()
         const file = this.$refs.preview__input.files[0]
         this.localImgPreview.name = file.name
         this.$refs.toBeUploadImg.src = URL.createObjectURL(file)
