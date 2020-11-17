@@ -198,6 +198,23 @@ export default {
     this.listedImg()
   },
   methods: {
+    async task (task) {
+      if (task === 'uploadSingleImg') {
+        // 進行壓縮後上傳
+        return false
+        // await this.uploadImg(this.targetRefCompression)
+        // await this.uploadImg(this.targetRef)
+        // this.hideModal('modalUploadInfo')
+        // return 'done'
+      }
+      await this.uploadImg(this.targetRef)
+      return this.F_updateArticle(this.articleData, this.addOrUpdate, this.$attrs)
+    },
+
+    compressPicture (pic) {
+
+    },
+
     listedImg () {
       this.F_listStorageRef(this.targetRef).then(itemList => {
         for (const item of itemList) {
@@ -320,29 +337,13 @@ export default {
       })
     },
 
-    async task (task) {
-      if (task === 'uploadSingleImg') {
-        await this.uploadImg(this.targetRefCompression)
-        await this.uploadImg(this.targetRef)
-        this.hideModal('modalUploadInfo')
-        return 'done'
-      }
-      await this.uploadImg(this.targetRef)
-      return this.F_updateArticle(this.articleData, this.addOrUpdate, this.$attrs)
-    },
-
-    compressPicture (pic) {
-
-    },
-
     previewImg () {
       try {
-        // this.$refs.toBeUploadImg.src = ''
         if (this.cropper !== null) this.cancelCrop()
         const file = this.$refs.preview__input.files[0]
+        const img = new Image()
         this.localImgPreview.name = file.name
         this.$refs.toBeUploadImg.src = URL.createObjectURL(file)
-        const img = new Image()
         img.src = URL.createObjectURL(file)
         img.onload = () => {
           if (img.width > 800 || img.height > 450) {
@@ -350,8 +351,6 @@ export default {
             this.crop(this.$refs.toBeUploadImg)
           }
         }
-        // this.previewCroppedFile.push(fileBuffer)
-        console.log(img)
       } catch (e) {
         console.log(e)
       }
