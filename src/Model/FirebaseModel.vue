@@ -26,6 +26,7 @@ export default {
         self.F_showUser().then(user => {
           self.F_updateManagerInfo(`${user.uid}`, { online: true })
           self.$router.replace(`/backend/${user.uid}`)
+          window.cookieTool.set('siaZA', user.uid, 60 * 60 * 24)
         }).catch(error => {
           console.log(error)
         })
@@ -50,6 +51,7 @@ export default {
     async F_signOut () {
       const self = this
       await self.F_updateManagerInfo(self.$route.params.who, { online: false })
+      window.cookieTool.set('siaZA')
       return firebase.auth().signOut().then(function () {
         self.$router.replace('/')
       })
@@ -76,27 +78,30 @@ export default {
       })
     },
 
-    F_stateWatcher () {
-      const self = this
-      firebase.auth().onAuthStateChanged(function (user) {
-        if (user) {
-          let userInfo = {}
-          self.F_getManagerInfo(user.uid).then(manager => {
-            userInfo = {
-              displayName: user.displayName,
-              email: user.email,
-              emailVerified: user.emailVerified,
-              photoURL: user.photoURL,
-              phoneNumber: user.phoneNumber,
-              name: manager.name
-            }
-            self.$store.commit('setCurrentUser', userInfo)
-          })
-        } else {
-          self.$store.commit('setCurrentUser', {})
-        }
-      })
-    },
+    // F_stateWatcher () {
+    //   const self = this
+    //   firebase.auth().onAuthStateChanged(function (user) {
+    //     if (user) {
+    //       let userInfo = {}
+    //       self.F_getManagerInfo(user.uid).then(manager => {
+    //         console.log(manager)
+    //         userInfo = {
+    //           displayName: user.displayName,
+    //           email: user.email,
+    //           emailVerified: user.emailVerified,
+    //           photoURL: user.photoURL,
+    //           phoneNumber: user.phoneNumber,
+    //           name: manager.name,
+    //           online: manager.online
+    //         }
+    //         self.$store.commit('setCurrentUser', userInfo)
+    //         console.log(self.$store.state)
+    //       })
+    //     } else {
+    //       self.$store.commit('setCurrentUser', {})
+    //     }
+    //   })
+    // },
 
     F_updateProfile (userInfo) {
       var user = firebase.auth().currentUser
@@ -156,7 +161,6 @@ export default {
     },
 
     F_updateManagerInfo (id, data) {
-      console.log('要更新的 data: 要更新的 data: 要更新的 data: ', data)
       const managers = db.collection('managers').doc(id)
       return managers.update(data).then(function () {
         console.log('Document successfully updated!')

@@ -8,9 +8,12 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'cropperjs/dist/cropper.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import VueCookies from 'vue-cookies'
 
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
+Vue.use(VueCookies)
+window.cookieTool = Vue.$cookies
 
 Vue.config.productionTip = false
 new Vue({

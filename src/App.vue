@@ -16,7 +16,7 @@ export default {
     Header
   },
   created () {
-    this.F_stateWatcher()
+    // this.F_stateWatcher()
   }
 }
 
