@@ -26,7 +26,6 @@ export default {
         self.F_showUser().then(user => {
           self.F_updateManagerInfo(`${user.uid}`, { online: true })
           self.$router.replace(`/backend/${user.uid}`)
-          window.cookieTool.set('siaZA', user.uid, 60 * 60 * 24)
         }).catch(error => {
           console.log(error)
         })

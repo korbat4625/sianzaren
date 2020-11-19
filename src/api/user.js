@@ -14,6 +14,7 @@ const userApi = {
     firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
         let userInfo = {}
+        window.cookieTool.set('siaZA', user.uid, 60 * 60 * 24)
         dbApi.getDBManagerInfo(user.uid).then(manager => {
           userInfo = {
             displayName: user.displayName,

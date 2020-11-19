@@ -5,11 +5,9 @@ import AddArticle from '../components/AddArticle.vue'
 import UserInfo from '../components/UserInfo.vue'
 import store from '@/store/index.js'
 // import { dbApi } from '@/api/db.js'
-import { userApi } from '@/api/user.js'
 Vue.use(VueRouter)
 
 const siteCondition = 'fixing'
-const showWatcherMsg = true
 // const showDBManagerInfo = true
 const routes = [
   {
@@ -89,7 +87,5 @@ router.beforeEach(async (to, from, next) => {
     return true
   } else next()
 })
-
-userApi.loginStateWatcher(showWatcherMsg)
 
 export { router }
