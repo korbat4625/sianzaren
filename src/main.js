@@ -2,8 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import { router } from './router'
 import store from './store'
-import { userApi } from '@/api/user.js'
-import { dbApi } from '@/api/db.js'
+import { userAPI } from '@/api/user.js'
+import { dbAPI } from '@/api/db.js'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 
 import 'cropperjs/dist/cropper.css'
@@ -19,9 +19,9 @@ Vue.use(VueCookies)
 Vue.config.productionTip = false
 
 window.cookieTool = Vue.$cookies
-window.userApi = userApi
-window.dbApi = dbApi
-window.userApi.loginStateWatcher(showWatcherMsg)
+window.userAPI = userAPI
+window.dbAPI = dbAPI
+window.userAPI.loginStateWatcher(showWatcherMsg)
 
 new Vue({
   router,

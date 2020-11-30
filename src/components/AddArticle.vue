@@ -32,7 +32,7 @@
       </template>
     </b-modal>
 
-    <b-modal @hide="cancelCrop" size="lg" ref="modalCropper" scrollable title="Scrollable Content">
+    <b-modal @hide="cancelCrop()" size="lg" ref="modalCropper" scrollable title="Scrollable Content">
       <b-row>
         <b-col cols="12">
           <div class="responsiveImg mx-auto">
@@ -47,10 +47,10 @@
       </b-row>
       <b-button size="md" variant="outline-primary" @click="crop($refs.preview__img)">進行裁切</b-button>
       <b-button size="md" variant="outline-primary" @click="cancelCrop">取消</b-button>
-      <b-button size="md" variant="outline-primary" @click="changeViewBox('16/9')">16:9</b-button>
-      <b-button size="md" variant="outline-primary" @click="changeViewBox('4/3')">4:3</b-button>
-      <b-button size="md" variant="outline-primary" @click="changeViewBox('2/3')">2:3</b-button>
-      <b-button size="md" variant="outline-primary" @click="changeViewBox('1/1')">1:1</b-button>
+      <b-button size="md" variant="outline-primary" @click="changeViewBox(16/9)">16:9</b-button>
+      <b-button size="md" variant="outline-primary" @click="changeViewBox(4/3)">4:3</b-button>
+      <b-button size="md" variant="outline-primary" @click="changeViewBox(2/3)">2:3</b-button>
+      <b-button size="md" variant="outline-primary" @click="changeViewBox(1/1)">1:1</b-button>
       <b-button size="md" variant="outline-primary" @click="changeViewBox('free')">任意範圍</b-button>
       <b-button size="md" variant="outline-primary" @click="resetCropper">重置</b-button>
       <b-button size="md" variant="warning" @click="uploadAndShowURL">產生網址</b-button>
@@ -246,9 +246,7 @@ export default {
     },
 
     crop (img, viewBoxSize = 16 / 9) {
-      console.log('img:', img)
-      if (this.cropper !== null) return 'none'
-      if (img.src === '') return 'none'
+      if (this.cropper) this.cancelCrop()
       const image = img
       this.cropper = new Cropper(image, {
         aspectRatio: viewBoxSize,
@@ -260,13 +258,15 @@ export default {
     changeViewBox (viewboxSize) {
       if (this.$refs.preview__img.src === '') return 'none'
       if (this.$refs.preview__img.src === '') return 'none'
-      if (this.cropper === null) {
-        this.crop(this.$refs.preview__img, viewboxSize)
-      } else {
-        if (this.cropper.ready === false) {
-          this.crop(this.$refs.preview__img, viewboxSize)
-        }
-      }
+      console.log('pass')
+      // if (this.cropper === null) {
+      //   this.crop(this.$refs.preview__img, viewboxSize)
+      // } else {
+      //   if (this.cropper.ready === false) {
+      //     this.crop(this.$refs.preview__img, viewboxSize)
+      //   }
+      // }
+      this.crop(this.$refs.preview__img, viewboxSize)
       return 'done'
     },
 
@@ -280,6 +280,7 @@ export default {
     },
 
     cancelCrop () {
+      if (!this.cropper) return 'done'
       this.cropper.clear()
       this.cropper.destroy()
       this.cropper = null

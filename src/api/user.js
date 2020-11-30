@@ -1,8 +1,8 @@
 import { firebase } from '@/Model/FirebaseModel.js'
-import { dbApi } from './db.js'
+import { dbAPI } from './db.js'
 import store from '@/store/index.js'
 
-const userApi = {
+const userAPI = {
   async getCurrentUser () {
     return await new Promise(resolve => {
       const user = firebase.auth().currentUser
@@ -15,7 +15,7 @@ const userApi = {
       if (user) {
         let userInfo = {}
         window.cookieTool.set('siaZA', user.uid, 60 * 60 * 24)
-        dbApi.getDBManagerInfo(user.uid).then(manager => {
+        dbAPI.getDBManagerInfo(user.uid).then(manager => {
           userInfo = {
             displayName: user.displayName,
             email: user.email,
@@ -39,4 +39,4 @@ const userApi = {
   }
 }
 
-export { userApi }
+export { userAPI }

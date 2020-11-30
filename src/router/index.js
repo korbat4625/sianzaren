@@ -4,7 +4,7 @@ import Backend from '../views/Backend.vue'
 import AddArticle from '../components/AddArticle.vue'
 import UserInfo from '../components/UserInfo.vue'
 import store from '@/store/index.js'
-// import { dbApi } from '@/api/db.js'
+// import { dbAPI } from '@/api/db.js'
 Vue.use(VueRouter)
 
 const siteCondition = 'fixing'
@@ -70,7 +70,7 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   // fireModel.methods.F_checkLogin()
-  // const mg = await dbApi.getDBManagerInfo(showDBManagerInfo)
+  // const mg = await dbAPI.getDBManagerInfo(showDBManagerInfo)
   const mg = store.state
   console.log('manager:', mg)
 
