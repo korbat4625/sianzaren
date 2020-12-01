@@ -13,6 +13,7 @@
           </div>
           <span :style="{ display: invalid }" style="color: red;">圖片過大，請先進行裁切</span>
           <span>{{ localImgPreview.name }}</span>
+          <b-form-input size="lg" placeholder="請輸入剪裁後檔案名稱" v-model="croppedName"></b-form-input>
         </b-col>
       </b-row>
       <div v-if="$store.state.uploadProgress !== ''">
@@ -53,7 +54,7 @@
       <b-button size="md" variant="outline-primary" @click="changeViewBox(1/1)">1:1</b-button>
       <b-button size="md" variant="outline-primary" @click="changeViewBox('free')">任意範圍</b-button>
       <b-button size="md" variant="outline-primary" @click="resetCropper">重置</b-button>
-      <b-button size="md" variant="warning" @click="uploadAndShowURL">產生網址</b-button>
+      <b-button size="md" variant="warning" @click="uploadAndShowURL(false)">產生網址</b-button>
       <b-form-input size="lg" placeholder="請輸入剪裁後檔案名稱" v-model="croppedName"></b-form-input>
     </b-modal>
 
@@ -86,9 +87,6 @@
                   <div>
                     <img v-b-modal class="img_item" :src="item.url" alt="" srcset="" @click="useTool(item)">
                   </div>
-                  <div>
-                    {{ item.name }}
-                  </div>
                 </div>
               </div>
             </b-card-body>
@@ -108,6 +106,7 @@
 
     <b-col cols="12 mt-3" v-if="wantToPreview" style="height: 300px; overflow: auto;">
       <img :src="wantToPreviewImgURL" alt="">
+      <div> {{ item.name }} </div>
     </b-col>
 
     <b-col cols="12 mt-3">
@@ -162,12 +161,18 @@ export default {
       addOrUpdate: '新增',
       tags: [],
       createdAt: null,
-      targetRef: 'posts/img/' + this.$route.params.who + '/',
-      targetRefCompression: 'posts/img/' + this.$route.params.who + '/compression/',
+
+      // 已經設好的固定路徑，對應到現在使用者擁有的圖片
+      targetRef: 'managers/' + this.$store.state.name + '/img',
+      // 已經設好的固定路徑，對應到現在使用者擁有的壓縮版本圖片
+      targetRefCompression: 'managers/' + this.$store.state.name + '/img/compression',
+      // 儲存第一次列出來的所有圖片，後續添加進去的都應使用 push 方法
+      storeImgURLs: [],
+
       previewCroppedFile: [],
       previewCompressionFile: null,
+
       uploadStatus: '',
-      storeImgURLs: [],
       localImgPreview: {
         name: ''
       },
@@ -195,12 +200,25 @@ export default {
     MarkdownPro
   },
   created () {
+    console.log(this.targetRef)
     this.listedImg()
   },
   methods: {
     async task (task) {
       if (task === 'uploadSingleImg') {
         // 進行壓縮後上傳
+        const compress = true
+        console.log('開始壓縮程序')
+        Promise.all(
+          [
+            this.uploadAndShowURL(compress),
+            this.uploadAndShowURL(!compress)
+          ]
+        ).then(res => {
+          this.cancelCrop()
+          this.clear()
+          this.clearFile()
+        })
         return false
         // await this.uploadImg(this.targetRefCompression)
         // await this.uploadImg(this.targetRef)
@@ -225,19 +243,6 @@ export default {
             })
           })
         }
-      })
-    },
-
-    uploadAndShowURL () {
-      // getCroppedCanvas 會轉為 canvas， toBlob 為 canvas 原生 WEB API
-      this.cropper.getCroppedCanvas({
-        minWidth: 640,
-        minHeight: 360
-      }).toBlob(blob => {
-        blob.name = this.croppedName
-        this.previewCroppedFile = []
-        this.previewCroppedFile[0] = blob
-        this.uploadAsBlob()
       })
     },
 
@@ -288,9 +293,9 @@ export default {
     },
 
     clear (obj) {
+      this.croppedName = ''
       this.localImgPreview.name = ''
       this.$refs.preview__input.value = ''
-      console.log(this.$refs.preview__input.files)
     },
 
     clearFile () {
@@ -357,10 +362,29 @@ export default {
       }
     },
 
-    async uploadImg (targetRef) {
+    async uploadAndShowURL (compress = false) {
+      // getCroppedCanvas 會轉為 canvas， toBlob 為 canvas 原生 WEB API
+      const typeOfImg = compress ? 'image/jpeg' : 'image/png'
+      const rateOfCompress = compress ? 0.9 : 1
+      let fileName = this.croppedName ? this.croppedName : this.localImgPreview.name
+      fileName = compress ? fileName + '_compressed' : fileName
+
+      this.cropper.getCroppedCanvas({
+        minWidth: 640,
+        minHeight: 360
+      }).toBlob(async blob => {
+        blob.name = this.croppedName
+        this.previewCroppedFile = []
+        this.previewCroppedFile[0] = blob
+        const ref = compress ? this.targetRefCompression + '/' + fileName + '/' : this.targetRef + '/' + fileName + '/'
+        console.log(ref)
+        return await this.uploadAsBlob(ref)
+      }, typeOfImg, rateOfCompress)
+    },
+
+    async uploadImg (ref) {
       await Promise.all(
         this.previewCroppedFile.map(file => {
-          const ref = targetRef + file.name
           return this.F_uploadFiles_with_watcher(ref, file.file)
         })
       ).then(res => {
@@ -371,11 +395,11 @@ export default {
       })
     },
 
-    async uploadAsBlob () {
-      await Promise.all(
+    async uploadAsBlob (ref) {
+      return await Promise.all(
         this.previewCroppedFile.map(file => {
-          const ref = this.targetRef + file.name
-          return this.F_uploadFiles_with_watcher(ref, file)
+          const targetRef = ref + file.name
+          return this.F_uploadFiles_with_watcher(targetRef, file)
         })
       ).then(res => {
         this.storeImgURLs.push({
