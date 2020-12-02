@@ -48,11 +48,10 @@ export default {
     },
 
     async F_signOut () {
-      const self = this
-      await self.F_updateManagerInfo(self.$route.params.who, { online: false })
-      window.cookieTool.set('siaZA')
-      return firebase.auth().signOut().then(function () {
-        self.$router.replace('/')
+      await this.F_updateManagerInfo(self.$route.params.who, { online: false })
+      window.cookieTool.set('siaZA', '')
+      return firebase.auth().signOut().then(() => {
+        this.$router.replace('/')
       })
     },
 

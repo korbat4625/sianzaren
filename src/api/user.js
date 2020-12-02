@@ -30,6 +30,9 @@ const userAPI = {
             console.log('來自監看者的完整訊息, 監看者會將使用者的狀態寫入Vuex store內')
             console.log('指定查看的db內管理者資訊: ', manager)
             console.log('查看app store: ', store.state)
+            // for (const key in store.state) {
+            //   console.log('key: ', key, 'value: ', store.state[key])
+            // }
           }
         })
       } else {

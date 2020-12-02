@@ -1,7 +1,7 @@
 import { db } from '@/Model/FirebaseModel.js'
-console.log('window:: ', window)
 const dbAPI = {
   async getDBManagerInfo (showSourceMsg = false) {
+    if (window.cookieTool.get('siaZA') === 'undefined') return { online: false }
     const mgI = window.cookieTool.get('siaZA')
     const managers = db.collection('managers').doc(mgI)
     if (showSourceMsg) {

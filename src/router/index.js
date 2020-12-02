@@ -3,12 +3,12 @@ import VueRouter from 'vue-router'
 import Backend from '../views/Backend.vue'
 import AddArticle from '../components/AddArticle.vue'
 import UserInfo from '../components/UserInfo.vue'
-import store from '@/store/index.js'
-// import { dbAPI } from '@/api/db.js'
+// import store from '@/store/index.js'
+import { dbAPI } from '@/api/db.js'
 Vue.use(VueRouter)
 
 const siteCondition = 'fixing'
-// const showDBManagerInfo = true
+const showDBManagerInfo = true
 const routes = [
   {
     path: '/',
@@ -69,23 +69,24 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  // fireModel.methods.F_checkLogin()
-  // const mg = await dbAPI.getDBManagerInfo(showDBManagerInfo)
-  const mg = store.state
-  console.log('manager:', mg)
+  const mg = await dbAPI.getDBManagerInfo(showDBManagerInfo)
+  // console.log('manager:', mg, mg.online)
+  // for (const key in mg) {
+  //   console.log('key: ', key, 'value: ', mg[key])
+  // }
+  console.log(mg)
+  if (mg.online) {
+    next()
+    return true
+  }
 
-  if (to.name === 'HandsomeLogin') {
-    next()
-    return true
+  if (!mg.online) {
+    console.log('梅登入')
+    if (to.name.indexOf('Backend') > -1) next({ name: 'NotFound' })
   }
-  if (to.name !== 'Home' && !mg) {
-    next({ name: 'Home' })
-    return true
-  }
-  if (to.name === 'NotFound') {
-    next()
-    return true
-  } else next()
+
+  if (to.name === 'NotFound') next()
+  next()
 })
 
 export { router }
