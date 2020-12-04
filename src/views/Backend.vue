@@ -43,6 +43,9 @@ export default {
       articleEditor: ''
     }
   },
+  created () {
+    console.log(this.$route)
+  },
   computed: {
     ...mapState([
       // 映射 this.count 为 store.state.count

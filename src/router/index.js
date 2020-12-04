@@ -69,6 +69,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
+  console.log('getDBManagerInfo')
   const mg = await dbAPI.getDBManagerInfo(showDBManagerInfo)
   // console.log('manager:', mg, mg.online)
   // for (const key in mg) {
