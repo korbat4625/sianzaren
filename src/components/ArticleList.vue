@@ -1,6 +1,5 @@
 <template>
   <div class="article__blocks">
-
     <ArticleCard
       v-for="article in filterPosts"
       :article="article"

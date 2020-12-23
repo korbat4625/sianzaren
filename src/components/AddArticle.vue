@@ -78,7 +78,7 @@
       <div class="accordion cloud" role="tablist">
         <b-card no-body class="mb-1">
           <b-card-header header-tag="header" class="p-1" role="tab">
-            <b-button block v-b-toggle.accordion-1 variant="info">點擊以顯示或隱藏雲端圖庫</b-button>
+            <b-button block v-b-toggle.accordion-1 variant="info">點擊以顯示或隱藏雲端圖庫 {{ $store.state.name }} </b-button>
           </b-card-header>
           <b-collapse id="accordion-1" visible accordion="my-accordion" role="tabpanel">
             <b-card-body>
@@ -162,10 +162,10 @@ export default {
       tags: [],
       createdAt: null,
 
-      // 已經設好的固定路徑，對應到現在使用者擁有的圖片
-      targetRef: 'managers/' + this.$store.state.name + '/img',
-      // 已經設好的固定路徑，對應到現在使用者擁有的壓縮版本圖片
-      targetRefCompression: 'managers/' + this.$store.state.name + '/img/compression',
+      // created 已經設好的固定路徑，對應到現在使用者擁有的圖片
+      targetRef: '',
+      // created 已經設好的固定路徑，對應到現在使用者擁有的壓縮版本圖片
+      targetRefCompression: '',
       // 儲存第一次列出來的所有圖片，後續添加進去的都應使用 push 方法
       storeImgURLs: [],
 
@@ -200,8 +200,13 @@ export default {
     MarkdownPro
   },
   created () {
-    console.log(this.targetRef)
-    this.listedImg()
+    const interval = setInterval(() => {
+      if (!this.$store.state.name) return
+      clearInterval(interval)
+      this.targetRef = 'managers/' + this.$store.state.name + '/img'
+      this.targetRefCompression = 'managers/' + this.$store.state.name + '/img/compression'
+      this.listedImg()
+    }, 0)
   },
   methods: {
     async task (task) {
@@ -219,12 +224,9 @@ export default {
           this.clear()
           this.clearFile()
         })
-        return false
-        // await this.uploadImg(this.targetRefCompression)
-        // await this.uploadImg(this.targetRef)
-        // this.hideModal('modalUploadInfo')
-        // return 'done'
+        return 'compressed'
       }
+      console.log('部會來這')
       await this.uploadImg(this.targetRef)
       return this.F_updateArticle(this.articleData, this.addOrUpdate, this.$attrs)
     },
@@ -236,12 +238,13 @@ export default {
     listedImg () {
       this.F_listStorageRef(this.targetRef).then(itemList => {
         for (const item of itemList) {
-          this.F_getStorageURL(item.fullPath).then(url => {
-            this.storeImgURLs.push({
-              name: item.name,
-              url: url
-            })
-          })
+          console.log(item)
+          // this.F_getStorageURL(item.fullPath).then(url => {
+          //   this.storeImgURLs.push({
+          //     name: item.name,
+          //     url: url
+          //   })
+          // })
         }
       })
     },
@@ -377,8 +380,7 @@ export default {
         this.previewCroppedFile = []
         this.previewCroppedFile[0] = blob
         const ref = compress ? this.targetRefCompression + '/' + fileName + '/' : this.targetRef + '/' + fileName + '/'
-        console.log(ref)
-        return await this.uploadAsBlob(ref)
+        return this.uploadAsBlob(ref)
       }, typeOfImg, rateOfCompress)
     },
 

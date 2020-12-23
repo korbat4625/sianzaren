@@ -62,8 +62,8 @@ export default {
       this.addArticle = ''
       this.articleEditor = ''
       if (which === 'userInfoEditor') this.userInfoEditor = 'active'
-      if (which === 'userInfoEditor') this.addArticle = 'active'
-      if (which === 'userInfoEditor') this.articleEditor = 'active'
+      if (which === 'addArticle') this.addArticle = 'active'
+      if (which === 'articleEditor') this.articleEditor = 'active'
     }
   }
 }
