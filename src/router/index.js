@@ -75,7 +75,6 @@ router.beforeEach(async (to, from, next) => {
   // for (const key in mg) {
   //   console.log('key: ', key, 'value: ', mg[key])
   // }
-  console.log(mg)
   if (mg.online) {
     next()
     return true

@@ -104,10 +104,10 @@
       </div>
     </b-col>
 
-    <b-col cols="12 mt-3" v-if="wantToPreview" style="height: 300px; overflow: auto;">
+    <!-- <b-col cols="12 mt-3" v-if="wantToPreview" style="height: 300px; overflow: auto;">
       <img :src="wantToPreviewImgURL" alt="">
       <div> {{ item.name }} </div>
-    </b-col>
+    </b-col> -->
 
     <b-col cols="12 mt-3">
       <label for="input-large">文章標題:</label>
@@ -213,20 +213,16 @@ export default {
       if (task === 'uploadSingleImg') {
         // 進行壓縮後上傳
         const compress = true
-        console.log('開始壓縮程序')
-        Promise.all(
-          [
-            this.uploadAndShowURL(compress),
-            this.uploadAndShowURL(!compress)
-          ]
-        ).then(res => {
+        Promise.all([
+          this.uploadAndShowURL(compress),
+          this.uploadAndShowURL(!compress)
+        ]).then(res => {
           this.cancelCrop()
           this.clear()
           this.clearFile()
         })
         return 'compressed'
       }
-      console.log('部會來這')
       await this.uploadImg(this.targetRef)
       return this.F_updateArticle(this.articleData, this.addOrUpdate, this.$attrs)
     },
@@ -239,12 +235,12 @@ export default {
       this.F_listStorageRef(this.targetRef).then(itemList => {
         for (const item of itemList) {
           console.log(item)
-          // this.F_getStorageURL(item.fullPath).then(url => {
-          //   this.storeImgURLs.push({
-          //     name: item.name,
-          //     url: url
-          //   })
-          // })
+          this.F_getStorageURL(item.fullPath).then(url => {
+            this.storeImgURLs.push({
+              name: item.name,
+              url: url
+            })
+          })
         }
       })
     },
@@ -435,6 +431,7 @@ export default {
     },
 
     switchTools (tools) {
+      console.log(tools)
       this.wantToCrop = false
       this.wantTogetURL = false
       this.wantToPreview = false
@@ -455,6 +452,7 @@ export default {
       }
 
       if (this.wantToPreview) {
+        console.log(item)
         this.wantToPreviewImgURL = item.url
       }
 

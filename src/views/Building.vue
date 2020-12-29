@@ -2,7 +2,7 @@
   <b-container fluid class="page-default-template">
     <Info
       title="網站訊息"
-      msg="網站建置或改版中，預計年底上線請耐心等候..."
+      msg="拍謝，站主工作太忙，需延後上線時間，deadline壓1/15，金拍謝，力求年初上限omg"
       title-class="bg-info"
     />
   </b-container>
