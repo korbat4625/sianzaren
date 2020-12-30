@@ -85,7 +85,7 @@
               <div class="cloud_img_container d-flex flex-wrap">
                 <div class="cloud_img" v-for="item in storeImgURLs" :key="item.url">
                   <div>
-                    <img v-b-modal class="img_item" :src="item.url" alt="" srcset="" @click="useTool(item)">
+                    <img v-b-modal class="img_item" :src="item.url" alt="" srcset="" @click="showModal('modal-showPic', item)">
                   </div>
                 </div>
               </div>
@@ -94,20 +94,11 @@
           <template v-slot:footer>
             <b-button size="sm" variant="outline-primary" @click="uploadLocalImgs">上傳電腦圖檔</b-button>
             <b-button size="sm" variant="outline-primary" @click="clearFile">取消上傳</b-button>
-            <b-button :class="{ active : wantToCrop }" size="sm" variant="outline-primary" @click="switchTools('cropper')">我要裁切</b-button>
-            <b-button :class="{ active : wantTogetURL }" size="sm" variant="outline-primary" @click="switchTools('getURL')">我要取得網址</b-button>
-            <b-button :class="{ active : wantToPreview }" size="sm" variant="outline-primary" @click="switchTools('preview')">我要檢視</b-button>
             <b-button size="sm" variant="outline-danger" @click="showModal('info-modal')">清空圖庫</b-button>
-            <b-button :class="{ active : wantToDelete }"  size="sm" variant="outline-danger" @click="switchTools('delete')">選擇刪除</b-button>
           </template>
         </b-card>
       </div>
     </b-col>
-
-    <!-- <b-col cols="12 mt-3" v-if="wantToPreview" style="height: 300px; overflow: auto;">
-      <img :src="wantToPreviewImgURL" alt="">
-      <div> {{ item.name }} </div>
-    </b-col> -->
 
     <b-col cols="12 mt-3">
       <label for="input-large">文章標題:</label>
@@ -143,6 +134,19 @@
       ref="preview__input"
       accept=".jpg,.jpeg,.png"
     >
+
+    <b-modal ref="modal-showPic" size="lg" hide-header hide-footer>
+      <div class="d-flex flex-column">
+        <div style="height: 80%;">
+          <img style="max-width: 100%;" class="mx-auto" :src="wantToPreviewImgURL" alt="">
+        </div>
+        <div style="height: 20%;">
+          <b-button  size="sm" variant="outline-primary" @click="useTool(cloudData, 'getURL')">我要取得網址</b-button>
+          <b-button size="sm" variant="outline-primary" @click="useTool(cloudData, 'cropper')">我要裁切</b-button>
+          <b-button size="sm" variant="outline-danger" @click="useTool(cloudData, 'delete')">選擇刪除</b-button>
+        </div>
+      </div>
+    </b-modal>
   </b-row>
 </template>
 
@@ -179,13 +183,10 @@ export default {
       cropper: null,
       croppedData: null,
       croppedName: '',
-      wantToCrop: false,
-      wantTogetURL: false,
-      wantToPreview: false,
-      wantToDelete: false,
       wantToPreviewImgURL: '',
       currentFileName: '',
-      invalid: 'none'
+      invalid: 'none',
+      cloudData: null
     }
   },
   watch: {
@@ -422,47 +423,38 @@ export default {
       this.listedImg()
     },
 
-    showModal (modalRef) {
+    showModal (modalRef, item) {
       this.$refs[modalRef].show()
+      this.cloudData = item
+      if (modalRef === 'modal-showPic') {
+        this.useTool(this.cloudData, 'preview')
+      }
     },
 
     hideModal (modalRef) {
       this.$refs[modalRef].hide()
     },
 
-    switchTools (tools) {
-      console.log(tools)
-      this.wantToCrop = false
-      this.wantTogetURL = false
-      this.wantToPreview = false
-      this.wantToDelete = false
-      if (tools === 'cropper') this.wantToCrop = true
-      if (tools === 'getURL') this.wantTogetURL = true
-      if (tools === 'preview') this.wantToPreview = true
-      if (tools === 'delete') this.wantToDelete = true
-    },
-
-    useTool (item) {
-      if (this.wantToCrop) {
-        this.loadImg(item.url)
-      }
-
-      if (this.wantTogetURL) {
-        this.makeToast('success', item)
-      }
-
-      if (this.wantToPreview) {
-        console.log(item)
-        this.wantToPreviewImgURL = item.url
-      }
-
-      if (this.wantToDelete) {
-        this.currentFileName = item.name
-        this.showModal('delete-modal')
+    useTool (item, tool) {
+      console.log(item, tool)
+      switch (tool) {
+        case 'cropper': this.loadImg(item.url); break
+        case 'getURL': {
+          console.log('geturl')
+          this.makeToast('success', item); break
+        }
+        case 'preview': this.wantToPreviewImgURL = item.url; break
+        case 'delete': {
+          this.currentFileName = item.name
+          this.showModal('delete-modal')
+          break
+        }
+        default: break
       }
     },
 
     makeToast (variant = null, data) {
+      console.log(data)
       this.$bvToast.toast(data.url, {
         title: '檔案名稱: ' + data.name,
         variant: variant,
