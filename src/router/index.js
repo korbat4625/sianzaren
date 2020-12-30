@@ -69,24 +69,17 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  console.log('getDBManagerInfo')
   const mg = await dbAPI.getDBManagerInfo(showDBManagerInfo)
+  console.log(mg)
   // console.log('manager:', mg, mg.online)
   // for (const key in mg) {
   //   console.log('key: ', key, 'value: ', mg[key])
   // }
-  if (mg.online) {
-    next()
-    return true
+  if (mg.online) next()
+  else {
+    if (to.name === 'Home' || to.name === 'NotFound' || to.name === 'HandsomeLogin') next()
+    if (to.fullPath.indexOf('backend') !== -1) next({ name: 'NotFound' })
   }
-
-  if (!mg.online) {
-    console.log('梅登入')
-    if (to.name.indexOf('Backend') > -1) next({ name: 'NotFound' })
-  }
-
-  if (to.name === 'NotFound') next()
-  next()
 })
 
 export { router }

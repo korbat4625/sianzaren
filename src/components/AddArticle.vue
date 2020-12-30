@@ -53,7 +53,7 @@
       <b-button size="md" variant="outline-primary" @click="changeViewBox(1/1)">1:1</b-button>
       <!-- <b-button size="md" variant="outline-primary" @click="changeViewBox('free')">任意範圍</b-button> -->
       <b-button size="md" variant="outline-primary" @click="resetCropper">重置</b-button>
-      <b-button size="md" variant="warning" @click="singleUploadTask(false)">產生網址</b-button>
+      <b-button size="md" variant="warning" @click="task">產生網址</b-button>
       <b-form-input size="lg" placeholder="請輸入剪裁後檔案名稱" v-model="croppedName"></b-form-input>
     </b-modal>
 
@@ -138,7 +138,6 @@
       <div class="d-flex flex-column">
         <div style="height: 80%;">
           <img style="max-width: 100%;" class="mx-auto" :src="wantToPreviewImgURL" alt="">
-          {{ cloudData }}
         </div>
         <div style="height: 20%;">
           <b-button  size="sm" variant="outline-primary" @click="useTool(cloudData, 'getURL')">我要取得網址</b-button>
