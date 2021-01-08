@@ -23,8 +23,8 @@ export default {
     F_signIn (account, password) {
       const self = this
       return firebase.auth().signInWithEmailAndPassword(account, password).then(function () {
-        self.F_showUser().then(user => {
-          self.F_updateManagerInfo(`${user.uid}`, { online: true })
+        self.F_showUser().then(async user => {
+          await self.F_updateManagerInfo(`${user.uid}`, { online: true })
           self.$router.replace(`/backend/${user.uid}`)
         }).catch(error => {
           console.log(error)
@@ -48,17 +48,14 @@ export default {
     },
 
     async F_signOut () {
-      console.log(this.$route.params.who)
-      await this.F_updateManagerInfo(this.$route.params.who, { online: false })
       window.cookieTool.set('siaZA', '')
+      await this.F_updateManagerInfo(this.$route.params.who, { online: false })
       return firebase.auth().signOut().then(() => {
         this.$router.replace('/')
       })
     },
 
     F_updateArticle (data, addOrUpdate, attrs) {
-      console.log('觸發了F_updateArticle')
-      console.log(data, addOrUpdate, attrs)
       if (addOrUpdate === '更新') {
         console.log('走入更新')
         var docRef = db.collection('posts').doc(attrs.id)
@@ -130,6 +127,12 @@ export default {
       })
     },
 
+    /**
+     * 一次性設置
+     * @async
+     * @param {object} user - showUser() 所返回的 user 物件的再封裝
+     */
+
     F_setManagerData (user) {
       return db.collection('managers').doc(user.uid).set({
         account: user.account,
@@ -148,6 +151,11 @@ export default {
       })
     },
 
+    /**
+     * 取得 user id 所代表人物的各資料狀態
+     * @async
+     * @param {string} id - user id，為類似uuid的使用者識別碼
+     */
     F_getManagerInfo (id) {
       const managers = db.collection('managers').doc(id)
       return managers.get().then(function (doc) {
@@ -159,6 +167,12 @@ export default {
       })
     },
 
+    /**
+     * 更新 user id 所代表人物的各資料狀態
+     * @async
+     * @param {string} id - user id，為類似uuid的使用者識別碼
+     * @param {object} data - 要更新的資料
+     */
     F_updateManagerInfo (id, data) {
       const managers = db.collection('managers').doc(id)
       return managers.update(data).then(function () {
@@ -178,6 +192,11 @@ export default {
       })
     },
 
+    /**
+     * 回傳檔案在雲端的路徑
+     * @async
+     * @param {string} ref - 吃檔案的fullpath路徑
+     */
     F_getStorageURL (ref) {
       // Create a storage reference from our storage service
       var storageRef = storage.ref()

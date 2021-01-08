@@ -104,6 +104,7 @@
 
 <script>
 import firebase from '../Model/FirebaseModel.vue'
+import { authAPI } from '@/api/auth'
 export default {
   name: 'handsomeLogin',
   mixins: [firebase],
@@ -149,37 +150,35 @@ export default {
       else this.setActive = false
     },
     submit () {
-      switch (this.inOrUp) {
-        case 1:
-          this.F_signIn(this.loginAcc, this.loginPsd)
-          break
-        case 2: {
-          const user = {
-            account: this.account,
-            password: this.password,
-            displayName: this.displayName,
-            name: this.name,
-            backupEmail: this.backupEmail,
-            phoneNumber: this.phoneNumber,
-            address: this.address
-          }
-          this.F_signUp(user).then(() => {
-            this.F_showUser().then(newUser => {
-              if (newUser.uid === null) return
-              user.uid = newUser.uid
-              user.online = true
-              user.registerTime = new Date().getTime()
-              this.F_setManagerData(user)
-              this.$router.push(`/backend/${newUser.uid}`)
-            }).catch(error => {
-              console.error(error)
-            })
-          }).catch(error => {
-            console.log(error)
-          })
-          break
+      if (this.inOrUp === 1) {
+        authAPI.signIn(this.loginAcc, this.loginPsd).then(({ status, uuid }) => {
+          if (status === 'success' && uuid) this.$router.replace('/backend/' + uuid)
+        })
+      }
+      if (this.inOrUp === 2) {
+        const user = {
+          account: this.account,
+          password: this.password,
+          displayName: this.displayName,
+          name: this.name,
+          backupEmail: this.backupEmail,
+          phoneNumber: this.phoneNumber,
+          address: this.address
         }
-        default: break
+        this.F_signUp(user).then(() => {
+          this.F_showUser().then(newUser => {
+            if (newUser.uid === null) return
+            user.uid = newUser.uid
+            user.online = true
+            user.registerTime = new Date().getTime()
+            this.F_setManagerData(user)
+            this.$router.push(`/backend/${newUser.uid}`)
+          }).catch(error => {
+            console.error(error)
+          })
+        }).catch(error => {
+          console.log(error)
+        })
       }
     }
   }

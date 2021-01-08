@@ -15,7 +15,7 @@ const userAPI = {
       if (user) {
         let userInfo = {}
         window.cookieTool.set('siaZA', user.uid, 60 * 60 * 24)
-        dbAPI.getDBManagerInfo(user.uid).then(manager => {
+        dbAPI.getDBManagerInfo(user.uid, 'loginStateWatcher').then(manager => {
           userInfo = {
             displayName: user.displayName,
             email: user.email,

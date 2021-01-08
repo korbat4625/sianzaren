@@ -215,9 +215,7 @@ export default {
         this.singleUploadTask(compress),
         this.singleUploadTask(!compress)
       ]).then(res => {
-        this.cancelCrop()
         this.clear()
-        this.clearFile()
       })
       return 'compressed'
     },
@@ -292,6 +290,8 @@ export default {
       this.croppedName = ''
       this.localInputPreview.name = ''
       this.$refs.preview__input.value = ''
+      this.cancelCrop()
+      this.clearFile()
     },
 
     clearFile () {
@@ -424,11 +424,16 @@ export default {
         case 'getURL': {
           this.listedImg(this.targetRef, true).then(unCompressedBox => {
             const compressedPicName = item.name.split('_')[0]
-            const unCompressedPic = unCompressedBox.filter(unCompressedPics => {
-              return unCompressedPics.name === compressedPicName
+            const unCompressedPic = unCompressedBox.filter(theUnCompressedPic => {
+              return theUnCompressedPic.name === compressedPicName
             })[0]
+            // F_getStorageURL 接收檔案在雲端的位置，會返回圖片顯示路徑
             this.F_getStorageURL(unCompressedPic.fullPath).then(unCompressedPicURL => {
-              this.makeToast('success', { url: unCompressedPicURL })
+              const pictureData = {
+                name: unCompressedPic.name,
+                url: unCompressedPicURL
+              }
+              this.makeToast('success', pictureData)
             })
           })
           break

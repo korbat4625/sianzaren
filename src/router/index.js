@@ -4,11 +4,12 @@ import Backend from '../views/Backend.vue'
 import AddArticle from '../components/AddArticle.vue'
 import UserInfo from '../components/UserInfo.vue'
 // import store from '@/store/index.js'
-import { dbAPI } from '@/api/db.js'
+// import { dbAPI } from '@/api/db.js'
+import { authAPI } from '@/api/auth.js'
 Vue.use(VueRouter)
 
 const siteCondition = 'fixing'
-const showDBManagerInfo = true
+const showDBManagerInfo = false
 const routes = [
   {
     path: '/',
@@ -69,7 +70,8 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const mg = await dbAPI.getDBManagerInfo(showDBManagerInfo)
+  console.log(to)
+  const mg = await authAPI.checkLogin(showDBManagerInfo, 'from router')
   console.log(mg)
   // console.log('manager:', mg, mg.online)
   // for (const key in mg) {
