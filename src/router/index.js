@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Backend from '../views/Backend.vue'
-import AddArticle from '../components/AddArticle.vue'
-import UserInfo from '../components/UserInfo.vue'
+import Backend from '@/views/Backend.vue'
+import AddArticle from '@/components/AddArticle.vue'
+import UserInfo from '@/components/UserInfo.vue'
 // import store from '@/store/index.js'
 // import { dbAPI } from '@/api/db.js'
 import { authAPI } from '@/api/auth.js'
@@ -14,7 +14,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: siteCondition === 'fixing' ? () => import('../views/Building.vue') : () => import('../views/Home.vue')
+    component: siteCondition === 'fixing' ? () => import('@/views/Building.vue') : () => import('@/views/Home.vue')
   },
   {
     path: '/about',
@@ -22,12 +22,12 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue')
   },
   {
     path: '/HandsomeLogin',
     name: 'HandsomeLogin',
-    component: () => import('../views/HandsomeLogin.vue')
+    component: () => import('@/views/HandsomeLogin.vue')
   },
   {
     path: '/backend/:who',
@@ -47,19 +47,19 @@ const routes = [
       {
         path: 'article_editor',
         name: 'ArticleEditor',
-        component: () => import('../components/ArticleEditor.vue')
+        component: () => import('@/components/ArticleEditor.vue')
       }
     ]
   },
   {
     path: '/article/:articleId',
     name: 'ArticlePage',
-    component: () => import('../components/ArticlePage.vue')
+    component: () => import('@/components/ArticlePage.vue')
   },
   {
     path: '*',
     name: 'NotFound',
-    component: () => import('../views/404.vue')
+    component: () => import('@/views/404.vue')
   }
 ]
 
@@ -70,17 +70,13 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  console.log(to)
-  const mg = await authAPI.checkLogin(showDBManagerInfo, 'from router')
-  console.log(mg)
-  // console.log('manager:', mg, mg.online)
-  // for (const key in mg) {
-  //   console.log('key: ', key, 'value: ', mg[key])
-  // }
+  const mg = await authAPI.checkLogin(showDBManagerInfo, 'router')
+  console.log('router看mg:', mg)
+
   if (mg.online) next()
   else {
-    if (to.name === 'Home' || to.name === 'NotFound' || to.name === 'HandsomeLogin') next()
-    if (to.fullPath.indexOf('backend') !== -1) next({ name: 'NotFound' })
+    console.log('沒有登入:', to)
+    next()
   }
 })
 

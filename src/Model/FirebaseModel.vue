@@ -25,6 +25,7 @@ export default {
       return firebase.auth().signInWithEmailAndPassword(account, password).then(function () {
         self.F_showUser().then(async user => {
           await self.F_updateManagerInfo(`${user.uid}`, { online: true })
+          console.log('登入開始進行跳轉')
           self.$router.replace(`/backend/${user.uid}`)
         }).catch(error => {
           console.log(error)
@@ -51,7 +52,7 @@ export default {
       window.cookieTool.set('siaZA', '')
       await this.F_updateManagerInfo(this.$route.params.who, { online: false })
       return firebase.auth().signOut().then(() => {
-        this.$router.replace('/')
+        this.$router.replace({ name: 'Home' })
       })
     },
 

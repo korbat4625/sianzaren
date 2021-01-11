@@ -9,12 +9,12 @@ class AuthFunctions {
   }
 
   async checkLogin () {
-    const mg = await dbAPI.getDBManagerInfo(this.showMessage, arguments)
+    const mg = await dbAPI.getDBManagerInfo(this.showMessage, arguments[1])
     return mg
   }
 
   async signIn (acc, pass) {
-    return this.firebase.auth().signInWithEmailAndPassword(acc, pass).then(async () => {
+    return await this.firebase.auth().signInWithEmailAndPassword(acc, pass).then(async () => {
       const uuid = this.currentUser().uid
       await this.updateManagerInfo(`${uuid}`, { online: true })
       return {

@@ -13,6 +13,7 @@ const userAPI = {
   loginStateWatcher (showSource = false) {
     firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
+        console.log('watcher觸發有user:', user)
         let userInfo = {}
         window.cookieTool.set('siaZA', user.uid, 60 * 60 * 24)
         dbAPI.getDBManagerInfo(user.uid, 'loginStateWatcher').then(manager => {
@@ -25,18 +26,20 @@ const userAPI = {
             name: manager.name,
             online: manager.online
           }
+          console.log('watcher 調查db撈回來資料:', userInfo)
           store.commit('setCurrentUser', userInfo)
-          if (showSource) {
-            console.log('來自監看者的完整訊息, 監看者會將使用者的狀態寫入Vuex store內')
-            console.log('指定查看的db內管理者資訊: ', manager)
-            console.log('查看app store: ', store.state)
-            // for (const key in store.state) {
-            //   console.log('key: ', key, 'value: ', store.state[key])
-            // }
-          }
         })
       } else {
-        store.commit('setCurrentUser', {})
+        const userInfo = {
+          displayName: '',
+          email: '',
+          emailVerified: '',
+          photoURL: '',
+          phoneNumber: '',
+          name: '',
+          online: 'false'
+        }
+        store.commit('setCurrentUser', userInfo)
       }
     })
   }
