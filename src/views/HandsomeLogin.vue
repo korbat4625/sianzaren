@@ -152,7 +152,13 @@ export default {
     submit () {
       if (this.inOrUp === 1) {
         authAPI.signIn(this.loginAcc, this.loginPsd).then(({ status, uuid }) => {
-          if (status === 'success' && uuid) this.$router.replace('/backend/' + uuid)
+          const waitDataFinished = setInterval(() => {
+            console.log('還沒登入')
+            if (!this.$store.state.online) return 'still offline'
+            clearInterval(waitDataFinished)
+            console.log('已經登入')
+            this.$router.replace('/backend/' + uuid)
+          }, 0)
         })
       }
       if (this.inOrUp === 2) {

@@ -6,14 +6,10 @@ const dbAPI = {
     if (!userUUID) return { online: false }
     const managers = db.collection('managers').doc(userUUID)
 
-    console.log('cookie uuid沒問題，開始查詢使用者資料', arguments[1] + '呼叫了DB查詢...')
-    return await new Promise((resolve, reject) => {
-      managers.get().then(function (doc) {
-        if (doc.exists) resolve(doc.data())
-        else reject(new Error('fail'))
-      }).catch(function (error) {
-        console.log('Error getting document:', error)
-      })
+    return managers.get().then(function (doc) {
+      if (doc.exists) return doc.data()
+    }).catch(function (error) {
+      console.log('Error getting document:', error)
     })
   }
 }

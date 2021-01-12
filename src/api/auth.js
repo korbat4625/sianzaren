@@ -9,14 +9,13 @@ class AuthFunctions {
   }
 
   async checkLogin () {
-    const mg = await dbAPI.getDBManagerInfo(this.showMessage, arguments[1])
+    const mg = await dbAPI.getDBManagerInfo(this.showMessage)
     return mg
   }
 
   async signIn (acc, pass) {
-    return await this.firebase.auth().signInWithEmailAndPassword(acc, pass).then(async () => {
+    return this.firebase.auth().signInWithEmailAndPassword(acc, pass).then(async () => {
       const uuid = this.currentUser().uid
-      await this.updateManagerInfo(`${uuid}`, { online: true })
       return {
         uuid: uuid,
         status: 'success'
@@ -40,7 +39,7 @@ class AuthFunctions {
   * @param {string} id - user id，為類似uuid的使用者識別碼
   * @param {object} data - 要更新的資料
   */
-  updateManagerInfo (id, data) {
+  async updateManagerInfo (id, data) {
     const managers = this.db.collection('managers').doc(id)
     return managers.update(data).then(function () {
       console.log('Document successfully updated!')
