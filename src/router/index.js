@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Backend from '@/views/Backend.vue'
 import AddArticle from '@/components/AddArticle.vue'
 import UserInfo from '@/components/UserInfo.vue'
-// import store from '@/store/index.js'
+import store from '@/store/index.js'
 // import { dbAPI } from '@/api/db.js'
 import { authAPI } from '@/api/auth.js'
 Vue.use(VueRouter)
@@ -72,11 +72,27 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
   const mg = await authAPI.checkLogin(showDBManagerInfo, 'router')
   console.log('router看mg:', mg)
+  const userInfo = {
+    displayName: mg.displayName,
+    email: mg.email,
+    emailVerified: mg.emailVerified,
+    photoURL: mg.photoURL,
+    phoneNumber: mg.phoneNumber,
+    name: mg.name,
+    online: mg.online
+  }
+  store.commit('setCurrentUser', userInfo)
 
   if (mg.online) next()
   else {
-    console.log('沒有登入:', to)
-    next()
+    switch (to.name) {
+      case 'Home': next(); break
+      case 'HandsomeLogin': next(); break
+      case 'NotFound': next(); break
+      default:
+        next({ name: 'NotFound' })
+        break
+    }
   }
 })
 

@@ -150,17 +150,7 @@ export default {
       else this.setActive = false
     },
     submit () {
-      if (this.inOrUp === 1) {
-        authAPI.signIn(this.loginAcc, this.loginPsd).then(({ status, uuid }) => {
-          const waitDataFinished = setInterval(() => {
-            console.log('還沒登入')
-            if (!this.$store.state.online) return 'still offline'
-            clearInterval(waitDataFinished)
-            console.log('已經登入')
-            this.$router.replace('/backend/' + uuid)
-          }, 0)
-        })
-      }
+      if (this.inOrUp === 1) authAPI.signIn(this.loginAcc, this.loginPsd)
       if (this.inOrUp === 2) {
         const user = {
           account: this.account,
