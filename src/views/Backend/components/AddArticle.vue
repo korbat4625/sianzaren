@@ -1,6 +1,6 @@
 <template>
   <b-row class="pageAddArticle">
-    <b-modal id="modal-1" title="下一步?">
+    <b-modal id="modal-1" title="下一步?" @ok="addArticle">
       <p class="my-4">如要{{ addOrUpdate }}文章請按確認</p>
     </b-modal>
 
@@ -107,7 +107,8 @@
     <b-col cols="12">
       <MarkdownPro
         @on-save="updateData"
-        v-model="value"
+        v-model="articleValue"
+        ref="markdownEditor"
       ></MarkdownPro>
     </b-col>
 
@@ -140,7 +141,7 @@
           <img style="max-width: 100%;" class="mx-auto" :src="wantToPreviewImgURL" alt="">
         </div>
         <div style="height: 20%;">
-          <b-button  size="sm" variant="outline-primary" @click="useTool(cloudData, 'getURL')">我要取得網址</b-button>
+          <b-button  size="sm" variant="outline-primary" @click="useTool(cloudData, 'getURL')">插入圖片</b-button>
           <b-button size="sm" variant="outline-primary" @click="useTool(cloudData, 'cropper')">我要裁切</b-button>
           <b-button size="sm" variant="outline-danger" @click="useTool(cloudData, 'delete')">選擇刪除</b-button>
         </div>
@@ -151,7 +152,7 @@
 
 <script>
 import { MarkdownPro } from 'vue-meditor'
-import firebase from '../Model/FirebaseModel.vue'
+import firebase from '@/Model/FirebaseModel.vue'
 import Cropper from 'cropperjs'
 export default {
   name: 'AddArticle',
@@ -160,7 +161,7 @@ export default {
     return {
       articleData: {},
       title: '',
-      value: '',
+      articleValue: '',
       addOrUpdate: '新增',
       tags: [],
       createdAt: null,
@@ -191,7 +192,7 @@ export default {
     $attrs: function (newVal, oldVal) {
       this.addOrUpdate = '更新'
       this.title = newVal.editTitle
-      this.value = newVal.editValue
+      this.articleValue = newVal.editValue
       this.createdAt = newVal.createdAt
     }
   },
@@ -235,7 +236,7 @@ export default {
             urlBox.push(item)
           }
         }
-        console.log(urlBox)
+        // console.log(urlBox)
         return urlBox
       })
     },
@@ -317,6 +318,7 @@ export default {
       if (this.addOrUpdate !== '更新') this.createdAt = new Date().getTime()
 
       this.F_showUser().then(res => {
+        console.log(res.photoURL)
         this.articleData.contentData = {
           title: self.title,
           createdAt: self.createdAt,
@@ -334,9 +336,14 @@ export default {
 
         this.articleData.others = {
           tags: self.tags,
-          articleImgURL: self.articleImgURL
+          articleImgURL: self.articleImgURL ? self.articleImgURL : ''
         }
       })
+    },
+
+    addArticle () {
+      console.log(this.articleData)
+      this.F_updateArticle(this.articleData, 'add')
     },
 
     inputImgSelected () {
@@ -433,7 +440,7 @@ export default {
                 name: unCompressedPic.name,
                 url: unCompressedPicURL
               }
-              this.makeToast('success', pictureData)
+              this.insertUrl('success', pictureData)
             })
           })
           break
@@ -448,13 +455,11 @@ export default {
       }
     },
 
-    makeToast (variant = null, data) {
-      console.log(data.url)
-      this.$bvToast.toast(data.url, {
-        title: '檔案名稱: ' + data.name,
-        variant: variant,
-        solid: true
-      })
+    insertUrl (variant = null, data) {
+      console.log(data)
+      // ![Alt text](/path/to/img.jpg "Optional title")
+      // this.articleValue += '\n' + '![' + data.name + '](' + data.url + ') \'Optional title attribute\''
+      this.articleValue += '\n' + '![' + data.name + '](' + data.url + ')'
     },
 
     uploadLocalImgs () {

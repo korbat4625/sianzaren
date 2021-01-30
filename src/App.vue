@@ -8,7 +8,7 @@
 
 <script>
 import firebase from './Model/FirebaseModel.vue'
-import Header from './views/Header.vue'
+import Header from './Header.vue'
 export default {
   name: 'App',
   mixins: [firebase],

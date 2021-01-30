@@ -14,7 +14,7 @@ export default {
     async F_showUser (e, msg) {
       console.log('觸發了F_showUser')
       var user = firebase.auth().currentUser
-      console.log(user, this.$store.state)
+      // console.log(user, this.$store.state)
       // var name, email, photoUrl, uid, emailVerified
       if (user != null) return user
       else return null
@@ -57,7 +57,7 @@ export default {
     },
 
     F_updateArticle (data, addOrUpdate, attrs) {
-      if (addOrUpdate === '更新') {
+      if (addOrUpdate === 'update') {
         console.log('走入更新')
         var docRef = db.collection('posts').doc(attrs.id)
         return docRef.update(data).then(function () {

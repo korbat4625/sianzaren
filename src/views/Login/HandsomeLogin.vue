@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import firebase from '../Model/FirebaseModel.vue'
+import firebase from '@/Model/FirebaseModel.vue'
 import { authAPI } from '@/api/auth'
 export default {
   name: 'handsomeLogin',

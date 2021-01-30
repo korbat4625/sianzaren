@@ -25,8 +25,8 @@
 </template>
 
 <script>
-import AddArticle from '../components/AddArticle.vue'
-import firebase from '../Model/FirebaseModel.vue'
+import AddArticle from './AddArticle.vue'
+import firebase from '@/Model/FirebaseModel.vue'
 export default {
   name: 'ArticleEditor',
   mixins: [firebase],

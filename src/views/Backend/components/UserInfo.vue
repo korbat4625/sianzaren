@@ -147,7 +147,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import firebase from '../Model/FirebaseModel.vue'
+import firebase from '@/Model/FirebaseModel.vue'
 export default {
   name: 'UserInfoEditor',
   mixins: [firebase],
@@ -296,7 +296,7 @@ export default {
   width: 100%;
   height: 200px;
   background-color: #ccc;
-  background-image: url('../assets/cover.png');
+  background-image: url('~@/assets/cover.png');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;

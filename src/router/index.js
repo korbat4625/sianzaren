@@ -1,20 +1,18 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Backend from '@/views/Backend.vue'
-import AddArticle from '@/components/AddArticle.vue'
-import UserInfo from '@/components/UserInfo.vue'
 import store from '@/store/index.js'
 // import { dbAPI } from '@/api/db.js'
 import { authAPI } from '@/api/auth.js'
+import Backend from '@/views/Backend/Backend.vue'
 Vue.use(VueRouter)
 
-const siteCondition = 'fixing'
+const siteCondition = 'online'
 const showDBManagerInfo = false
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: siteCondition === 'fixing' ? () => import('@/views/Building.vue') : () => import('@/views/Home.vue')
+    component: siteCondition === 'fixing' ? () => import('@/components/Building.vue') : () => import('@/views/Home/Home.vue')
   },
   {
     path: '/about',
@@ -22,12 +20,12 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue')
+    component: () => import(/* webpackChunkName: "about" */ '@/views/About/About.vue')
   },
   {
     path: '/HandsomeLogin',
     name: 'HandsomeLogin',
-    component: () => import('@/views/HandsomeLogin.vue')
+    component: () => import('@/views/Login/HandsomeLogin.vue')
   },
   {
     path: '/backend/:who',
@@ -37,29 +35,34 @@ const routes = [
       {
         path: 'add_article',
         name: 'AddArticle',
-        component: AddArticle
+        component: () => import('@/views/Backend/components/AddArticle.vue')
       },
       {
         path: 'user_info_editor',
         name: 'UserInfoEditor',
-        component: UserInfo
+        component: () => import('@/views/Backend/components/UserInfo.vue')
       },
       {
         path: 'article_editor',
         name: 'ArticleEditor',
-        component: () => import('@/components/ArticleEditor.vue')
+        component: () => import('@/views/Backend/components/ArticleEditor.vue')
+      },
+      {
+        path: 'desktop_preview',
+        name: 'PreviewDesktop',
+        component: () => import('@/views/Home/Home.vue')
       }
     ]
   },
   {
     path: '/article/:articleId',
     name: 'ArticlePage',
-    component: () => import('@/components/ArticlePage.vue')
+    component: () => import('@/views/Home/components/ArticlePage.vue')
   },
   {
     path: '*',
     name: 'NotFound',
-    component: () => import('@/views/404.vue')
+    component: () => import('@/components/404.vue')
   }
 ]
 
@@ -71,7 +74,6 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   const mg = await authAPI.checkLogin(showDBManagerInfo, 'router')
-  console.log('router看mg:', mg)
   const userInfo = {
     displayName: mg.displayName,
     email: mg.email,

@@ -15,10 +15,34 @@
           </picture>
           <nav class="mb-3">
             <b-navbar-nav class="ml-auto">
-              <b-nav-item @click="setActive('userInfoEditor')" active :to="'/backend/'+ who +'/user_info_editor'">個人主頁</b-nav-item>
-              <b-nav-item @click="setActive('addArticle')" active :to="'/backend/'+ who +'/add_article'">新增文章</b-nav-item>
-              <b-nav-item @click="setActive('articleEditor')" active :to="'/backend/'+ who +'/article_editor'">編輯文章</b-nav-item>
-              <b-nav-item @click="F_signOut" to="#">登出</b-nav-item>
+              <b-nav-item
+                @click="linkActive='userInfoEditor'"
+                :active="linkActive==='userInfoEditor'"
+                :to="'/backend/'+ who +'/user_info_editor'"
+              >個人主頁
+              </b-nav-item>
+              <b-nav-item
+                @click="linkActive='addArticle'"
+                :active="linkActive==='addArticle'"
+                :to="'/backend/'+ who +'/add_article'"
+              >新增文章
+              </b-nav-item>
+              <b-nav-item
+                @click="linkActive='articleEditor'"
+                :active="linkActive==='articleEditor'"
+                :to="'/backend/'+ who +'/article_editor'"
+              >編輯文章
+              </b-nav-item>
+              <b-nav-item
+                @click="linkActive='articleEditor'"
+                :active="linkActive==='articleEditor'"
+                :to="'/backend/'+ who +'/desktop_preview'"
+              >預覽桌面
+              </b-nav-item>
+              <b-nav-item
+                @click="F_signOut" to="#"
+              >登出
+              </b-nav-item>
             </b-navbar-nav>
           </nav>
         </div>
@@ -30,7 +54,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import firebase from '../Model/FirebaseModel.vue'
+import firebase from '@/Model/FirebaseModel.vue'
 export default {
   name: 'Backend',
   mixins: [firebase],
@@ -38,9 +62,7 @@ export default {
     return {
       who: this.$route.params.who,
       avatorShow: false,
-      userInfoEditor: '',
-      addArticle: '',
-      articleEditor: ''
+      linkActive: ''
     }
   },
   created () {},
@@ -55,13 +77,14 @@ export default {
     app () {
       console.log(this.$route.params)
     },
-    setActive (which) {
+    clearActive () {
       this.userInfoEditor = ''
       this.addArticle = ''
       this.articleEditor = ''
-      if (which === 'userInfoEditor') this.userInfoEditor = 'active'
-      if (which === 'addArticle') this.addArticle = 'active'
-      if (which === 'articleEditor') this.articleEditor = 'active'
+    },
+    setActive (activeLink) {
+      this.clearActive()
+      this.linkActive = activeLink
     }
   }
 }

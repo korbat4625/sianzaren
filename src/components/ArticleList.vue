@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import firebase from '../Model/FirebaseModel.vue'
+import firebase from '@/Model/FirebaseModel.vue'
 import ArticleCard from './ArticleCard'
 export default {
   name: 'ArticleList',
@@ -55,7 +55,7 @@ export default {
     this.F_getCollectionDocsSort('posts', { where: 'contentData.createdAt', order: 'desc' }).then(docs => {
       this.mainPosts = docs
       this.filterPosts = JSON.parse(JSON.stringify(this.mainPosts))
-      console.log(this.filterPosts)
+      console.log('posts:', this.filterPosts)
 
       this.tags = this.filterPosts.map(ele => {
         return ele.others.tags
@@ -67,6 +67,8 @@ export default {
 
       this.tagsFiltered = new Set(buffer)
       this.tagsFiltered = Array.from(this.tagsFiltered)
+    }).catch(err => {
+      console.log(err)
     })
   },
 

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import firebase from '../Model/FirebaseModel.vue'
+import firebase from '@/Model/FirebaseModel.vue'
 export default {
   name: 'Recently',
   mixins: [firebase],

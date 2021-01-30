@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { db } from '../Model/FirebaseModel.js'
+import { db } from '@/Model/FirebaseModel.js'
 export default {
   name: 'ArticlePage',
   data () {
