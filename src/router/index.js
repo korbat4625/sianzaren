@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import store from '@/store/index.js'
+// import store from '@/store/index.js'
 // import { dbAPI } from '@/api/db.js'
 import { authAPI } from '@/api/auth.js'
 import Backend from '@/views/Backend/Backend.vue'
+import store from '../store'
 Vue.use(VueRouter)
 
 const siteCondition = 'online'
-const showDBManagerInfo = false
 const routes = [
   {
     path: '/',
@@ -73,27 +73,31 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const mg = await authAPI.checkLogin(showDBManagerInfo, 'router')
-  const userInfo = {
-    displayName: mg.displayName,
-    email: mg.email,
-    emailVerified: mg.emailVerified,
-    photoURL: mg.photoURL,
-    phoneNumber: mg.phoneNumber,
-    name: mg.name,
-    online: mg.online
-  }
-  store.commit('setCurrentUser', userInfo)
-
-  if (mg.online) next()
-  else {
-    switch (to.name) {
-      case 'Home': next(); break
-      case 'HandsomeLogin': next(); break
-      case 'NotFound': next(); break
-      default:
-        next({ name: 'NotFound' })
-        break
+  const mg = await authAPI.checkLogin()
+  console.log('開頭', mg)
+  if (mg.online && !store.state.online) {
+    console.log('你登入了還重新整理，為什麼要重新整理..白目')
+    const userInfo = {
+      displayName: mg.displayName,
+      email: mg.account,
+      emailVerified: mg.emailVerified,
+      photoURL: mg.photoURL,
+      phoneNumber: mg.phoneNumber,
+      name: mg.name,
+      online: mg.online
+    }
+    store.commit('setCurrentUser', userInfo)
+    next()
+  } else {
+    if (mg.online) next()
+    else {
+      console.log('真的沒登入')
+      switch (to.name) {
+        case 'Home': next(); break
+        case 'HandsomeLogin': next(); break
+        case 'NotFound': next(); break
+        default: next({ name: 'NotFound' }); break
+      }
     }
   }
 })

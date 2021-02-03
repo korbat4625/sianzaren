@@ -1,5 +1,6 @@
 import { dbAPI } from './db.js'
 import { firebase, db } from '@/Model/FirebaseModel.js'
+import store from '../store/index'
 class AuthFunctions {
   constructor () {
     this.showMessage = true
@@ -10,16 +11,25 @@ class AuthFunctions {
 
   async checkLogin () {
     const mg = await dbAPI.getDBManagerInfo(this.showMessage)
+    console.log('ck::', mg)
     return mg
   }
 
-  async signIn (acc, pass) {
+  signIn (acc, pass) {
     return this.firebase.auth().signInWithEmailAndPassword(acc, pass).then(async () => {
-      const uuid = this.currentUser().uid
-      return {
-        uuid: uuid,
-        status: 'success'
+      await this.updateManagerInfo(this.currentUser().uid, { online: true })
+      const mg = await this.checkLogin()
+      const userInfo = {
+        displayName: mg.displayName,
+        email: mg.account,
+        emailVerified: mg.emailVerified,
+        photoURL: mg.photoURL,
+        phoneNumber: mg.phoneNumber,
+        name: mg.name,
+        online: mg.online
       }
+      store.commit('setCurrentUser', userInfo)
+      return this.currentUser()
     }).catch(function (error) {
       // Handle Errors here.
       var errorCode = error.code

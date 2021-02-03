@@ -104,7 +104,7 @@
 
 <script>
 import firebase from '@/Model/FirebaseModel.vue'
-import { authAPI } from '@/api/auth'
+import { authAPI } from '../../api/auth'
 export default {
   name: 'handsomeLogin',
   mixins: [firebase],
@@ -150,7 +150,11 @@ export default {
       else this.setActive = false
     },
     submit () {
-      if (this.inOrUp === 1) authAPI.signIn(this.loginAcc, this.loginPsd)
+      if (this.inOrUp === 1) {
+        authAPI.signIn(this.loginAcc, this.loginPsd).then(response => {
+          this.$router.replace({ path: `/backend/${response.uid}` })
+        })
+      }
       if (this.inOrUp === 2) {
         const user = {
           account: this.account,

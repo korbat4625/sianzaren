@@ -40,7 +40,7 @@
               >預覽桌面
               </b-nav-item>
               <b-nav-item
-                @click="F_signOut" to="#"
+                @click="F_signOut"
               >登出
               </b-nav-item>
             </b-navbar-nav>
@@ -48,6 +48,7 @@
         </div>
       </template>
     </b-sidebar>
+    <h2>Welcome Backend...</h2>
     <router-view></router-view>
   </b-container>
 </template>

@@ -52,6 +52,16 @@ export default {
       window.cookieTool.set('siaZA', '')
       await this.F_updateManagerInfo(this.$route.params.who, { online: false })
       return firebase.auth().signOut().then(() => {
+        const userInfo = {
+          displayName: '',
+          email: '',
+          emailVerified: '',
+          photoURL: '',
+          phoneNumber: '',
+          name: '',
+          online: false
+        }
+        this.$store.commit('setCurrentUser', userInfo)
         this.$router.replace({ name: 'Home' })
       })
     },
