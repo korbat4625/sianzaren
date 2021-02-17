@@ -1,13 +1,15 @@
 <template>
   <b-container fluid id="HeroPaper" class="mx-auto">
     <b-row>
-      <b-col cols="1" v-if="$route.path.indexOf('backend') !== -1 && $store.state.online">
+      <section class="toggler" cols="1" v-if="$route.path.indexOf('backend') !== -1 && $store.state.online">
         <span class="toggle_sidebar" v-b-toggle.sidebar-1 ><b-icon icon="grid3x2-gap"></b-icon></span>
-      </b-col>
-      <b-col cols="8" offset="3">
+      </section>
+      <b-col cols="12 text-center">
         <h1 @click="goto('/')">閒咱人等</h1>
-        <p>你們、我們、他們</p>
-        {{$store.state.online}}
+        <div>你們、我們、他們</div>
+      </b-col>
+      <b-col cols="12 text-center">
+        {{ hours }} <span class="blink-animation">:</span> {{ minutes }}
       </b-col>
     </b-row>
     <!-- <b-navbar type="dark" variant="dark" v-if="$router.history.current.fullPath.search('backend') === -1">
@@ -27,7 +29,9 @@ export default {
   data () {
     return {
       searchText: '',
-      loginShow: false
+      loginShow: false,
+      hours: new Date().getHours() < 10 ? '0' + new Date().getHours() : new Date().getHours(),
+      minutes: new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes()
     }
   },
   watch: {
@@ -35,6 +39,29 @@ export default {
       if (newVal === 'loginpls') this.loginShow = true
       else this.loginShow = false
     }
+  },
+  computed: {
+    time: {
+    // getter
+      get: function () {
+        return this.time
+      },
+      // setter
+      set: function (timeStamp) {
+        const hour = new Date(timeStamp).getHours()
+        const minute = new Date(timeStamp).getMinutes()
+        this.hours = hour < 10 ? '0' + hour : hour
+        this.minutes = minute < 10 ? '0' + minute : minute
+      }
+    }
+  },
+  created () {
+    setInterval(() => {
+      this.time = Date.now()
+    }, 1000)
+  },
+  beforeMount () {
+    // this.colon = ':'
   },
   methods: {
     goto (url) {
@@ -47,8 +74,9 @@ export default {
 <style lang="scss" scoped>
 #HeroPaper {
   background-color: #221E1F;
+  position: relative;
   width: 100%;
-  padding: 1rem;
+  padding: 1.5rem;
   opacity: 0.8;
   * {
     color: #fff;
@@ -61,9 +89,34 @@ export default {
     margin-bottom: 0px;
   }
 
-  .toggle_sidebar {
-    font-size: 2rem;
-    outline: none;
+  .toggler {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+    .toggle_sidebar {
+      font-size: 2rem;
+      outline: none;
+    }
+  }
+
+  .blink-animation {
+    animation-name: blink;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-duration: 2s;
+  }
+
+  @keyframes blink {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
   }
 }
 </style>

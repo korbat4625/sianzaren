@@ -2,25 +2,31 @@
   <b-container fluid>
     <b-row>
       <b-col md="12">
-        <div class="article">
-          <div class="content__header">
+        <section class="article">
+          <section class="content__header">
             <h3>{{ articleInfo.title }}</h3>
             <p>文章作者: {{ articleInfo.authorInfo.displayName }}</p>
             <p>上傳時間: {{ articleInfo.contentData.createdAt }}</p>
-          </div>
-          <div class="article__content" v-html="articleInfo.contentData.html"></div>
-        </div>
-      </b-col>
-
-      <b-col md="12">
-        <section
-            border-variant="secondary"
-            header="討論板"
-            header-border-variant="secondary"
-            align="center"
+          </section>
+          <section class="article__content markdown">
+            <div class="markdown-content">
+              <div class="markdown-preview markdown-theme-light">
+                <div v-html="articleInfo.contentData.html"></div>
+              </div>
+            </div>
+          </section>
+          <section
+            v-b-toggle.sidebar-discuss
+            class="toggler-discuss d-inline-block"
           >
-          <div v-for="comment in comments" :key="comment.id">{{ comment.who }} : {{ comment.value }}</div>
-          <div v-if="!noComments">看起來目前乏人問津呢...</div>
+            <img
+              style="width: 24px;"
+              class="d-inline-block"
+              src="@/assets/vector/speech-bubble-message-svgrepo-com.svg"
+              alt=""
+            >
+            {{ comments.length }}
+          </section>
         </section>
       </b-col>
 
@@ -42,6 +48,42 @@
         </section>
       </b-col>
     </b-row>
+    <b-sidebar
+      id="sidebar-discuss"
+      bg-variant="dark"
+      text-variant="light"
+      title="討論些什麼?"
+      right
+      shadow
+      backdrop
+      no-header-close
+    >
+      <template v-slot:footer="{ hide }">
+        <div class="d-flex flex-column text-light px-3 py-2">
+          <b-button size="sm" @click="hide">Close</b-button>
+        </div>
+      </template>
+      <section
+        border-variant="secondary"
+        header="討論板"
+        header-border-variant="secondary"
+        align="center"
+        class="p-3"
+      >
+        <section class="mb-5" v-for="comment in comments" :key="comment.id">
+          <section class="discuss-header text-left">
+            {{ comment.who }}:
+          </section>
+          <section class="discuss-content text-left">
+            {{ comment.value }}
+          </section>
+          <section class="discuss-footer text-left">
+            {{ transferTime(comment.createdAt) }}
+          </section>
+        </section>
+        <section v-if="!noComments">乏人問津...</section>
+      </section>
+    </b-sidebar>
   </b-container>
 </template>
 
@@ -84,6 +126,7 @@ export default {
   created () {
     const self = this
     const articleRef = db.collection('posts').doc(this.articleId)
+    console.log(this.$route)
     articleRef.get().then((doc) => {
       if (doc.exists) {
         this.articleInfo = doc.data()
@@ -108,24 +151,13 @@ export default {
     leaveAMessage () {
       const self = this
       const articleRef = db.collection('posts').doc(this.articleId).collection('comments')
-      const d = new Date()
-
-      let month = (d.getMonth() + 1)
-      let date = d.getDate()
-      let hours = d.getHours()
-      let minutes = d.getMinutes()
-      let seconds = d.getSeconds()
-      if (String(date).length === 1) date = '0' + String(date)
-      if (String(month).length === 1) month = '0' + String(month)
-      if (hours === 0) hours = '00'
-      if (String(hours).length === 1 === 0) hours = '0' + String(hours)
-      if (String(minutes).length === 1) minutes = '0' + String(minutes)
-      if (String(seconds).length === 1) seconds = '0' + String(seconds)
-      const time = d.getFullYear() + '-' + month + '-' + date + '^^' + hours + ' : ' + minutes + ' : ' + seconds
       const comment = {
         who: this.iAm,
-        value: this.commentTextarea + '-----' + time,
+        value: this.commentTextarea,
         createdAt: new Date().getTime()
+      }
+      const article = {
+        id: this.$route.params
       }
 
       articleRef.add(comment).then(function (commentData) {
@@ -134,6 +166,14 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+
+      this.F_updateArticle(this.articleData, 'update', )
+    },
+    transferTime (timeStamp) {
+      const y = ('0' + new Date(timeStamp).getFullYear()).substr(-4)
+      const m = ('0' + new Date(timeStamp).getMonth()).substr(-2)
+      const d = ('0' + new Date(timeStamp).getDate()).substr(-2)
+      return y + '-' + m + '-' + d
     }
   }
 }

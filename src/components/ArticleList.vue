@@ -1,5 +1,5 @@
 <template>
-  <div class="article__blocks">
+  <section class="article__blocks">
     <ArticleCard
       v-for="article in filterPosts"
       :article="article"
@@ -9,15 +9,16 @@
       :author-img="article.authorInfo.photoURL"
     >
     </ArticleCard>
-    <div class="article__tags--expose" v-show="false">
+    <section class="article__tags--expose" v-show="false">
       <slot name="tagsFiltered" :tagsFiltered="tagsFiltered"></slot>
-    </div>
-  </div>
+    </section>
+  </section>
 </template>
 
 <script>
 import firebase from '@/Model/FirebaseModel.vue'
 import ArticleCard from './ArticleCard'
+// import { db } from '@/Model/FirebaseModel.js'
 export default {
   name: 'ArticleList',
   mixins: [firebase],
@@ -37,7 +38,6 @@ export default {
 
   watch: {
     chooseTag: function (newVal, oldVal) {
-      console.log(newVal)
       if (newVal === 'all') {
         this.filterPosts = this.mainPosts
         return 'done'
@@ -54,9 +54,8 @@ export default {
     const buffer = []
     this.F_getCollectionDocsSort('posts', { where: 'contentData.createdAt', order: 'desc' }).then(docs => {
       this.mainPosts = docs
-      this.filterPosts = JSON.parse(JSON.stringify(this.mainPosts))
-      console.log('posts:', this.filterPosts)
-
+      this.filterPosts = docs
+      console.log(docs)
       this.tags = this.filterPosts.map(ele => {
         return ele.others.tags
       })
@@ -86,10 +85,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .article__blocks {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
   padding: 1rem;
-  column-gap: 5px;
 }
 
 .card {
@@ -108,10 +104,6 @@ export default {
       text-align: center;
       margin: 5px;
     }
-  }
-
-  .goto {
-    margin: 5px;
   }
 }
 

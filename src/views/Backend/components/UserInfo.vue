@@ -196,15 +196,12 @@ export default {
         (async function () {
           await self.F_uploadImg(self.file, self.targetRef)
           await self.F_listStorageRef('managers/' + self.name).then(item => {
-            console.log(item)
             self.F_getStorageURL('managers/' + self.name + '/' + item[0].name).then(url => {
-              self.photoURL = url
               info.photoURL = url
               self.$store.commit('setCurrentUser', {
-                photoURL: self.photoURL
+                photoURL: url
               })
-              self.F_updateProfile({ displayName: info.displayName, photoURL: self.photoURL })
-              console.log(self.$route.params.who, info)
+              self.F_updateProfile({ displayName: info.displayName, photoURL: url })
               self.F_updateManagerInfo(self.$route.params.who, info)
             })
           })

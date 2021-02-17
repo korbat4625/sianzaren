@@ -55,4 +55,18 @@ export default {
 </script>
 
 <style lang="scss">
+.pageHome {
+  padding-top: 6rem;
+  // background-color: #4E4B4C;
+}
+
+.toggler-discuss {
+    border-radius: 20px;
+    padding: 5px;
+    transition-duration: .2s;
+    outline: 0;
+    &:hover {
+      background-color: rgba(233, 233, 233, 0.664);
+    }
+  }
 </style>

@@ -99,16 +99,29 @@
       </div>
     </b-col>
 
-    <b-col cols="12 mt-3">
+    <b-col cols="12 my-3">
       <label for="input-large">文章標題:</label>
       <b-form-input id="input-large" size="lg" placeholder="請輸入文章標題" v-model="title"></b-form-input>
     </b-col>
 
-    <b-col cols="12">
+    <b-col cols="12 my-3">
+      <label for="input-front">要顯示在文章列表的引言:</label>
+      <b-form-textarea
+        id="input-front"
+        placeholder="Enter something..."
+        rows="3"
+        max-rows="6"
+        v-model="showFront"
+      ></b-form-textarea>
+    </b-col>
+
+    <b-col cols="12 my-3">
+      <label for="input-large">文章內容:</label>
       <MarkdownPro
         @on-save="updateData"
         v-model="articleValue"
         ref="markdownEditor"
+        theme="light"
       ></MarkdownPro>
     </b-col>
 
@@ -185,7 +198,8 @@ export default {
       wantToPreviewImgURL: '',
       currentFileName: '',
       invalid: 'none',
-      cloudData: null
+      cloudData: null,
+      showFront: ''
     }
   },
   watch: {
@@ -306,22 +320,13 @@ export default {
     },
 
     updateData (saveEventInfo) {
-      const splitter = '<!-- more -->'
-      const self = this
-      if (saveEventInfo.value.indexOf(splitter) === -1) {
-        saveEventInfo.value = saveEventInfo.value.slice(0, 20) + splitter + saveEventInfo.value.slice(20)
-      }
-
-      saveEventInfo.stopOnMore = saveEventInfo.value.split(splitter)
-      saveEventInfo.stopOnMore = saveEventInfo.stopOnMore[0] + '...'
-
+      saveEventInfo.stopOnMore = this.showFront
       if (this.addOrUpdate !== '更新') this.createdAt = new Date().getTime()
 
       this.F_showUser().then(res => {
-        console.log(res.photoURL)
         this.articleData.contentData = {
-          title: self.title,
-          createdAt: self.createdAt,
+          title: this.title,
+          createdAt: this.createdAt,
           value: saveEventInfo.value,
           stopOnMore: saveEventInfo.stopOnMore,
           html: saveEventInfo.html
@@ -335,8 +340,8 @@ export default {
         }
 
         this.articleData.others = {
-          tags: self.tags,
-          articleImgURL: self.articleImgURL ? self.articleImgURL : ''
+          tags: this.tags,
+          articleImgURL: this.articleImgURL ? this.articleImgURL : ''
         }
       })
     },

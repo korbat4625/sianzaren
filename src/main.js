@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
-import { router } from './router'
 import store from './store'
+import { router } from './router'
 import { userAPI } from '@/api/user.js'
 import { dbAPI } from '@/api/db.js'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
@@ -9,6 +9,7 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'cropperjs/dist/cropper.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import './assets/scss/main.scss'
 import VueCookies from 'vue-cookies'
 
 const showWatcherMsg = true
