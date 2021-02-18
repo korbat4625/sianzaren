@@ -1,5 +1,5 @@
 <template>
-  <section class="sianzaren-card"
+  <section class="sianzaren-card mb-5"
     @click="gotoArticle(article.id)"
     :data-articleId="article.id"
   >
@@ -41,7 +41,7 @@
         >
         {{ article.messageLength ? article.messageLength : 0 }}
       </section>
-      <section style="border: solid 1px #ccc;"></section>
+      <section class="border-split"></section>
     </section>
   </section>
 </template>
@@ -91,7 +91,7 @@ export default {
 <style lang="scss">
 .sub-text {
   font-size: small;
-  color: rgb(221, 221, 221);
+  color: rgb(185, 185, 185);
 }
 .tags {
   display: flex;
@@ -111,6 +111,8 @@ export default {
   position: relative;
   cursor: pointer;
   transition-duration: .3s;
+  // background-color: rgb(255, 255, 255);
+  // opacity: 0.5;
   // border: solid 4px grey;
   // border-radius: 10px;
   // box-shadow: 0px 2px 2px 1px;
@@ -124,6 +126,10 @@ export default {
   }
   &:hover {
     background-color: #F7F7F7;
+  }
+  .border-split {
+    border: solid 1px #ccc;
+    border-style: dashed;
   }
 
   // &::before {

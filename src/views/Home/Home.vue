@@ -56,7 +56,7 @@ export default {
 
 <style lang="scss">
 .pageHome {
-  padding-top: 6rem;
+  padding-top: 3rem;
   // background-color: #4E4B4C;
 }
 
