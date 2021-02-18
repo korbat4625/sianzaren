@@ -39,7 +39,7 @@
           src="@/assets/vector/speech-bubble-message-svgrepo-com.svg"
           alt=""
         >
-        11
+        {{ article.messageLength ? article.messageLength : 0 }}
       </section>
       <section style="border: solid 1px #ccc;"></section>
     </section>
