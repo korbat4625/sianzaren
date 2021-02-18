@@ -3,7 +3,7 @@
     @click="gotoArticle(article.id)"
     :data-articleId="article.id"
   >
-    <section class="sianzaren-card__title d-flex justify-content-between mb-3">
+    <section class="sianzaren-card__title d-flex flex-column mb-3">
       <section>
         <strong>{{ article.contentData.title }}</strong>
       </section>

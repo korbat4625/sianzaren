@@ -1,9 +1,9 @@
 <template>
   <b-container fluid class="pageHome">
     <b-row>
-      <b-col cols="2">
+      <b-col lg="2" cols="0">
       </b-col>
-      <b-col cols="8">
+      <b-col lg="8" cols="12">
         <ArticleList
           :chooseTag="storeChooseTags"
         >
@@ -12,7 +12,7 @@
           </template>
         </ArticleList>
       </b-col>
-      <b-col cols="2">
+      <b-col lg="2" cols="0">
         <!-- <Recently
           :tags="storeAllTags"
         >
