@@ -25,10 +25,9 @@ export default {
       return firebase.auth().signInWithEmailAndPassword(account, password).then(function () {
         self.F_showUser().then(async user => {
           await self.F_updateManagerInfo(`${user.uid}`, { online: true })
-          console.log('登入開始進行跳轉')
           self.$router.replace(`/backend/${user.uid}`)
         }).catch(error => {
-          console.log(error)
+          console.error(error)
         })
       }).catch(function (error) {
         // Handle Errors here.
@@ -68,10 +67,8 @@ export default {
 
     F_updateArticle (data, addOrUpdate, attrs) {
       if (addOrUpdate === 'update') {
-        console.log('走入更新')
         var docRef = db.collection('posts').doc(attrs.id)
         return docRef.update(data).then(function () {
-          console.log('Document successfully updated!')
         }).catch(function (error) {
           // The document probably doesn't exist.
           console.error('Error updating document: ', error)
@@ -120,7 +117,6 @@ export default {
 
     F_checkLogin () {
       return this.F_showUser().then(res => {
-        console.log(res)
         if (res === null) this.$router.replace('HandsomeLogin')
         else this.$router.replace(`backend/${res.uid}`)
       })

@@ -11,7 +11,6 @@ class AuthFunctions {
 
   async checkLogin () {
     const mg = await dbAPI.getDBManagerInfo(this.showMessage)
-    console.log('ck::', mg)
     return mg
   }
 
@@ -39,7 +38,6 @@ class AuthFunctions {
   }
 
   currentUser (e, msg) {
-    console.log('觸發了F_currentUser')
     return this.firebase.auth().currentUser
   }
 
@@ -52,7 +50,6 @@ class AuthFunctions {
   async updateManagerInfo (id, data) {
     const managers = this.db.collection('managers').doc(id)
     return managers.update(data).then(function () {
-      console.log('Document successfully updated!')
     }).catch(function (error) {
       console.error('Error updating document: ', error)
       // pass

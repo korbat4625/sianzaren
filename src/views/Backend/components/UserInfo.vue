@@ -258,7 +258,6 @@ export default {
       (async () => {
         let currentUser = null
         await this.F_showUser().then(user => {
-          console.log(user)
           currentUser = user
         })
         await this.F_updateManagerInfo(this.$route.params.who, { emailVerified: currentUser.emailVerified })

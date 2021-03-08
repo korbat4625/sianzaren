@@ -65,7 +65,7 @@ export default {
       this.tagsFiltered = new Set(buffer)
       this.tagsFiltered = Array.from(this.tagsFiltered)
     }).catch(err => {
-      console.log(err)
+      alert(err)
     })
   },
 

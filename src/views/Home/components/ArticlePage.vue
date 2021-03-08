@@ -128,7 +128,6 @@ export default {
   created () {
     const self = this
     const articleRef = db.collection('posts').doc(this.articleId)
-    console.log(this.$route)
     articleRef.get().then((doc) => {
       if (doc.exists) {
         this.articleInfo = doc.data()
@@ -143,7 +142,6 @@ export default {
       .get().then(function (querySnapshot) {
         querySnapshot.forEach(function (doc) {
         // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, ' => ', doc.data(), ' => ', self.comments)
           self.comments.push(doc.data())
         })
       })

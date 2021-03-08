@@ -76,7 +76,6 @@ export default {
     changeViewBox (viewboxSize) {
       if (this.$refs.preview__img.src === '') return 'none'
       if (this.$refs.preview__img.src === '') return 'none'
-      console.log('pass')
       // if (this.cropper === null) {
       //   this.crop(this.$refs.preview__img, viewboxSize)
       // } else {
