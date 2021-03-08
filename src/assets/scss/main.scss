@@ -1,1 +1,11 @@
-@import 'vendor'
+@import 'reset';
+@import 'main-variables';
+@import 'main-vendor';
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background-color: $main-background-color !important;
+}

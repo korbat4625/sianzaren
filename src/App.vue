@@ -28,11 +28,6 @@ export default {
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100%;
-  // background-color: #F2F2F2 !important;
-}
-
 #app {
   height: 100%;
 }

@@ -1,9 +1,9 @@
 <template>
   <b-container fluid class="pageHome">
     <b-row>
-      <b-col cols="2">
+      <b-col lg="2" cols="0">
       </b-col>
-      <b-col cols="8">
+      <b-col lg="8" cols="12">
         <ArticleList
           :chooseTag="storeChooseTags"
         >
@@ -12,7 +12,7 @@
           </template>
         </ArticleList>
       </b-col>
-      <b-col cols="2">
+      <b-col lg="2" cols="0">
         <!-- <Recently
           :tags="storeAllTags"
         >
@@ -56,7 +56,7 @@ export default {
 
 <style lang="scss">
 .pageHome {
-  padding-top: 6rem;
+  padding-top: 3rem;
   // background-color: #4E4B4C;
 }
 

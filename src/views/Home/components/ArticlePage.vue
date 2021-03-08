@@ -6,7 +6,7 @@
           <section class="content__header">
             <h3>{{ articleInfo.title }}</h3>
             <p>文章作者: {{ articleInfo.authorInfo.displayName }}</p>
-            <p>上傳時間: {{ articleInfo.contentData.createdAt }}</p>
+            <p>上傳時間: {{ transferTime(articleInfo.contentData.createdAt) }}</p>
           </section>
           <section class="article__content markdown">
             <div class="markdown-content">
@@ -17,7 +17,7 @@
           </section>
           <section
             v-b-toggle.sidebar-discuss
-            class="toggler-discuss d-inline-block"
+            class="toggler-discuss d-inline-block ml-2"
           >
             <img
               style="width: 24px;"
@@ -31,7 +31,7 @@
       </b-col>
 
       <b-col md="5">
-        <section border-variant="info" header="我想說話..." align="center">
+        <section border-variant="info" header="我想說話..." align="center" style="padding-left: 12px;">
           <div>
             <b-form-input v-model="iAm" placeholder="我叫做..." autocomplete="off"></b-form-input>
           </div>
@@ -89,8 +89,10 @@
 
 <script>
 import { db } from '@/Model/FirebaseModel.js'
+import firebase from '@/Model/FirebaseModel.vue'
 export default {
   name: 'ArticlePage',
+  mixins: [firebase],
   data () {
     return {
       articleId: this.$route.params.articleId,
@@ -148,26 +150,42 @@ export default {
   },
 
   methods: {
-    leaveAMessage () {
-      const self = this
+    async leaveAMessage () {
       const articleRef = db.collection('posts').doc(this.articleId).collection('comments')
       const comment = {
         who: this.iAm,
         value: this.commentTextarea,
         createdAt: new Date().getTime()
       }
-      const article = {
-        id: this.$route.params
+      const theArticle = {
+        id: this.$route.params.articleId
       }
-      articleRef.add(comment).then(function (commentData) {
+
+      await this.addComment(articleRef, comment)
+      await this.updateMessageLength(articleRef, theArticle)
+      // this.F_updateArticle(this.articleData, 'update', article)
+    },
+
+    addComment (articleRef, comment) {
+      return articleRef.add(comment).then((commentData) => {
         comment.id = commentData.id
-        self.comments.push(comment)
+        this.comments.push(comment)
       }).catch(err => {
         console.log(err)
       })
-      console.log(article)
-      this.F_updateArticle(this.articleData, 'update', article)
     },
+
+    updateMessageLength (articleRef, theArticle) {
+      return articleRef.get().then((querySnapshot) => {
+        const messagebox = []
+        querySnapshot.forEach((doc) => {
+          messagebox.push(doc.data())
+        })
+
+        this.F_updateArticle({ messageLength: messagebox.length }, 'update', theArticle)
+      })
+    },
+
     transferTime (timeStamp) {
       const y = ('0' + new Date(timeStamp).getFullYear()).substr(-4)
       const m = ('0' + new Date(timeStamp).getMonth()).substr(-2)

@@ -5,7 +5,7 @@
       :article="article"
       :key="article.id"
       article-img="https://placekitten.com/380/200"
-      titleImageDescription="a ate"
+      title-image-description="a ate"
       :author-img="article.authorInfo.photoURL"
     >
     </ArticleCard>
