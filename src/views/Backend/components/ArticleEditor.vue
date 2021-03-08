@@ -19,6 +19,9 @@
         :editValue="editValue"
         :id="id"
         :createdAt="createdAt"
+        action="editArticle"
+        @update="updateArticle"
+        @updateData="updateData"
       ></AddArticle>
     </b-col>
   </b-row>
@@ -27,6 +30,7 @@
 <script>
 import AddArticle from './AddArticle.vue'
 import firebase from '@/Model/FirebaseModel.vue'
+import { dbAPI } from '../../../api/db'
 export default {
   name: 'ArticleEditor',
   mixins: [firebase],
@@ -36,7 +40,8 @@ export default {
       editTitle: '',
       editValue: '',
       createdAt: null,
-      id: ''
+      id: '',
+      updatedData: null
     }
   },
   components: {
@@ -44,11 +49,25 @@ export default {
   },
   created () {
     this.F_getCollectionDocsSort('posts', { where: 'contentData.createdAt', order: 'desc' }).then(docs => {
-      console.log(docs)
       this.editPosts = docs
     })
   },
   methods: {
+    updateData (data) {
+      this.updatedData = data
+    },
+    async updateArticle () {
+      try {
+        await dbAPI.updateArticle(this.id, this.updatedData)
+        this.$bvToast.toast('文章修改成功', {
+          title: '成功',
+          variant: 'success',
+          solid: true
+        })
+      } catch (err) {
+        alert(err)
+      }
+    },
     putArticle (articleInfo) {
       this.editTitle = articleInfo.contentData.title
       this.editValue = articleInfo.contentData.value

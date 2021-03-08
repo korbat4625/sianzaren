@@ -204,7 +204,6 @@ export default {
   },
   watch: {
     $attrs: function (newVal, oldVal) {
-      this.addOrUpdate = '更新'
       this.title = newVal.editTitle
       this.articleValue = newVal.editValue
       this.createdAt = newVal.createdAt
@@ -214,6 +213,7 @@ export default {
     MarkdownPro
   },
   created () {
+    if (this.$attrs.action === 'editArticle') this.addOrUpdate = '更新'
     const interval = setInterval(() => {
       if (!this.$store.state.name) return
       clearInterval(interval)
@@ -343,12 +343,17 @@ export default {
           tags: this.tags,
           articleImgURL: this.articleImgURL ? this.articleImgURL : ''
         }
+
+        this.$emit('updateData', this.articleData)
       })
     },
 
     addArticle () {
-      console.log(this.articleData)
-      this.F_updateArticle(this.articleData, 'add')
+      if (this.$attrs.action === 'editArticle') {
+        this.$emit('update')
+      } else {
+        this.F_updateArticle(this.articleData, 'add')
+      }
     },
 
     inputImgSelected () {

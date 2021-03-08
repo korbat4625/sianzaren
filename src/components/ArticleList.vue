@@ -46,7 +46,6 @@ export default {
         return ele.others.tags.indexOf(newVal) !== -1
       })
       this.filterPosts = filterPost
-      console.log('目前文章:', filterPost)
     }
   },
 
@@ -55,7 +54,6 @@ export default {
     this.F_getCollectionDocsSort('posts', { where: 'contentData.createdAt', order: 'desc' }).then(docs => {
       this.mainPosts = docs
       this.filterPosts = docs
-      console.log(docs)
       this.tags = this.filterPosts.map(ele => {
         return ele.others.tags
       })

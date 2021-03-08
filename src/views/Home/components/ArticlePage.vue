@@ -159,15 +159,14 @@ export default {
       const article = {
         id: this.$route.params
       }
-
       articleRef.add(comment).then(function (commentData) {
         comment.id = commentData.id
         self.comments.push(comment)
       }).catch(err => {
         console.log(err)
       })
-
-      this.F_updateArticle(this.articleData, 'update', )
+      console.log(article)
+      this.F_updateArticle(this.articleData, 'update', article)
     },
     transferTime (timeStamp) {
       const y = ('0' + new Date(timeStamp).getFullYear()).substr(-4)

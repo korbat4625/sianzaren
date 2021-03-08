@@ -11,6 +11,11 @@ const dbAPI = {
     }).catch(function (error) {
       console.log('Error getting document:', error)
     })
+  },
+
+  updateArticle (articleId, data) {
+    var docRef = db.collection('posts').doc(articleId)
+    return docRef.update(data)
   }
 }
 
