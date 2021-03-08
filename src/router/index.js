@@ -93,6 +93,7 @@ router.beforeEach(async (to, from, next) => {
         case 'Home': next(); break
         case 'HandsomeLogin': next(); break
         case 'NotFound': next(); break
+        case 'ArticlePage': next(); break
         default: next({ name: 'NotFound' }); break
       }
     }
